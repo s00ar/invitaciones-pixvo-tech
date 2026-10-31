@@ -1,0 +1,179 @@
+{
+  "fonts": "Sin archivos redistribuidos: fallbacks locales explícitos",
+  "assets": [
+    {
+      "path": "/brand/pixvo-logo-footer.webp",
+      "source": "brand/pixvo-logo-footer.webp",
+      "license": "Identidad de Pixvo proporcionada por el titular",
+      "sha256": "a8761d51cde27ac0ac37f7bf1cb683bcf805cabc28fb4cf23312369c57486e38"
+    },
+    {
+      "path": "/brand/pixvo-logo-header.webp",
+      "source": "brand/pixvo-logo-header.webp",
+      "license": "Identidad de Pixvo proporcionada por el titular",
+      "sha256": "a81b725ddd5804c1277e3bd6cbe00ef90281d080465becddc7d499288a93ebf4"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-boho-night-party.svg",
+      "source": "assets/backgrounds/pixvo-boho-night-party.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "187c060a460369e3d9368cc6cd9a6d41a912bc5c5e98ce9e3f9436f82bc89723"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-boho-sunset.svg",
+      "source": "assets/backgrounds/pixvo-boho-sunset.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "187c060a460369e3d9368cc6cd9a6d41a912bc5c5e98ce9e3f9436f82bc89723"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-cinematic-couple.svg",
+      "source": "assets/backgrounds/pixvo-cinematic-couple.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "817d10b65c08886114d2b29bc7779268e85e11e84e7e3dad879347b49fbf94fa"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-circus-kids.svg",
+      "source": "assets/backgrounds/pixvo-circus-kids.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "1daf120f15ff9edb1911df27952fd737d54ff1c3a148f760004823cb134a5f5b"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-dino-party.svg",
+      "source": "assets/backgrounds/pixvo-dino-party.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "f7a11b44218ce308d801a83e8b3cf91fa742c6adaa22ffd6e50a164a02965531"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-disco-night-party.svg",
+      "source": "assets/backgrounds/pixvo-disco-night-party.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "e0e1b11e3a01e40c45250d4f75bca968ee1558ca32100db634bd98de06d0513a"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-disco-night.svg",
+      "source": "assets/backgrounds/pixvo-disco-night.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "e0e1b11e3a01e40c45250d4f75bca968ee1558ca32100db634bd98de06d0513a"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-editorial-minimal.svg",
+      "source": "assets/backgrounds/pixvo-editorial-minimal.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "54dedfa84fa748b9aacb6f63705e61bfba9b0248a919fbeb4c6b44a418850bb9"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-executive-slate.svg",
+      "source": "assets/backgrounds/pixvo-executive-slate.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "771e974177408a1dc33480b918b060fd584c3da52528455b713e1681bd6e8897"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-free-corporate.svg",
+      "source": "assets/backgrounds/pixvo-free-corporate.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "a4d3e622a3bad14fdc4d7349a6f2d216e925e3c451aec58216654b232ddfd28d"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-free-kids.svg",
+      "source": "assets/backgrounds/pixvo-free-kids.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "3e26fc4e8b8a3dc2b80bdcd362b8f4cf85a6e4061be619bb3a171a084b5cd0ff"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-free-parties.svg",
+      "source": "assets/backgrounds/pixvo-free-parties.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "86837d102e393cd7608fdb306a69bece7fe20737389a26bdd3eeeee1703f528c"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-free-weddings.svg",
+      "source": "assets/backgrounds/pixvo-free-weddings.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "da35b57879f2d6d054b38314352eb912e0ca1cc69cf47f0bbd189227293dcadf"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-free-xv.svg",
+      "source": "assets/backgrounds/pixvo-free-xv.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "359670fd5afef1955637f67d8d0deada99a386d4a2b3799cd565c7fe901577da"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-glam-pink.svg",
+      "source": "assets/backgrounds/pixvo-glam-pink.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "dfb9a80a20759133103ffac0f80da83b77f61c39a63851f5446599db0cbb1a99"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-golden-luxury.svg",
+      "source": "assets/backgrounds/pixvo-golden-luxury.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "93c29ab3cc0aa4d28d94c3b7d85b5e3a04965bef7fff0b211337fdc3c16f7e55"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-luxury-black.svg",
+      "source": "assets/backgrounds/pixvo-luxury-black.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "03e1c4dda65964ab1b750ed6705f3ad831eb4b5ed4d7731df07761da72cb1b28"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-luxury-brand.svg",
+      "source": "assets/backgrounds/pixvo-luxury-brand.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "8b84df28e1ab824875d3ef8efaade1ab875d0078f03947bfddd2fc0dc7c5d099"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-neon-party-party.svg",
+      "source": "assets/backgrounds/pixvo-neon-party-party.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "0909ed4f2dc6ef1f5884617e3bd29dadea9522c8dad638dc8b8cb515e8019850"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-neon-party.svg",
+      "source": "assets/backgrounds/pixvo-neon-party.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "0d2e24d98a08c08dd3be050a458b6fd8b9a339b8acaf2dcea42bc4526cdb8b87"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-princess-dream.svg",
+      "source": "assets/backgrounds/pixvo-princess-dream.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "e9c3ac3fc54588abbadbb9c48f0be4176aca0ec31492cb9550c8f60c5dd422d7"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-princess-kids.svg",
+      "source": "assets/backgrounds/pixvo-princess-kids.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "4f77cf27d59cfd8827b4e6268b5e6d760a32a28c382d9b86fcd4278247fccf37"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-romantic-garden.svg",
+      "source": "assets/backgrounds/pixvo-romantic-garden.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "86a9ead902091691896fdaebf9a6ef4582fb7e9f09151b348a8725ce03309114"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-safari-adventure.svg",
+      "source": "assets/backgrounds/pixvo-safari-adventure.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "5d8955d92637431cf9b25ebaa45ddda9b2c19121087917b7c06b63d2848a3504"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-space-explorer.svg",
+      "source": "assets/backgrounds/pixvo-space-explorer.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "ebc5c945176088a48bd4247a27a63f25fb748870a6291bbace0d3dd54ba2d4fc"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-sports-kids.svg",
+      "source": "assets/backgrounds/pixvo-sports-kids.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "304647183a97c99c818d38b2a5bed7e271736f1a042762b5ed8a206fb158224e"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-tech-conference.svg",
+      "source": "assets/backgrounds/pixvo-tech-conference.svg",
+      "license": "SVG original del proyecto Pixvo",
+      "sha256": "cedbe7475f8da59a701f4f6850be889f279fcc2888781abd3dd456289b631029"
+    }
+  ]
+}

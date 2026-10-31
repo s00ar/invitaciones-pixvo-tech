@@ -1,0 +1,60 @@
+{
+  "name": "pixvo-invitaciones",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "npm@11.6.0",
+  "type": "module",
+  "engines": {
+    "node": "24.22.2"
+  },
+  "scripts": {
+    "prebuild": "node scripts/sync-presets.mjs",
+    "predev": "node scripts/sync-presets.mjs",
+    "predev:local": "node scripts/sync-presets.mjs",
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "lint": "eslint src tests scripts/*.ts",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "dev:local": "node scripts/dev-local.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.14",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "date-fns-tz": "3.2.0",
+    "file-type": "22.3.0",
+    "lucide-react": "1.66.0",
+    "next": "16.4.3",
+    "pg": "8.23.1",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@rolldown/binding-win32-x64-msvc": "1.2.16",
+    "@types/node": "26.6.6",
+    "@types/pg": "8.23.1",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.3",
+    "jsqr": "1.4.0",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "1.2.16"
+  }
+}

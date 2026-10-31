@@ -51,3 +51,19 @@ Errores: 400 entrada, 401 sesión, 403 permiso/entitlement, 404 inexistente/no a
 5. Publicar valida documento, medios y revisión; snapshot + contador de ediciones atómicos.
 6. Reembolsos/contracargos requieren política explícita y registro; no borrar eventos automáticamente.
 Tokens de invitado y edición: aleatorios de alta entropía, almacenados con hash, rotables y con alcance a un evento. No usar IDs secuenciales como secreto.
+
+## Contrato de la implementación actual
+
+El cuadro anterior es el diseño inicial. La aplicación usa estas rutas concretas adicionales o ajustadas:
+
+- POST /api/auth/login, /register, /recover, /password, /logout y /google. GET /auth/confirm acepta código PKCE o token_hash/tipo permitido. GET /api/auth devuelve usuario autenticado y si es desarrollo local.
+- POST /api/invitations/:id/media recibe multipart (file, authorized=true). El servidor limita bytes, inspecciona formato, decodifica imágenes y escribe al bucket privado. Reemplaza el esquema de upload-url/complete propuesto para evitar publicar archivos sin procesar.
+- GET /api/invitations/:id/media lista metadatos privados. GET /api/media/:id autoriza propietario o referencia publicada con ?slug=; soporta Range. DELETE retira de biblioteca solo si no hay referencias en borradores/snapshots.
+- POST /api/invitations/:id/status: draft/paused/archived; POST /guests crea enlace personal, mostrando su token una sola vez; GET /versions y /songs son privados.
+- GET /api/invitations/:id/rsvps y /export.csv aceptan response=yes|no|pending y q. El mismo filtro se aplica al CSV.
+- GET /api/public/:slug/calendar produce ICS. POST /rsvp devuelve recibo/token para actualizar, con datos validados contra snapshot activo y cupos bajo bloqueo.
+- GET /api/orders lista órdenes del propietario; POST /api/orders y /:id/checkout calculan el importe en servidor. Retornos del navegador no mutan pagos.
+- GET /api/admin ofrece planes, templates, eventos, órdenes, encargos y auditoría solo a admin. POST /api/admin/plans, /templates, /events y /requests valida cambios y genera audit_log. No hay aprobación manual de pagos.
+- PATCH /api/profile edita display_name; nunca role. Encargos GET/POST /api/custom-requests son privados.
+
+Las tablas adicionales version_media y rate_limits protegen referencias publicadas y antiabuso. local_dev.users/sessions existen exclusivamente en el adaptador local; Supabase usa auth.users. El schema JSON se genera desde Zod con scripts/generate-schema.ts; las refinaciones semánticas (zona IANA, orden temporal, capacidades y referencias) se aplican además en servidor.

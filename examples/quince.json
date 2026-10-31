@@ -4,14 +4,11 @@
   "templateVersion": 1,
   "event": {
     "title": "Los quince de Emilia",
-    "startsAt": "2027-12-18T21:00:00-03:00",
-    "endsAt": "2027-12-19T05:00:00-03:00",
-    "timezone": "America/Argentina/Buenos_Aires",
     "category": "xv",
-    "hosts": [
-      "Emilia"
-    ],
-    "message": "Una noche para compartir con quienes más quiero."
+    "startsAt": "2027-12-18T21:00:00-03:00",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "hosts": [],
+    "message": "Hay momentos que se vuelven inolvidables cuando los compartimos."
   },
   "theme": {
     "accent": "#ff4ec8",
@@ -20,44 +17,99 @@
     "headingFont": "Cormorant Garamond",
     "bodyFont": "Inter Tight",
     "radius": 8,
-    "backgroundAsset": "assets/backgrounds/pixvo-glam-pink.svg"
+    "family": "ornamental",
+    "backgroundAsset": "assets/backgrounds/pixvo-glam-pink.svg",
+    "overlay": 0.15,
+    "focusX": 50,
+    "focusY": 50,
+    "align": "center",
+    "scale": 1,
+    "spacing": 1
   },
   "blocks": [
     {
-      "id": "hero-1",
+      "id": "hero-0",
       "type": "hero",
       "enabled": true,
       "props": {
-        "eyebrow": "Mis quince"
+        "eyebrow": "Quince años"
       }
     },
     {
-      "id": "count-1",
+      "id": "countdown-1",
       "type": "countdown",
       "enabled": true,
       "props": {}
     },
     {
-      "id": "venue-1",
+      "id": "venues-2",
       "type": "venues",
       "enabled": true,
-      "props": {
-        "items": [
-          {
-            "name": "Salón de ejemplo",
-            "address": "Dirección ficticia por completar"
-          }
-        ]
-      }
+      "props": {}
     },
     {
-      "id": "rsvp-1",
+      "id": "message-3",
+      "type": "message",
+      "enabled": true,
+      "props": {}
+    },
+    {
+      "id": "rsvp-4",
       "type": "rsvp",
       "enabled": true,
       "props": {
-        "mode": "online",
-        "maxAttendees": 2
+        "maxAttendees": 2,
+        "mode": "open",
+        "askDiet": true
       }
+    },
+    {
+      "id": "calendar-5",
+      "type": "calendar",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "gallery-6",
+      "type": "gallery",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "dressCode-7",
+      "type": "dressCode",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "gifts-8",
+      "type": "gifts",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "music-9",
+      "type": "music",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "social-10",
+      "type": "social",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "songRequests-11",
+      "type": "songRequests",
+      "enabled": false,
+      "props": {}
+    },
+    {
+      "id": "agenda-12",
+      "type": "agenda",
+      "enabled": false,
+      "props": {}
     }
   ]
 }

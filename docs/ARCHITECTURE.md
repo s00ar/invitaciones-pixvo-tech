@@ -26,3 +26,14 @@ Imágenes responsivas con ancho/alto, lazy-load debajo del hero, poster de video
 - https://supabase.com/docs/guides/database/postgres/row-level-security
 - https://www.mercadopago.com.ar/developers/es/docs/checkout-pro-preferences/overview
 Revisar documentos específicos de SDK, firmas de webhooks y Auth antes de implementación. No fijar una versión por conocimiento desactualizado.
+
+## Arquitectura implementada (2026-10-31)
+
+- Next.js 16.4.3 App Router y React 19.3.1; proxy SSR para refrescar cookies Supabase. La autorización sensible siempre se repite en servidor, fuera del proxy.
+- Supabase Auth/Storage para producción; PostgreSQL mediante pg y transacciones que asumen service_role. Las mutaciones de la app validan explícitamente propietario/rol; el Data API no concede INSERT/UPDATE/DELETE al navegador. RLS limita lecturas directas por propietario/admin.
+- Desarrollo explícito con PGlite persistente, tablas de sesión locales privadas y hashes scrypt. No se habilita en producción. Mismas migraciones de producto y pruebas RLS con roles reales de PostgreSQL; Storage alojado y Auth externo requieren staging.
+- Documento v1 y motor compartido en src/domain y components/invitation.tsx. Cinco ramas de composición de portada y estilos de bloques; presets generados saneados sin metadata del competidor en cliente. Sync-presets copia únicamente brand y fondos propios.
+- Server/services contiene autorización, revisiones, snapshots, rollback, invitados, respuestas y administración. Media procesa imágenes en servidor y almacena archivos privados. Payments implementa contrato de preferencias y verificación server-to-server.
+- Proyección pública con allowlist por bloque; medios públicos solo por referencia de un snapshot activo. Sin SELECT anónimo sobre invitaciones/RSVP/medios/órdenes; las rutas públicas son proyecciones controladas con no-store.
+- La revisión del borrador es optimista (409), la publicación y cupos se serializan por fila. Autosave tiene recuperación local y cola de cambios pendientes, sin bucles de reintento de un servidor fallido.
+- No hay HTML/CSS/JS arbitrario, hotlinks al competidor ni paquete de research en el build. No hay proveedor falso ni bypass de pagos en las rutas de producción.

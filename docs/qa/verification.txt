@@ -1,0 +1,14 @@
+Verificación local — 2026-10-31
+Runtime: Node v24.22.2 LTS, npm 11.6.0. Instalador y comprobaciones ejecutados con este runtime portable verificado contra SHA-256 oficial.
+
+npm ci: PASS, 528 paquetes instalados desde package-lock.json.
+npm run lint: PASS, sin errores ni advertencias de lint.
+npm run typecheck: PASS, next typegen + tsc --noEmit.
+npm test: PASS, 23 pruebas, 1 archivo.
+npm run build: PASS, Next.js 16.4.3, compilación y generación de rutas completas.
+Bundle cliente: sin coincidencias de somosweb, research/media ni SUPABASE_SERVICE_ROLE_KEY en JavaScript de .next/static.
+npm audit --omit=dev: PASS, 0 vulnerabilidades.
+
+npm run test:e2e: PASS, 7/7 recorridos con Chromium tras instalación limpia. Incluye axe WCAG A/AA, teclado, QR decodificado, red/conflictos, publicación y RSVP.
+No se ejecutaron pagos reales ni sandbox del proveedor. Contratos de pago probados con stub de HTTP y transacciones reales en PostgreSQL embebido.
+

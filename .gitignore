@@ -6,3 +6,12 @@ node_modules/
 coverage/
 .DS_Store
 __pycache__/
+.data/
+.test-data/
+.test-data-unit-*/
+test-results/
+playwright-report/
+*.tsbuildinfo
+pixvo-invitaciones-codex.zip
+research/media/
+next-env.d.ts
