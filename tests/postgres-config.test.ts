@@ -182,7 +182,7 @@ it("la CA permite TLS real y sigue rechazando certificados desconocidos y nombre
   // Same PostgreSQL SSLRequest negotiation used by pg before its TLS handshake.
   const server = net.createServer((socket) => {
     socket.once("data", (data) => {
-      if (!data.equals(request)) {
+      if (!Buffer.isBuffer(data) || !data.equals(request)) {
         socket.destroy();
         return;
       }
