@@ -50,7 +50,7 @@ Activar backups PostgreSQL/PITR según plan y respaldo separado del bucket. Ensa
 - Volver al release anterior compatible, sin down migrations destructivas.
 - Restaurar snapshot desde Revisar y publicar; conserva borrador y respuestas.
 - Monitorear 5xx/429, publicación, uploads y discrepancias de pagos. Logs de app no incluyen SQL, tokens ni payloads.
-- Ensayar rollback y restauración antes de producción. Esta tarea no realizó despliegues.
+- Ensayar rollback y restauración antes de habilitar ventas. La actualización de main mediante el auto-despliegue de Hostinger fue autorizada por el titular el 2026-10-31; su resultado se registra en IMPLEMENTATION-STATUS.md.
 
 ## Fuentes oficiales consultadas (2026-10-31)
 

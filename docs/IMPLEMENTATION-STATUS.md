@@ -16,7 +16,7 @@
 - No hay credenciales de Supabase ni Mercado Pago aportadas al entorno. La app muestra configuración pendiente, sin fingir correo, checkout o aprobación.
 - Se usa PGlite/PostgreSQL persistente en desarrollo. RLS se prueba con roles separados y dos usuarios de fixture. Falta repetirlo con dos usuarios reales de Supabase alojado y con Storage real.
 - Las pruebas de publicación usan órdenes ficticias preparadas solo en la base aislada de tests. No son pagos de sandbox del proveedor y no hay endpoint de bypass en la aplicación.
-- No se desplegó, no se ejecutaron cobros reales y no se afirma paridad con paneles privados del competidor.
+- El hito inicial se verificó localmente. La actualización a Hostinger fue autorizada después por el titular; ver registro al final. No se ejecutaron cobros reales ni se afirma paridad con paneles privados del competidor.
 - Fuentes locales con fallbacks explícitos; sin archivos de fuentes ni fotos/música ajenas redistribuidas. research/media no se importa en la app.
 - Video/audio se inspeccionan por firma/tamaño; no se transcodifican ni analizan con antivirus. Imágenes sí se decodifican, optimizan y se eliminan metadatos.
 - Limpieza irreversible de medios y retención requieren política del titular. Las referencias de snapshots se conservan.
@@ -38,6 +38,10 @@ El titular informó que Hostinger despliega automáticamente `main` a https://in
 
 La integración usa el documento v1 con `theme.sampleStyle` opcional y enum seguro: compatible con documentos y snapshots anteriores. No requiere nuevas tablas ni migraciones de base de datos. La muestra elegida se valida en servidor al crear; el cambio de estilo conserva datos, bloques y medios. El catálogo original mantiene sus 27 presets.
 
-Pruebas: lint y typecheck pasan; 26 tests de servicios pasan (incluyen crear, publicar y responder RSVP para las cinco muestras). Verificación de build y E2E en curso antes del push a main. Origen y adaptación del ZIP: assets/custom-samples/SOURCE.md.
+Pruebas: lint, typecheck y build pasan; 26 tests de servicios pasan (incluyen crear, publicar y responder RSVP para las cinco muestras). El nuevo E2E local pasó: cinco estilos en 360/390/768/1440 px, axe WCAG A/AA, selección a través del login, autosave/reapertura/cambio de estilo, encargo persistente y rechazo de estilos inválidos. Se revisaron visualmente las cinco capturas móviles y la galería. Evidencias: docs/qa/muestras-xv.png y docs/qa/muestra-sobre-premium-mobile.png. Origen y adaptación del ZIP: assets/custom-samples/SOURCE.md.
+
+El primer CI de muestras (41219421644) pasó los siete recorridos previos y falló por opacidad heredada que reducía el contraste del rótulo RSVP de Romántica. Se corrigió en 5b8c55e y la prueba local ya pasa. Reproducir: `npm run test:e2e -- --grep "cinco muestras XV"`; diagnóstico inicial: regla axe `color-contrast`, selector `#confirmacion > .inv-eyebrow`. El primer intento local de la suite no pudo arrancar porque un servidor de desarrollo del mismo checkout mantenía `.next/dev/lock`; detener ese servidor antes de ejecutar Playwright resolvió el arranque.
+
+CI Linux final aprobado para el código 5b8c55e: https://github.com/s00ar/invitaciones-pixvo-tech/actions/runs/41219758420. Instalación limpia, lint, typecheck, 26/26 tests, build y 8/8 E2E pasan. La prueba nueva local pasó en 51,1 s; suite completa en CI en 1,1 min. El servidor local habitual se restauró en http://localhost:3000 después de las pruebas.
 
 Hostinger no dispone de herramientas MCP conectadas en esta sesión. Se reutiliza el auto-despliegue indicado por el titular, sin cambiar hosting, DNS, variables ni credenciales. El dominio devolvió 403 antes de la actualización; el resultado posterior se verificará por HTTP y contenido real.

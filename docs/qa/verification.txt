@@ -11,3 +11,13 @@ npm audit --omit=dev: PASS, 0 vulnerabilidades.
 
 npm run test:e2e: PASS, 7/7 recorridos con Chromium tras instalación limpia. Incluye axe WCAG A/AA, teclado, QR decodificado, red/conflictos, publicación y RSVP.
 No se ejecutaron pagos reales ni sandbox del proveedor. Contratos de pago probados con stub de HTTP y transacciones reales en PostgreSQL embebido.
+
+Actualización de cinco muestras XV y push autorizado a main — 2026-10-31
+Código verificado: 5b8c55e; muestras integradas en 598d03e.
+CI Linux PASS: https://github.com/s00ar/invitaciones-pixvo-tech/actions/runs/41219758420
+npm ci; npm run lint; npm run typecheck; npm test (26/26); npm run build; npm run test:e2e (8/8).
+Local: npm run test:e2e -- --grep "cinco muestras XV": PASS, 1 recorrido, 51,1 s.
+Verificación: cinco estilos en 360/390/768/1440 px, sin desborde; axe WCAG A/AA en los cinco; selección a través del login; crear, guardar, reabrir y cambiar estilo; solicitud a medida persistente; API rechaza estilo inválido.
+Galería y cinco capturas móviles revisadas visualmente. Capturas conservadas: muestras-xv.png y muestra-sobre-premium-mobile.png.
+Build local PASS. Un servidor de desarrollo anterior impedía iniciar Playwright por .next/dev/lock; detenerlo resolvió el bloqueo. Servidor habitual restaurado al terminar.
+El primer CI de muestras detectó color-contrast en #confirmacion > .inv-eyebrow; corregido en 5b8c55e antes de actualizar main.
