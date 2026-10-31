@@ -21,6 +21,8 @@ Si la red necesita la CA del sistema, usar `NODE_USE_SYSTEM_CA=1`. No desactivar
 
 Las conexiones PostgreSQL a hosts de Supabase usan automáticamente su CA pública incluida en `certs/`, con validación de cadena y hostname. No hace falta agregar variables para el certificado habitual. `DATABASE_SSL_CA` es una opción de servidor para sustituir la CA si Supabase rota certificados: admite PEM completo o una sola línea con `\n` entre líneas. Runtime, migraciones y seed comparten la configuración. Para otros hosts se conserva la confianza del driver. Usar `sslmode=verify-full` hace explícita la intención de verificación; el driver no debe configurarse para aceptar certificados desconocidos.
 
+Seguridad de dependencias: `npm ci` aplica una adaptación versionada para que las herramientas de lint usen minimatch 11.0.1. `npm audit` se ejecuta en CI y debe pasar también incluyendo desarrollo. Ver [mantenimiento y compatibilidad](docs/SECURITY-MAINTENANCE.md); no ignorar scripts de instalación sin aplicar después esa adaptación.
+
 ## Supabase
 
 1. Copiar `.env.example` a `.env.local` y completar URL/anon key, `DATABASE_URL` y service-role solo en servidor. Usar un proyecto separado de staging y TLS.
@@ -32,7 +34,6 @@ node --env-file=.env.local --import tsx scripts/migrate.ts
 
 3. Configurar Supabase Auth: URL canónica, redirects `/auth/confirm`, SMTP y Google OAuth opcional ([guía de Google](docs/GOOGLE-AUTH.md)). Confirmación y recuperación pasan por `/auth/confirm`, conservando el destino elegido y admitiendo URL canónica con o sin barra final. Adaptar la plantilla de recuperación para conservar el redirect a nueva contraseña.
 
-Seguridad de dependencias: `npm ci` aplica una adaptación versionada para que las herramientas de lint usen minimatch 11.0.1. `npm audit` se ejecuta en CI y debe pasar también incluyendo desarrollo. Ver [mantenimiento y compatibilidad](docs/SECURITY-MAINTENANCE.md); no ignorar scripts de instalación sin aplicar después esa adaptación.
 4. La migración crea el bucket privado `pixvo-private`. Subidas solo mediante servidor, con inspección de bytes y procesamiento de imágenes.
 5. Crear una cuenta y asignar admin con SQL controlado por el titular: `update public.profiles set role='admin' where id='<UUID>';`. El usuario no puede modificar su rol. Entrar a `/admin` para configurar planes, precios y disponibilidad.
 6. Seguir [despliegue y rollback](docs/DEPLOYMENT.md), incluyendo sandbox y políticas comerciales.
