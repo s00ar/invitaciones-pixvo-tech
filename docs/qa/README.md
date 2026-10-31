@@ -10,6 +10,7 @@ Capturas generadas con Chromium y datos ficticios en la base de tests aislada.
 - respuestas.png: panel privado de RSVP.
 - muestras-xv.png: galería de las cinco muestras aportadas por el titular.
 - muestra-sobre-premium-mobile.png: preview de muestra a 390 px.
+- precios-desktop.png y precios-mobile.png: tres importes aprobados, descripciones, nota de adicionales y estado pendiente de Google Sheets.
 
 El QR se decodifica automáticamente y coincide con la URL abierta desde otro contexto de navegador. No se comprobó todavía el escaneo con cámara física ni Safari/iOS. Las comprobaciones axe se ejecutan en landing, catálogo, login, preview y las cinco muestras personalizadas; no certifican por sí solas toda la accesibilidad de contenido personalizado por clientes.
 

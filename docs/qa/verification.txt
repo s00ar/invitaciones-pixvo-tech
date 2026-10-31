@@ -24,3 +24,12 @@ El primer CI de muestras detectó color-contrast en #confirmacion > .inv-eyebrow
 Push a origin/main PASS, SHA remoto confirmado 47255eb26d326050b0c1bee5d265aae52d91a4d8; incluye plataforma y muestras. Commits siguientes solo documentan el resultado del despliegue.
 HTTP GET raíz: 403, server hcdn, título 403 Forbidden; navegador confirma Access to this resource on the server is denied! antes y después del push.
 HTTP GET /personalizadas: 404, server hcdn; no contiene galería. No se dispone del log/estado de Hostinger en esta sesión; despliegue efectivo no confirmado. Ver IMPLEMENTATION-STATUS.md.
+
+Precios aprobados — 2026-10-31, código 2d5570d
+Básica $35.000 ARS; Interactiva $60.000 ARS; Premium $100.000 ARS. Nota de adicionales incluida.
+Local: lint PASS; typecheck PASS; npm test 27/27 PASS; E2E landing/catálogo/precios PASS (32,4 s).
+Se probaron bases nuevas y actualización heredada mediante migración única; seed conserva ajustes posteriores y los snapshots/importes de órdenes previas permanecen sin cambios. Un fixture nuevo inicialmente dejaba una invitación adicional y alteraba el recuento esperado del test RLS; se limpió ese fixture, sin debilitar la aserción de aislamiento, y la suite completa pasó.
+Precios/nombres presentes en / y /precios; 360/390/768/1440 px sin desborde; axe WCAG A/AA sin violaciones en precios. Capturas desktop/móvil revisadas: precios-desktop.png y precios-mobile.png.
+Servidor local restaurado en 3000: GET /precios 200; los tres precios, nota de adicionales y estado pendiente de Google Sheets presentes sobre la base persistente local.
+CI Linux PASS: https://github.com/s00ar/invitaciones-pixvo-tech/actions/runs/41220596116 (código 2d5570d). npm ci; lint; typecheck; 27/27 tests; build; 8/8 E2E (1,4 min).
+Sin DATABASE_URL/Supabase en el entorno local; no se aplicó migración en producción ni se habilitaron cobros.
