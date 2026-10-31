@@ -11,4 +11,3 @@ npm audit --omit=dev: PASS, 0 vulnerabilidades.
 
 npm run test:e2e: PASS, 7/7 recorridos con Chromium tras instalación limpia. Incluye axe WCAG A/AA, teclado, QR decodificado, red/conflictos, publicación y RSVP.
 No se ejecutaron pagos reales ni sandbox del proveedor. Contratos de pago probados con stub de HTTP y transacciones reales en PostgreSQL embebido.
-

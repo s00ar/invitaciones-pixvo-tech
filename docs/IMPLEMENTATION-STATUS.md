@@ -31,4 +31,3 @@
 - npm audit --omit=dev: 0 vulnerabilidades. npm audit completo: 16 moderadas de la cadena de herramientas ESLint/minimatch; no se aplicó un downgrade mayor automático. Reevaluar antes de integrar CI.
 
 Comandos ejecutados: npm ci; npm run lint; npm run typecheck; npm test (23/23); npm run build; npm run test:e2e (7/7); npm audit --omit=dev; python scripts/validate.py. Evidencias: docs/qa/verification.txt y siete capturas en docs/qa/. CI en GitHub se define en .github/workflows/checks.yml; su ejecución remota se consulta en el PR. Ver README.md y DEPLOYMENT.md para reproducir instalación, staging y rollback.
-
