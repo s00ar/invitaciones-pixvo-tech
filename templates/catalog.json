@@ -1,0 +1,1379 @@
+[
+  {
+    "id": "pixvo-editorial-minimal",
+    "version": 1,
+    "name": "Votos Editoriales",
+    "category": "weddings",
+    "tier": "standard",
+    "family": "editorial",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "editorial-minimal",
+      "name": "Editorial Minimal",
+      "url": "https://invita.somosweb.ar/preview/editorial-minimal",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#6d6351",
+      "background": "#14100a",
+      "foreground": "#ffffff",
+      "headingFont": "Playfair Display",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-editorial-minimal.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero centrado, tipografía serif, separadores finos y espacios amplios."
+  },
+  {
+    "id": "pixvo-romantic-garden",
+    "version": 1,
+    "name": "Jardín de Seda",
+    "category": "weddings",
+    "tier": "standard",
+    "family": "ornamental",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "romantic-garden",
+      "name": "Floral Beige",
+      "url": "https://invita.somosweb.ar/preview/romantic-garden",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#f0b5b5",
+      "background": "#1a0d10",
+      "foreground": "#ffffff",
+      "headingFont": "DM Serif Display",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-romantic-garden.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-luxury-black",
+    "version": 1,
+    "name": "Noche de Gala",
+    "category": "weddings",
+    "tier": "premium",
+    "family": "ornamental",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "luxury-black",
+      "name": "Luxury Black",
+      "url": "https://invita.somosweb.ar/preview/luxury-black",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#d4af37",
+      "background": "#050505",
+      "foreground": "#ffffff",
+      "headingFont": "Cinzel",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-luxury-black.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-boho-sunset",
+    "version": 1,
+    "name": "Atardecer Bohemio",
+    "category": "weddings",
+    "tier": "premium",
+    "family": "editorial",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "boho-sunset",
+      "name": "Boho Sunset",
+      "url": "https://invita.somosweb.ar/preview/boho-sunset",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#d97757",
+      "background": "#1a0f0a",
+      "foreground": "#ffffff",
+      "headingFont": "DM Serif Display",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-boho-sunset.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero centrado, tipografía serif, separadores finos y espacios amplios."
+  },
+  {
+    "id": "pixvo-cinematic-couple",
+    "version": 1,
+    "name": "Historia de Cine",
+    "category": "weddings",
+    "tier": "premium",
+    "family": "editorial",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "cinematic-couple",
+      "name": "Cinematik",
+      "url": "https://invita.somosweb.ar/preview/cinematic-couple",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ffffff",
+      "background": "#08070a",
+      "foreground": "#ffffff",
+      "headingFont": "Playfair Display",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-cinematic-couple.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero centrado, tipografía serif, separadores finos y espacios amplios."
+  },
+  {
+    "id": "pixvo-free-weddings",
+    "version": 1,
+    "name": "Boda a tu Manera",
+    "category": "weddings",
+    "tier": "standard",
+    "family": "editorial",
+    "freeStyle": true,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "free-weddings",
+      "name": "Mi estilo",
+      "url": "https://invita.somosweb.ar/preview/free-weddings",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#937aff",
+      "background": "#03010e",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-free-weddings.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero centrado, tipografía serif, separadores finos y espacios amplios."
+  },
+  {
+    "id": "pixvo-glam-pink",
+    "version": 1,
+    "name": "Quince Destellos",
+    "category": "xv",
+    "tier": "standard",
+    "family": "ornamental",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "glam-pink",
+      "name": "Glam Pink",
+      "url": "https://invita.somosweb.ar/preview/glam-pink",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#ff4ec8",
+      "background": "#1a0815",
+      "foreground": "#ffffff",
+      "headingFont": "Cormorant Garamond",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-glam-pink.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-disco-night",
+    "version": 1,
+    "name": "Quince Disco",
+    "category": "xv",
+    "tier": "premium",
+    "family": "party",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "disco-night",
+      "name": "Disco Night",
+      "url": "https://invita.somosweb.ar/preview/disco-night",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ff5fa2",
+      "background": "#100820",
+      "foreground": "#ffffff",
+      "headingFont": "Bungee",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-disco-night.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero de alto impacto, geometría diagonal, títulos grandes y contador compacto."
+  },
+  {
+    "id": "pixvo-princess-dream",
+    "version": 1,
+    "name": "Jardín de Mariposas",
+    "category": "xv",
+    "tier": "premium",
+    "family": "ornamental",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "princess-dream",
+      "name": "Mariposas y Flores",
+      "url": "https://invita.somosweb.ar/preview/princess-dream",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ff7eb5",
+      "background": "#1a0a18",
+      "foreground": "#ffffff",
+      "headingFont": "Cormorant Garamond",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-princess-dream.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-golden-luxury",
+    "version": 1,
+    "name": "Quince Dorado",
+    "category": "xv",
+    "tier": "premium",
+    "family": "ornamental",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "golden-luxury",
+      "name": "Golden Luxury",
+      "url": "https://invita.somosweb.ar/preview/golden-luxury",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ffc857",
+      "background": "#080604",
+      "foreground": "#ffffff",
+      "headingFont": "Cinzel",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-golden-luxury.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-neon-party",
+    "version": 1,
+    "name": "Quince Neón",
+    "category": "xv",
+    "tier": "premium",
+    "family": "party",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "neon-party",
+      "name": "Neon Party",
+      "url": "https://invita.somosweb.ar/preview/neon-party",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#00ffe0",
+      "background": "#050018",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-neon-party.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero de alto impacto, geometría diagonal, títulos grandes y contador compacto."
+  },
+  {
+    "id": "pixvo-free-xv",
+    "version": 1,
+    "name": "Quince a tu Manera",
+    "category": "xv",
+    "tier": "standard",
+    "family": "ornamental",
+    "freeStyle": true,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "free-xv",
+      "name": "Mi estilo",
+      "url": "https://invita.somosweb.ar/preview/free-xv",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#937aff",
+      "background": "#03010e",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-free-xv.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Marco ornamental, nombres protagonistas y tarjetas delicadas."
+  },
+  {
+    "id": "pixvo-disco-night-party",
+    "version": 1,
+    "name": "Noche de Ritmo",
+    "category": "parties",
+    "tier": "standard",
+    "family": "party",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "disco-night-party",
+      "name": "Disco",
+      "url": "https://invita.somosweb.ar/preview/disco-night-party",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#ff5fa2",
+      "background": "#100820",
+      "foreground": "#ffffff",
+      "headingFont": "Bungee",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-disco-night-party.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero de alto impacto, geometría diagonal, títulos grandes y contador compacto."
+  },
+  {
+    "id": "pixvo-boho-night-party",
+    "version": 1,
+    "name": "Encuentro Bohemio",
+    "category": "parties",
+    "tier": "standard",
+    "family": "editorial",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "boho-night-party",
+      "name": "Boho",
+      "url": "https://invita.somosweb.ar/preview/boho-night-party",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#d97757",
+      "background": "#1a0f0a",
+      "foreground": "#ffffff",
+      "headingFont": "DM Serif Display",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-boho-night-party.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero centrado, tipografía serif, separadores finos y espacios amplios."
+  },
+  {
+    "id": "pixvo-neon-party-party",
+    "version": 1,
+    "name": "Pulso Nocturno",
+    "category": "parties",
+    "tier": "premium",
+    "family": "party",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "neon-party-party",
+      "name": "Party Night",
+      "url": "https://invita.somosweb.ar/preview/neon-party-party",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#a259ff",
+      "background": "#0a0a1f",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-neon-party-party.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero de alto impacto, geometría diagonal, títulos grandes y contador compacto."
+  },
+  {
+    "id": "pixvo-free-parties",
+    "version": 1,
+    "name": "Fiesta a tu Manera",
+    "category": "parties",
+    "tier": "standard",
+    "family": "party",
+    "freeStyle": true,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "free-parties",
+      "name": "Mi estilo",
+      "url": "https://invita.somosweb.ar/preview/free-parties",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#937aff",
+      "background": "#03010e",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-free-parties.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero de alto impacto, geometría diagonal, títulos grandes y contador compacto."
+  },
+  {
+    "id": "pixvo-safari-adventure",
+    "version": 1,
+    "name": "Aventura Selvática",
+    "category": "kids",
+    "tier": "standard",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "safari-adventure",
+      "name": "La Jungla",
+      "url": "https://invita.somosweb.ar/preview/safari-adventure",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#7ccf52",
+      "background": "#0a160c",
+      "foreground": "#ffffff",
+      "headingFont": "Fredoka",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-safari-adventure.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-princess-kids",
+    "version": 1,
+    "name": "Reino de Colores",
+    "category": "kids",
+    "tier": "standard",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "princess-kids",
+      "name": "Princesas y unicornios",
+      "url": "https://invita.somosweb.ar/preview/princess-kids",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#714f5c",
+      "background": "#180a18",
+      "foreground": "#ffffff",
+      "headingFont": "Cormorant Garamond",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-princess-kids.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-space-explorer",
+    "version": 1,
+    "name": "Héroes en Acción",
+    "category": "kids",
+    "tier": "premium",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "space-explorer",
+      "name": "Superhéroes",
+      "url": "https://invita.somosweb.ar/preview/space-explorer",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#7cc7ff",
+      "background": "#02030f",
+      "foreground": "#ffffff",
+      "headingFont": "Orbitron",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-space-explorer.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-dino-party",
+    "version": 1,
+    "name": "Pequeños Dinosaurios",
+    "category": "kids",
+    "tier": "premium",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "dino-party",
+      "name": "Dinosaurios",
+      "url": "https://invita.somosweb.ar/preview/dino-party",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#7ccf52",
+      "background": "#0a160c",
+      "foreground": "#ffffff",
+      "headingFont": "Fredoka",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-dino-party.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-circus-kids",
+    "version": 1,
+    "name": "Gran Función",
+    "category": "kids",
+    "tier": "premium",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "circus-kids",
+      "name": "Circo",
+      "url": "https://invita.somosweb.ar/preview/circus-kids",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ffd23f",
+      "background": "#1a0a14",
+      "foreground": "#ffffff",
+      "headingFont": "Fredoka",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-circus-kids.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-sports-kids",
+    "version": 1,
+    "name": "Equipo de Cumple",
+    "category": "kids",
+    "tier": "premium",
+    "family": "kids",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "sports-kids",
+      "name": "Deportes",
+      "url": "https://invita.somosweb.ar/preview/sports-kids",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#ffb62b",
+      "background": "#0a1f3a",
+      "foreground": "#ffffff",
+      "headingFont": "Fredoka",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-sports-kids.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-free-kids",
+    "version": 1,
+    "name": "Cumple a tu Manera",
+    "category": "kids",
+    "tier": "standard",
+    "family": "kids",
+    "freeStyle": true,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "free-kids",
+      "name": "Mi estilo",
+      "url": "https://invita.somosweb.ar/preview/free-kids",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#937aff",
+      "background": "#03010e",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 24
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-free-kids.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Título lúdico, formas grandes y tarjetas redondeadas."
+  },
+  {
+    "id": "pixvo-tech-conference",
+    "version": 1,
+    "name": "Foro Esencial",
+    "category": "corporate",
+    "tier": "standard",
+    "family": "corporate",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "tech-conference",
+      "name": "Minimalista Negro",
+      "url": "https://invita.somosweb.ar/preview/tech-conference",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#00d8d8",
+      "background": "#0a0a0a",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-tech-conference.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero alineado izquierda, agenda estructurada y sedes en tarjetas."
+  },
+  {
+    "id": "pixvo-luxury-brand",
+    "version": 1,
+    "name": "Conexión Digital",
+    "category": "corporate",
+    "tier": "premium",
+    "family": "corporate",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "luxury-brand",
+      "name": "Tech Cyan",
+      "url": "https://invita.somosweb.ar/preview/luxury-brand",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#00d8d8",
+      "background": "#06121a",
+      "foreground": "#ffffff",
+      "headingFont": "Cinzel",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-luxury-brand.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero alineado izquierda, agenda estructurada y sedes en tarjetas."
+  },
+  {
+    "id": "pixvo-executive-slate",
+    "version": 1,
+    "name": "Encuentro Ejecutivo",
+    "category": "corporate",
+    "tier": "premium",
+    "family": "corporate",
+    "freeStyle": false,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "executive-slate",
+      "name": "Executive Slate",
+      "url": "https://invita.somosweb.ar/preview/executive-slate",
+      "observedTier": "premium"
+    },
+    "theme": {
+      "accent": "#6ec8d8",
+      "background": "#0a1018",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-executive-slate.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero alineado izquierda, agenda estructurada y sedes en tarjetas."
+  },
+  {
+    "id": "pixvo-free-corporate",
+    "version": 1,
+    "name": "Evento a tu Manera",
+    "category": "corporate",
+    "tier": "standard",
+    "family": "corporate",
+    "freeStyle": true,
+    "status": "proposed_pixvo_preset",
+    "reference": {
+      "slug": "free-corporate",
+      "name": "Mi estilo",
+      "url": "https://invita.somosweb.ar/preview/free-corporate",
+      "observedTier": "standard"
+    },
+    "theme": {
+      "accent": "#937aff",
+      "background": "#03010e",
+      "foreground": "#ffffff",
+      "headingFont": "Sora",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-free-corporate.svg",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "calendar",
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Hero alineado izquierda, agenda estructurada y sedes en tarjetas."
+  }
+]

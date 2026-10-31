@@ -1,0 +1,17 @@
+[
+  {
+    "url": "https://somosweb.ar/invitaciones/",
+    "checked": "2026-10-31",
+    "scope": "marketing claims only"
+  },
+  {
+    "url": "https://invita.somosweb.ar/templates",
+    "checked": "2026-10-31",
+    "scope": "27 catalog entries in browser and HTML"
+  },
+  {
+    "url": "https://pixvo.tech/",
+    "checked": "2026-10-31",
+    "scope": "computed CSS and logos"
+  }
+]

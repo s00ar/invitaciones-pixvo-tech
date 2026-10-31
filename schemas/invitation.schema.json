@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pixvo:invitation:1",
+  "title": "Pixvo Invitation Document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "templateId",
+    "templateVersion",
+    "event",
+    "theme",
+    "blocks"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "templateId": {
+      "type": "string"
+    },
+    "templateVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "startsAt",
+        "timezone",
+        "category"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "startsAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "endsAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "enum": [
+            "weddings",
+            "xv",
+            "parties",
+            "kids",
+            "corporate"
+          ]
+        },
+        "hosts": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "message": {
+          "type": "string",
+          "maxLength": 2000
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "required": [
+        "accent",
+        "background",
+        "foreground"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "background": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "foreground": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "headingFont": {
+          "type": "string"
+        },
+        "bodyFont": {
+          "type": "string"
+        },
+        "radius": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 80
+        },
+        "backgroundAsset": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 40,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "enabled",
+          "props"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "hero",
+              "countdown",
+              "venues",
+              "message",
+              "rsvp",
+              "calendar",
+              "gallery",
+              "dressCode",
+              "gifts",
+              "music",
+              "social",
+              "songRequests",
+              "agenda"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "props": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

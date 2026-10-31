@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "name",
+    "category",
+    "tier",
+    "family",
+    "theme",
+    "backgroundAsset",
+    "blocks"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^pixvo-"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "category": {
+      "enum": [
+        "weddings",
+        "xv",
+        "parties",
+        "kids",
+        "corporate"
+      ]
+    },
+    "tier": {
+      "enum": [
+        "standard",
+        "premium"
+      ]
+    },
+    "family": {
+      "enum": [
+        "editorial",
+        "ornamental",
+        "party",
+        "kids",
+        "corporate"
+      ]
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "hero",
+          "countdown",
+          "venues",
+          "message",
+          "rsvp",
+          "calendar",
+          "gallery",
+          "dressCode",
+          "gifts",
+          "music",
+          "social",
+          "songRequests",
+          "agenda"
+        ]
+      }
+    }
+  }
+}

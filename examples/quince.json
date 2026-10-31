@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "templateId": "pixvo-glam-pink",
+  "templateVersion": 1,
+  "event": {
+    "title": "Los quince de Emilia",
+    "startsAt": "2027-12-18T21:00:00-03:00",
+    "endsAt": "2027-12-19T05:00:00-03:00",
+    "timezone": "America/Argentina/Buenos_Aires",
+    "category": "xv",
+    "hosts": [
+      "Emilia"
+    ],
+    "message": "Una noche para compartir con quienes más quiero."
+  },
+  "theme": {
+    "accent": "#ff4ec8",
+    "background": "#1a0815",
+    "foreground": "#ffffff",
+    "headingFont": "Cormorant Garamond",
+    "bodyFont": "Inter Tight",
+    "radius": 8,
+    "backgroundAsset": "assets/backgrounds/pixvo-glam-pink.svg"
+  },
+  "blocks": [
+    {
+      "id": "hero-1",
+      "type": "hero",
+      "enabled": true,
+      "props": {
+        "eyebrow": "Mis quince"
+      }
+    },
+    {
+      "id": "count-1",
+      "type": "countdown",
+      "enabled": true,
+      "props": {}
+    },
+    {
+      "id": "venue-1",
+      "type": "venues",
+      "enabled": true,
+      "props": {
+        "items": [
+          {
+            "name": "Salón de ejemplo",
+            "address": "Dirección ficticia por completar"
+          }
+        ]
+      }
+    },
+    {
+      "id": "rsvp-1",
+      "type": "rsvp",
+      "enabled": true,
+      "props": {
+        "mode": "online",
+        "maxAttendees": 2
+      }
+    }
+  ]
+}
