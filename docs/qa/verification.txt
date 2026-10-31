@@ -21,3 +21,6 @@ Verificación: cinco estilos en 360/390/768/1440 px, sin desborde; axe WCAG A/AA
 Galería y cinco capturas móviles revisadas visualmente. Capturas conservadas: muestras-xv.png y muestra-sobre-premium-mobile.png.
 Build local PASS. Un servidor de desarrollo anterior impedía iniciar Playwright por .next/dev/lock; detenerlo resolvió el bloqueo. Servidor habitual restaurado al terminar.
 El primer CI de muestras detectó color-contrast en #confirmacion > .inv-eyebrow; corregido en 5b8c55e antes de actualizar main.
+Push a origin/main PASS, SHA remoto confirmado 47255eb26d326050b0c1bee5d265aae52d91a4d8; incluye plataforma y muestras. Commits siguientes solo documentan el resultado del despliegue.
+HTTP GET raíz: 403, server hcdn, título 403 Forbidden; navegador confirma Access to this resource on the server is denied! antes y después del push.
+HTTP GET /personalizadas: 404, server hcdn; no contiene galería. No se dispone del log/estado de Hostinger en esta sesión; despliegue efectivo no confirmado. Ver IMPLEMENTATION-STATUS.md.
