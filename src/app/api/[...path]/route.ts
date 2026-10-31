@@ -6,6 +6,7 @@ import {
   signOut,
   supabase,
   safeNext,
+  authCallbackUrl,
   hashToken,
 } from "@/server/auth";
 import { transaction, localMode, configured } from "@/server/db";
@@ -77,7 +78,10 @@ async function route(request: Request, ctx: Context) {
         ).auth.signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm?next=${encodeURIComponent(safeNext(input.next))}`,
+            redirectTo: authCallbackUrl(
+              process.env.NEXT_PUBLIC_APP_URL,
+              input.next,
+            ),
           },
         });
         if (error || !data.url) fail(503, "Google no está configurado");
@@ -111,7 +115,10 @@ async function route(request: Request, ctx: Context) {
         const { error } = await (
           await supabase()
         ).auth.resetPasswordForEmail(a.email, {
-          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm?next=/actualizar-clave`,
+          redirectTo: authCallbackUrl(
+            process.env.NEXT_PUBLIC_APP_URL,
+            "/actualizar-clave",
+          ),
         });
         if (error) fail(503, "No se pudo solicitar la recuperación");
         return send({

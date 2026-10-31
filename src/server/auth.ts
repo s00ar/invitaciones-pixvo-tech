@@ -9,6 +9,8 @@ import {
 } from "node:crypto";
 import { localMode, transaction, configured } from "./db";
 import { fail } from "./errors";
+import { authCallbackUrl } from "./auth-redirect";
+export { authCallbackUrl, safeNext } from "./auth-redirect";
 export type User = {
   id: string;
   email: string;
@@ -18,13 +20,6 @@ export type User = {
 export const hashToken = (s: string) =>
   createHash("sha256").update(s).digest("hex");
 export const token = () => randomBytes(32).toString("base64url");
-export function safeNext(value: string | null | undefined) {
-  return value?.startsWith("/") &&
-    !value.startsWith("//") &&
-    !value.includes("\\")
-    ? value
-    : "/app";
-}
 export async function supabase() {
   const jar = await cookies();
   if (
@@ -107,7 +102,10 @@ export async function authenticate(
           email,
           password,
           options: {
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm?next=${encodeURIComponent(safeNext(next))}`,
+            emailRedirectTo: authCallbackUrl(
+              process.env.NEXT_PUBLIC_APP_URL,
+              next,
+            ),
           },
         })
       : await s.auth.signInWithPassword({ email, password });
