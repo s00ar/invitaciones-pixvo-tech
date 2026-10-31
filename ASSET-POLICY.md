@@ -11,3 +11,7 @@
 scripts/sync-presets.mjs copia solo logos y SVG propios a public y genera public/assets/provenance.json con origen y SHA-256. Genera también src/domain/presets.json sin referencias comerciales del catálogo de investigación. El bundle usa esa proyección.
 
 No se distribuyen fuentes: Urbanist/Inter Tight tienen fallback explícito a Trebuchet MS/Arial; presets serif usan Georgia. La selección conserva el nombre de fuente para permitir incorporar después archivos licenciados. Fotografías, música y videos solo provienen de uploads autorizados del cliente. No hay contenido remoto de ejemplo de terceros.
+
+## Muestras XV adjuntas
+
+Las cinco muestras recibidas del titular se adaptan en React y CSS propios del producto. Origen, declaración de derechos y SHA-256 del ZIP: assets/custom-samples/SOURCE.md. No se incorporan fuentes remotas, fotografías, música ni el formulario RSVP de demostración del paquete. El motor público/editor y el backend de Pixvo conservan la validación, persistencia y controles de acceso existentes.

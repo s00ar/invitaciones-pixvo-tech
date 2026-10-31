@@ -1,5 +1,10 @@
 import { z } from "zod";
 import catalog from "./presets.json" with { type: "json" };
+import {
+  customSamples,
+  sampleStyles,
+  type SampleStyle,
+} from "./custom-samples";
 
 export const categories = {
   xv: "Quince años",
@@ -211,6 +216,7 @@ export const documentSchema = z
         align: z.enum(["left", "center", "right"]),
         scale: z.number().min(0.7).max(1.5),
         spacing: z.number().min(0.5).max(2),
+        sampleStyle: z.enum(sampleStyles).optional(),
       })
       .strict(),
     blocks: z
@@ -368,6 +374,62 @@ export function changeTemplate(
     },
     blocks: d.blocks,
   };
+}
+export function applySample(
+  d: InvitationDocument,
+  id: SampleStyle,
+): InvitationDocument {
+  const s = customSamples.find((s) => s.id === id)!;
+  return {
+    ...d,
+    theme: {
+      ...d.theme,
+      sampleStyle: s.id,
+      accent: s.accent,
+      background: s.background,
+      foreground: s.foreground,
+      headingFont: s.headingFont,
+      bodyFont: "Inter Tight",
+      family: s.family,
+      backgroundAsset: "",
+      overlay: 0,
+      radius: 23,
+      align: "center",
+    },
+  };
+}
+export function makeSampleDocument(id: SampleStyle): InvitationDocument {
+  const d = applySample(makeDocument("pixvo-free-xv"), id);
+  d.event = {
+    ...d.event,
+    title: "Valentina",
+    startsAt: "2027-06-19T21:00:00-03:00",
+    message: "Una noche, mil recuerdos. Quiero compartir este momento con vos.",
+  };
+  d.blocks = d.blocks.map((b) =>
+    b.type === "hero"
+      ? { ...b, props: { eyebrow: "Mis quince años" } }
+      : b.type === "venues"
+        ? {
+            ...b,
+            props: {
+              title: "Una noche inolvidable",
+              items: [
+                {
+                  name: "Salón Jardines del Sol",
+                  address: "Dirección de ejemplo · Buenos Aires, Argentina",
+                  url: "https://www.google.com/maps/search/?api=1&query=Buenos+Aires",
+                },
+              ],
+            },
+          }
+        : b.type === "calendar"
+          ? { ...b, enabled: true }
+          : b.type === "message"
+            ? { ...b, enabled: false }
+            : b,
+  );
+  return documentSchema.parse(d);
 }
 export function referencedMedia(d: InvitationDocument) {
   return [

@@ -217,6 +217,16 @@
           "type": "number",
           "minimum": 0.5,
           "maximum": 2
+        },
+        "sampleStyle": {
+          "type": "string",
+          "enum": [
+            "romantic",
+            "neon",
+            "royal",
+            "butterfly",
+            "envelope"
+          ]
         }
       },
       "required": [

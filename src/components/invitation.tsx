@@ -17,6 +17,8 @@ import {
 import { useRef } from "react";
 import type { InvitationDocument, Block } from "@/domain/document";
 import { dateLabel } from "@/domain/format";
+import { customSamples } from "@/domain/custom-samples";
+import { SampleMotif } from "./sample-motif";
 const serif = [
   "Playfair Display",
   "DM Serif Display",
@@ -89,6 +91,9 @@ function Hero({
         <p className="inv-small">{d.event.hosts.join(" · ")}</p>
       )}
       <p className="inv-date">{date}</p>
+      {d.theme.sampleStyle && d.event.message && (
+        <p className="sample-quote">{d.event.message}</p>
+      )}
       <a className="inv-button" href="#confirmacion">
         Quiero ser parte <ArrowUpRight size={16} />
       </a>
@@ -120,7 +125,9 @@ function Hero({
   );
   const bg = d.theme.backgroundMediaId
     ? mediaURL(d.theme.backgroundMediaId, slug)
-    : `/${d.theme.backgroundAsset}`;
+    : d.theme.backgroundAsset
+      ? `/${d.theme.backgroundAsset}`
+      : undefined;
   return (
     <section
       className={`inv-hero hero-${d.theme.family}`}
@@ -156,7 +163,12 @@ function Hero({
         </video>
       )}
       <div className="hero-content">
-        {d.theme.family === "editorial" ? (
+        {d.theme.sampleStyle ? (
+          <div className="sample-hero-content">
+            <SampleMotif style={d.theme.sampleStyle} />
+            {common}
+          </div>
+        ) : d.theme.family === "editorial" ? (
           <>
             <div className="editorial-label">
               <span>UNA HISTORIA PARA COMPARTIR</span>
@@ -666,6 +678,7 @@ export function InvitationRenderer({
   guest?: string;
   compact?: boolean;
 }) {
+  const sample = customSamples.find((s) => s.id === d.theme.sampleStyle);
   const style = {
     "--inv-accent": d.theme.accent,
     "--inv-bg": d.theme.background,
@@ -675,11 +688,19 @@ export function InvitationRenderer({
     "--inv-radius": `${d.theme.radius}px`,
     "--inv-scale": d.theme.scale,
     "--inv-spacing": d.theme.spacing,
+    ...(sample
+      ? {
+          "--sample-surface": sample.surface,
+          "--sample-muted": sample.muted,
+          "--sample-border": sample.border,
+          "--sample-decor": sample.decor,
+        }
+      : {}),
     textAlign: d.theme.align,
   } as CSSProperties;
   return (
     <div
-      className={`invitation family-${d.theme.family} ${compact ? "compact" : ""}`}
+      className={`invitation family-${d.theme.family} ${compact ? "compact" : ""} ${sample ? `sample-layout sample-${sample.id}` : ""}`}
       style={style}
     >
       {d.blocks

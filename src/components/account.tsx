@@ -4,6 +4,7 @@ import { api } from "./auth";
 import { Notice } from "./ui";
 import { statusLabels } from "./dashboard";
 import Link from "next/link";
+import { findCustomSample, type SampleStyle } from "@/domain/custom-samples";
 export function Payments() {
   const [rows, setRows] = useState<
       {
@@ -129,7 +130,8 @@ export function Profile({
     </main>
   );
 }
-export function CustomRequest() {
+export function CustomRequest({ sampleId }: { sampleId?: SampleStyle }) {
+  const sample = sampleId ? findCustomSample(sampleId) : undefined;
   const [items, setItems] = useState<
       { id: string; brief: string; state: string; delivery_url: string }[]
     >([]),
@@ -160,6 +162,16 @@ export function CustomRequest() {
           </p>
         </div>
       </div>
+      {sample && (
+        <section className="panel narrow">
+          <p>
+            Muestra elegida: <strong>{sample.name}</strong>
+          </p>
+          <Link className="text-link" href={`/personalizadas/${sample.slug}`}>
+            Volver a ver el diseño ↗
+          </Link>
+        </section>
+      )}
       <section className="panel narrow">
         <form
           className="form-grid"
@@ -184,6 +196,11 @@ export function CustomRequest() {
             Tu idea
             <textarea
               name="brief"
+              defaultValue={
+                sample
+                  ? `Me interesa la muestra ${sample.name} para mis quince.\n\nFecha prevista:\nNombre de la homenajeada:\nDetalles que me gustaría personalizar:`
+                  : undefined
+              }
               required
               minLength={20}
               maxLength={4000}

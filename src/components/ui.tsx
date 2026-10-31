@@ -20,6 +20,7 @@ export function Header() {
         <Logo />
         <nav aria-label="Navegación principal">
           <Link href="/templates">Diseños</Link>
+          <Link href="/personalizadas">A medida</Link>
           <Link href="/precios">Planes</Link>
           <Link href="/#como-funciona">Cómo funciona</Link>
         </nav>

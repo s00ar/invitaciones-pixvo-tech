@@ -11,6 +11,8 @@ import {
   validatePlan,
   defaultPlans,
   referencedMedia,
+  makeSampleDocument,
+  applySample,
 } from "../src/domain/document";
 import { csv, calendarICS } from "../src/domain/format";
 import {
@@ -39,6 +41,7 @@ import { upload, getMedia, duplicate } from "../src/server/media";
 import type { User } from "../src/server/auth";
 import sharp from "sharp";
 import { publicProjection } from "../src/domain/public-projection";
+import { customSamples } from "../src/domain/custom-samples";
 const a: User = {
     id: randomUUID(),
     email: "owner-a@example.test",
@@ -551,5 +554,59 @@ describe("publicación, archivos y RSVP", () => {
     expect(() =>
       validatePlan(d, defaultPlans[0].entitlements as never),
     ).toThrow("Premium");
+  });
+});
+
+describe("muestras XV personalizadas", () => {
+  it("valida cinco estilos y conserva el catálogo original y los documentos previos", () => {
+    expect(customSamples).toHaveLength(5);
+    expect(templates).toHaveLength(27);
+    for (const s of customSamples) {
+      const d = makeSampleDocument(s.id);
+      expect(documentSchema.safeParse(d).success).toBe(true);
+      expect(d.theme.sampleStyle).toBe(s.id);
+      expect(d.theme.background).toBe(s.background);
+      expect(d.templateId).toBe("pixvo-free-xv");
+    }
+    const old = makeDocument("pixvo-glam-pink");
+    expect(old.theme.sampleStyle).toBeUndefined();
+    expect(
+      documentSchema.safeParse({
+        ...old,
+        theme: { ...old.theme, sampleStyle: "<script>" },
+      }).success,
+    ).toBe(false);
+  });
+  it("cambia estilos conservando datos, bloques y referencias de archivos", () => {
+    const old = makeDocument("pixvo-free-xv");
+    old.event.title = "Nombre propio";
+    old.theme.backgroundMediaId = randomUUID();
+    old.blocks.find((b) => b.type === "gallery")!.props.photos = [
+      { mediaId: randomUUID(), alt: "Recuerdo" },
+    ];
+    const changed = applySample(old, "envelope");
+    expect(changed.event).toEqual(old.event);
+    expect(changed.blocks).toEqual(old.blocks);
+    expect(referencedMedia(changed)).toEqual(referencedMedia(old));
+    expect(old.theme.sampleStyle).toBeUndefined();
+  });
+  it("persiste y publica las cinco muestras con RSVP real y el mismo documento", async () => {
+    for (const s of customSamples) {
+      const fresh = (
+        await createInvitation(a, "pixvo-free-xv", undefined, s.id)
+      ).id;
+      const saved = await getInvitation(a, fresh);
+      expect(saved.draft_json.theme.sampleStyle).toBe(s.id);
+      const { p } = await paid(fresh);
+      await transaction((db) => applyPayment(db, p, "test-merchant", false));
+      const { slug } = await publish(a, fresh, saved.revision);
+      expect((await getPublic(slug)).theme.sampleStyle).toBe(s.id);
+      await respond(
+        slug,
+        { name: "Invitada de muestra", response: "yes", attendees: 1 },
+        `sample-${s.id}`,
+      );
+      expect((await responses(a, fresh))[0].response).toBe("yes");
+    }
   });
 });

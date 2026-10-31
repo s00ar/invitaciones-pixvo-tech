@@ -59,3 +59,9 @@ Activar backups PostgreSQL/PITR según plan y respaldo separado del bucket. Ensa
 - [Supabase SSR](https://supabase.com/docs/guides/auth/server-side/creating-a-client?framework=nextjs), [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [Storage](https://supabase.com/docs/guides/storage/security/access-control)
 - [MP preferencias](https://www.mercadopago.com.ar/developers/es/reference/online-payments/checkout-pro-preferences/create-preference/post), [firma webhook](https://www.mercadopago.com.ar/developers/en/docs/zero-dollar-auth/additional-content/your-integrations/notifications/webhooks)
 - [PGlite](https://pglite.dev/docs/)
+
+## Hostinger y muestras personalizadas
+
+El auto-despliegue de Hostinger usa main y el dominio invitaciones.pixvo.tech, según configuración confirmada por el titular el 2026-10-31. El comando de producción escucha en 0.0.0.0 y usa PORT cuando el hosting lo define (3000 por defecto). No habilitar el adaptador local en producción ni modificar secretos como efecto secundario de actualizar muestras.
+
+Rollback de esta actualización: volver al último commit con despliegue exitoso desde hPanel, o revertir el commit de publicación de main y dejar que el auto-despliegue regenere el release. No borrar tablas ni respuestas. Las muestras añaden únicamente un campo opcional del documento; los snapshots previos siguen siendo compatibles.

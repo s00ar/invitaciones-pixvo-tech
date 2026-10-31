@@ -321,3 +321,110 @@ test("admin configura planes y visibilidad con auditoría, sin aprobar pagos", a
     page.getByText("No se aprueban pagos manualmente", { exact: false }),
   ).toBeVisible();
 });
+
+test("cinco muestras XV, estilos accesibles y selección persistente en editor y encargo", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  await page.goto("/personalizadas");
+  await expect(page.locator(".custom-sample-card")).toHaveCount(5);
+  await page.screenshot({
+    path: "test-results/evidence/muestras-xv.png",
+    fullPage: true,
+    caret: "initial",
+  });
+  for (const width of [360, 390, 768, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const slug of [
+      "romantica",
+      "black-neon",
+      "royal",
+      "mariposas",
+      "sobre-premium",
+    ]) {
+      await page.goto(`/personalizadas/${slug}`);
+      await expect(
+        page.getByRole("heading", { name: "Valentina", exact: true }),
+      ).toBeVisible();
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+      ).toBe(true);
+      if (width === 390) {
+        const result = await new AxeBuilder({ page })
+          .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+          .analyze();
+        expect(
+          result.violations.map((v) => ({
+            id: v.id,
+            nodes: v.nodes.map((n) => n.target),
+          })),
+        ).toEqual([]);
+        await page.screenshot({
+          path: `test-results/evidence/muestra-${slug}-mobile.png`,
+          fullPage: true,
+          caret: "initial",
+        });
+      }
+    }
+  }
+  await page.goto("/personalizadas/sobre-premium");
+  await page.getByRole("link", { name: "Usar este estilo" }).click();
+  await expect(page).toHaveURL(/login\?next=/);
+  await expect(
+    page.getByRole("heading", { name: "Qué bueno verte." }),
+  ).toBeVisible();
+  await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
+  await page.getByLabel("Contraseña", { exact: true }).fill("FixturePass2027!");
+  await page.getByRole("button", { name: "Iniciar sesión" }).click();
+  await expect(page).toHaveURL(/\/app\/invitaciones\/.+\/editar$/);
+  await expect(page.locator(".invitation.sample-envelope")).toBeVisible();
+  const editorURL = page.url();
+  await page
+    .getByLabel("Nombre del evento", { exact: true })
+    .fill("Los quince de Julieta");
+  await expect(page.locator(".editor-title small")).toContainText("Guardado");
+  await page.reload();
+  await expect(
+    page.getByLabel("Nombre del evento", { exact: true }),
+  ).toHaveValue("Los quince de Julieta");
+  await page
+    .getByRole("button", { name: "Estilo y diseño", exact: true })
+    .click();
+  await page
+    .getByRole("combobox", { name: "Muestra personalizada XV" })
+    .selectOption("butterfly");
+  await expect(page.locator(".invitation.sample-butterfly")).toBeVisible();
+  await expect(page.locator(".editor-title small")).toContainText("Guardado");
+  const stored = await (
+    await page.request.get(`/api/invitations/${editorURL.split("/").at(-2)}`)
+  ).json();
+  expect(stored.draft_json.theme.sampleStyle).toBe("butterfly");
+  expect(stored.draft_json.event.title).toBe("Los quince de Julieta");
+  await page.goto("/personalizadas/royal");
+  await page
+    .getByRole("link", { name: "Solicitar personalización", exact: false })
+    .click();
+  await expect(page).toHaveURL(/app\/personalizado\?sample=royal/);
+  await expect(page.getByRole("textbox", { name: "Tu idea" })).toHaveValue(
+    /Royal/,
+  );
+  await page.getByRole("button", { name: "Guardar solicitud" }).click();
+  await expect(
+    page.locator(".notice").filter({ hasText: "Solicitud guardada" }),
+  ).toBeVisible();
+  const requests = await (
+    await page.request.get("/api/custom-requests")
+  ).json();
+  expect(
+    requests.some((r: { brief: string }) => r.brief.includes("Royal")),
+  ).toBe(true);
+  expect(
+    (
+      await page.request.post("/api/invitations", {
+        data: { templateId: "pixvo-free-xv", sampleId: "unsafe" },
+      })
+    ).status(),
+  ).toBe(422);
+});

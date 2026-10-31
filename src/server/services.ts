@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   documentSchema,
   makeDocument,
+  makeSampleDocument,
   referencedMedia,
   validatePlan,
   entitlementsSchema,
@@ -13,6 +14,7 @@ import { transaction, type DB } from "./db";
 import { fail } from "./errors";
 import { hashToken, token, type User } from "./auth";
 import { publicProjection } from "../domain/public-projection";
+import type { SampleStyle } from "../domain/custom-samples";
 export type Invitation = {
   id: string;
   owner_id: string;
@@ -85,8 +87,14 @@ export async function createInvitation(
   user: User,
   templateId: string,
   copy?: InvitationDocument,
+  sampleId?: SampleStyle,
 ) {
-  const doc = documentSchema.parse(copy ?? makeDocument(templateId)),
+  if (sampleId && templateId !== "pixvo-free-xv")
+    fail(422, "Las muestras personalizadas usan el template XV a tu manera");
+  const doc = documentSchema.parse(
+      copy ??
+        (sampleId ? makeSampleDocument(sampleId) : makeDocument(templateId)),
+    ),
     id = randomUUID();
   return transaction(async (db) => {
     const t = (

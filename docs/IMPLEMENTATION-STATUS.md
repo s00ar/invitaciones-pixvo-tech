@@ -31,3 +31,13 @@
 - npm audit --omit=dev: 0 vulnerabilidades. npm audit completo: 16 moderadas de la cadena de herramientas ESLint/minimatch; no se aplicó un downgrade mayor automático. Reevaluar antes de integrar CI.
 
 Comandos ejecutados: npm ci; npm run lint; npm run typecheck; npm test (23/23); npm run build; npm run test:e2e (7/7); npm audit --omit=dev; python scripts/validate.py. Evidencias: docs/qa/verification.txt y siete capturas en docs/qa/. CI en GitHub se define en .github/workflows/checks.yml; su ejecución remota se consulta en el PR. Ver README.md y DEPLOYMENT.md para reproducir instalación, staging y rollback.
+
+## Actualización autorizada a Hostinger — 2026-10-31
+
+El titular informó que Hostinger despliega automáticamente `main` a https://invitaciones.pixvo.tech y solicitó expresamente el push de actualización. Se integra la aplicación completa de la rama anterior y se agregan cinco muestras XV en /personalizadas, con creación editable y solicitudes a medida que conservan la selección.
+
+La integración usa el documento v1 con `theme.sampleStyle` opcional y enum seguro: compatible con documentos y snapshots anteriores. No requiere nuevas tablas ni migraciones de base de datos. La muestra elegida se valida en servidor al crear; el cambio de estilo conserva datos, bloques y medios. El catálogo original mantiene sus 27 presets.
+
+Pruebas: lint y typecheck pasan; 26 tests de servicios pasan (incluyen crear, publicar y responder RSVP para las cinco muestras). Verificación de build y E2E en curso antes del push a main. Origen y adaptación del ZIP: assets/custom-samples/SOURCE.md.
+
+Hostinger no dispone de herramientas MCP conectadas en esta sesión. Se reutiliza el auto-despliegue indicado por el titular, sin cambiar hosting, DNS, variables ni credenciales. El dominio devolvió 403 antes de la actualización; el resultado posterior se verificará por HTTP y contenido real.

@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import {
+  applySample,
   categories,
   families,
   fonts,
@@ -11,6 +12,7 @@ import {
   type Block,
   blockLabels,
 } from "@/domain/document";
+import { customSamples, type SampleStyle } from "@/domain/custom-samples";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { api } from "./auth";
 import { Notice } from "./ui";
@@ -255,6 +257,31 @@ export function EditorInspector({ id, d, selected, change }: Props) {
         )}
         {selected === "theme" && (
           <>
+            <label className="field">
+              Muestra personalizada XV
+              <select
+                aria-label="Muestra personalizada XV"
+                value={d.theme.sampleStyle ?? ""}
+                onChange={(e) => {
+                  if (e.target.value)
+                    change((d) =>
+                      applySample(d, e.target.value as SampleStyle),
+                    );
+                  else theme("sampleStyle", undefined);
+                }}
+              >
+                <option value="">Diseño del template</option>
+                {customSamples.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+              <small>
+                Conserva los datos, bloques, fotos y respuestas; cambia la
+                apariencia. Podés deshacer.
+              </small>
+            </label>
             <label className="field">
               Template
               <select

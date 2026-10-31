@@ -14,6 +14,7 @@ import { Header, Footer, Eyebrow, CTA } from "@/components/ui";
 import { TemplateCard } from "@/components/catalog";
 import { categories, templates } from "@/domain/document";
 import { Plans } from "@/components/plans";
+import { CustomSamplesGallery } from "@/components/custom-samples";
 export const dynamic = "force-dynamic";
 export default function Home() {
   const selections = [templates[6], templates[0], templates[17]];
@@ -130,6 +131,25 @@ export default function Home() {
               <TemplateCard key={t.id} t={t} />
             ))}
           </div>
+        </section>
+        <section className="container section" id="personalizadas">
+          <div className="section-heading">
+            <div>
+              <Eyebrow>Hechas para tu historia</Eyebrow>
+              <h2>
+                Tus quince.
+                <br />
+                <em>Tu propio universo.</em>
+              </h2>
+            </div>
+            <div>
+              <p>Cinco muestras para imaginar una invitación a tu medida.</p>
+              <Link className="text-link" href="/personalizadas">
+                Explorar invitaciones personalizadas <ArrowRight size={17} />
+              </Link>
+            </div>
+          </div>
+          <CustomSamplesGallery />
         </section>
         <section className="how-section section" id="como-funciona">
           <div className="container">
@@ -279,7 +299,7 @@ export default function Home() {
           <CTA />
           <p>
             ¿Querés un diseño especial?{" "}
-            <Link href="/app/personalizado">
+            <Link href="/personalizadas">
               Contanos tu idea <ArrowUpRight size={13} />
             </Link>
           </p>

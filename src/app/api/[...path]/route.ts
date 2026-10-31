@@ -23,6 +23,7 @@ import * as billing from "@/server/payments";
 import { csv, calendarICS } from "@/domain/format";
 import { randomUUID } from "node:crypto";
 import { templates } from "@/domain/document";
+import { sampleStyles } from "@/domain/custom-samples";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ path: string[] }> };
@@ -206,14 +207,24 @@ async function route(request: Request, ctx: Context) {
       const id = p[1];
       if (!id) {
         if (method === "GET") return send(await service.listInvitations(user));
-        if (method === "POST")
+        if (method === "POST") {
+          const input = z
+            .object({
+              templateId: z.string(),
+              sampleId: z.enum(sampleStyles).optional(),
+            })
+            .strict()
+            .parse(await jsonBody(request));
           return send(
             await service.createInvitation(
               user,
-              z.string().parse((await jsonBody(request)).templateId),
+              input.templateId,
+              undefined,
+              input.sampleId,
             ),
             201,
           );
+        }
       }
       if (!p[2]) {
         if (method === "GET")
