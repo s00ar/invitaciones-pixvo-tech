@@ -23,7 +23,9 @@ async function emptySupabaseFixture() {
 
 it("el SQL entregado aplica el esquema completo una vez y conserva ajustes y datos al repetirse", async () => {
   const sql = await buildBootstrapSQL();
-  expect(await readFile("supabase/bootstrap.sql", "utf8")).toBe(sql);
+  expect(
+    (await readFile("supabase/bootstrap.sql", "utf8")).replaceAll("\r\n", "\n"),
+  ).toBe(sql);
   const db = await emptySupabaseFixture();
   try {
     await db.exec(sql);

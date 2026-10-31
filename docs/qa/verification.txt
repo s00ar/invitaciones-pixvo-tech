@@ -33,3 +33,9 @@ Precios/nombres presentes en / y /precios; 360/390/768/1440 px sin desborde; axe
 Servidor local restaurado en 3000: GET /precios 200; los tres precios, nota de adicionales y estado pendiente de Google Sheets presentes sobre la base persistente local.
 CI Linux PASS: https://github.com/s00ar/invitaciones-pixvo-tech/actions/runs/41220596116 (código 2d5570d). npm ci; lint; typecheck; 27/27 tests; build; 8/8 E2E (1,4 min).
 Sin DATABASE_URL/Supabase en el entorno local; no se aplicó migración en producción ni se habilitaron cobros.
+
+Supabase bootstrap y React 441 — 2026-10-31
+HTTP GET portada: 500; /api/plans: 500 con mensaje público saneado. Lectura pública de planes en Supabase: 404/PGRST205, public.plans no encontrada en schema cache. No se consultaron datos de invitados ni credenciales privadas.
+React 441 documenta un error de Server Components cuyo detalle se oculta en producción; falta correlacionar el log privado para descartar además errores de conexión PostgreSQL.
+Generador offline npm run db:bootstrap-sql; artefacto supabase/bootstrap.sql sin secretos. Lint PASS; typecheck PASS; suite local 29/29 PASS. Pruebas específicas de bootstrap 2/2 PASS después de normalizar CRLF/LF. Se ejercitan migraciones completas, seed 27/3, storage privado, permisos, repetición que conserva datos/ajustes y rollback ante tablas ajenas.
+El primer intento de generación en sandbox Windows falló con uv_os_get_passwd/ENOMEM; ejecución autorizada fuera del sandbox pasó. No se ejecutó SQL remoto ni se considera resuelta producción hasta comprobarla después de aplicar migraciones.

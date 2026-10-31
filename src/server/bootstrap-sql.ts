@@ -26,7 +26,10 @@ end $pixvo_guard$;`,
     .filter((name) => name.endsWith(".sql"))
     .sort();
   for (const [index, name] of names.entries()) {
-    const source = await readFile(path.join(directory, name), "utf8");
+    const source = (await readFile(path.join(directory, name), "utf8")).replaceAll(
+      "\r\n",
+      "\n",
+    );
     const delimiter = `$pixvo_migration_${index}$`;
     if (source.includes(delimiter)) throw new Error("SQL delimiter collision");
     statements.push(`do $pixvo_apply_${index}$ begin
