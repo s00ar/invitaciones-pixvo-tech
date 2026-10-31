@@ -2,7 +2,7 @@
 
 Plataforma en Next.js App Router, React y TypeScript con 27 presets, editor por bloques, cuentas, panel del organizador, archivos, publicación versionada, RSVP online, CSV, QR, calendario y administración.
 
-**Estado:** aplicación implementada y ejecutable localmente. Supabase alojado y Mercado Pago sandbox requieren configuración externa. No está desplegada y no se realizaron cobros. Ver [estado y evidencias](docs/IMPLEMENTATION-STATUS.md).
+**Estado:** aplicación implementada, con auto-despliegue de `main` a https://invitaciones.pixvo.tech configurado por el titular. Las integraciones de Supabase y Mercado Pago requieren configuración y verificación externa. No se realizaron cobros durante la implementación. Ver [estado y evidencias](docs/IMPLEMENTATION-STATUS.md).
 
 ## Arranque local
 
@@ -55,7 +55,7 @@ Next carga `.env.local`; los scripts TypeScript directos requieren `--env-file` 
 ## Organización
 
 - `src/domain/`: documento versionado, validación, planes, proyección pública, CSV e ICS.
-- `src/components/invitation.tsx`: renderer único para preview, editor y público; cinco composiciones distintas.
+- `src/components/invitation.tsx`: renderer único para preview, editor y público; cinco composiciones distintas y cinco muestras XV aportadas por el titular en `/personalizadas`.
 - `src/components/editor*.tsx`: inspector, historial, autosave con revisión, recuperación y comparación.
 - `src/server/`: autenticación, transacciones, autorización, medios y Mercado Pago.
 - `supabase/migrations/`: tablas, RLS, snapshots inmutables y storage privado.
