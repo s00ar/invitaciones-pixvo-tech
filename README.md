@@ -31,6 +31,8 @@ node --env-file=.env.local --import tsx scripts/migrate.ts
 ```
 
 3. Configurar Supabase Auth: URL canónica, redirects `/auth/confirm`, SMTP y Google OAuth opcional ([guía de Google](docs/GOOGLE-AUTH.md)). Confirmación y recuperación pasan por `/auth/confirm`, conservando el destino elegido y admitiendo URL canónica con o sin barra final. Adaptar la plantilla de recuperación para conservar el redirect a nueva contraseña.
+
+Seguridad de dependencias: `npm ci` aplica una adaptación versionada para que las herramientas de lint usen minimatch 11.0.1. `npm audit` se ejecuta en CI y debe pasar también incluyendo desarrollo. Ver [mantenimiento y compatibilidad](docs/SECURITY-MAINTENANCE.md); no ignorar scripts de instalación sin aplicar después esa adaptación.
 4. La migración crea el bucket privado `pixvo-private`. Subidas solo mediante servidor, con inspección de bytes y procesamiento de imágenes.
 5. Crear una cuenta y asignar admin con SQL controlado por el titular: `update public.profiles set role='admin' where id='<UUID>';`. El usuario no puede modificar su rol. Entrar a `/admin` para configurar planes, precios y disponibilidad.
 6. Seguir [despliegue y rollback](docs/DEPLOYMENT.md), incluyendo sandbox y políticas comerciales.
