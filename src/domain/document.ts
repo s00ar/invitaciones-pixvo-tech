@@ -461,12 +461,14 @@ export type Entitlements = z.infer<typeof entitlementsSchema>;
 export const defaultPlans = [
   {
     id: "standard",
-    name: "Estándar",
+    name: "Invitación básica",
+    price_minor: 3500000,
+    currency: "ARS",
     entitlements: {
       tier: "standard",
       photos: 4,
       video: false,
-      audio: false,
+      audio: true,
       qr: false,
       republications: 3,
       validDays: 365,
@@ -474,7 +476,9 @@ export const defaultPlans = [
   },
   {
     id: "premium",
-    name: "Premium",
+    name: "Invitación interactiva",
+    price_minor: 6000000,
+    currency: "ARS",
     entitlements: {
       tier: "premium",
       photos: 30,
@@ -487,7 +491,9 @@ export const defaultPlans = [
   },
   {
     id: "custom",
-    name: "A tu medida",
+    name: "Invitación premium",
+    price_minor: 10000000,
+    currency: "ARS",
     entitlements: {
       tier: "custom",
       photos: 60,
@@ -502,7 +508,7 @@ export const defaultPlans = [
 export function validatePlan(d: InvitationDocument, e: Entitlements) {
   const t = templates.find((t) => t.id === d.templateId)!;
   if (t.tier === "premium" && e.tier === "standard")
-    throw new Error("Este template requiere Premium");
+    throw new Error("Este template requiere Invitación interactiva o premium");
   if (
     d.blocks.reduce(
       (n, b) => n + (b.enabled ? (b.props.photos?.length ?? 0) : 0),

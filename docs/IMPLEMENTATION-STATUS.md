@@ -20,7 +20,7 @@
 - Fuentes locales con fallbacks explícitos; sin archivos de fuentes ni fotos/música ajenas redistribuidas. research/media no se importa en la app.
 - Video/audio se inspeccionan por firma/tamaño; no se transcodifican ni analizan con antivirus. Imágenes sí se decodifican, optimizan y se eliminan metadatos.
 - Limpieza irreversible de medios y retención requieren política del titular. Las referencias de snapshots se conservan.
-- Privacidad/condiciones, contacto, precios y permanencia comercial definitivos pendientes antes de habilitar ventas.
+- Privacidad/condiciones, contacto, adicionales y permanencia comercial definitivos pendientes antes de habilitar ventas. Los tres precios base fueron aprobados después por el titular; ver actualización de precios al final.
 - El remoto de aplicación es público. Durante la tarea se publicó main en 8c07bd7 con el historial previo del kit. La rama codex/pixvo-platform retira research/media del árbol distribuido y conserva las copias locales ignoradas. No reescribe el historial ya publicado.
 
 ## Verificación
@@ -49,3 +49,11 @@ Push autorizado completado: main avanzó sin force-push de 8c07bd7 a 47255eb26d3
 Hostinger no dispone de herramientas MCP conectadas en esta sesión. Se reutilizó el auto-despliegue indicado por el titular, sin cambiar hosting, DNS, variables ni credenciales. El dominio devolvía 403 antes de la actualización y, tras el push y una segunda comprobación en navegador, sigue devolviendo `403 Forbidden / Access to this resource on the server is denied!`; `/personalizadas` devuelve 404. Ambas respuestas vienen de `hcdn` y no muestran la aplicación. No se afirma despliegue finalizado ni se atribuye el error a una causa no inspeccionada.
 
 Reproducción HTTP: `curl.exe -I https://invitaciones.pixvo.tech/` y `curl.exe -I https://invitaciones.pixvo.tech/personalizadas`; también se verificaron solicitudes GET y el navegador. Bloqueo externo concreto: no hay acceso al estado ni al log del despliegue de Hostinger; GitHub no expone deployments del proveedor. En hPanel, revisar el despliegue asociado a main y su log, confirmar que la aplicación esté configurada para Node.js/Next.js con `npm ci`, `npm run build` y `npm start`, y verificar las variables/migraciones indicadas en DEPLOYMENT.md. El 403 por sí solo no permite determinar si el proceso de construcción falló, no comenzó o si el dominio está sirviendo otro directorio.
+
+## Precios comerciales aprobados — 2026-10-31
+
+Básica $35.000 ARS, Interactiva $60.000 ARS y Premium $100.000 ARS, con descripciones aportadas por el titular y nota de adicionales según funcionalidades extra. La landing y /precios comparten el mismo componente; el editor/checkout lee esos planes desde PostgreSQL. Se mantienen IDs internos y snapshots previos; migración 202610310003 para instalaciones existentes y seed con los importes aprobados para bases nuevas. Básica habilita audio autorizado conforme a la descripción. El catálogo identifica los niveles con los nuevos nombres.
+
+Google Sheets se muestra como integración pendiente: no hay conector implementado ni se finge sincronización. El registro RSVP persistente y CSV permanecen disponibles. WhatsApp sigue siendo un complemento configurable. Diseño personalizado/exclusivo corresponde al servicio de Pixvo; no se afirma generación automática de diseños a medida. No se habilitan pagos ni se ejecutan cobros al configurar estos valores.
+
+Verificación de precios, migración, conservación de snapshots y vistas responsive en curso.

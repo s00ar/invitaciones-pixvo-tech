@@ -709,9 +709,22 @@ small {
   margin-top: 28px;
 }
 .plan-card > p {
-  font-size: 12px;
+  font-size: 13px;
+  line-height: 1.8;
   margin-top: 7px;
-  min-height: 38px;
+  min-height: 94px;
+}
+.plan-currency {
+  display: block;
+  margin: 8px 0 16px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.plans-note {
+  margin-top: 25px;
+  font-size: 13px;
+  line-height: 1.8;
+  text-align: center;
 }
 .plan-card .button {
   width: 100%;

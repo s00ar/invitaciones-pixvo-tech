@@ -2,7 +2,7 @@ import { beforeAll, afterAll, describe, it, expect, vi } from "vitest";
 import { randomUUID, createHmac } from "node:crypto";
 import { mkdtemp, rm } from "node:fs/promises";
 import path from "node:path";
-import { transaction, asOwner } from "../src/server/db";
+import { transaction, asOwner, migrate, seed } from "../src/server/db";
 import {
   makeDocument,
   templates,
@@ -118,6 +118,88 @@ async function update(id: string, edit: (d: Invitation["draft_json"]) => void) {
   return saveDraft(a, id, i.draft_json, i.revision);
 }
 describe("documento y exportación", () => {
+  it("actualiza precios heredados una vez, conserva configuración y fija importes de órdenes", async () => {
+    const db = (await globalThis.pixvoDb)!;
+    await db.query(
+      "update plans set name='Estándar',price_minor=null,entitlements=jsonb_set(entitlements,'{audio}','false'::jsonb) where id='standard'",
+    );
+    await db.query(
+      "delete from pixvo_migrations where name='202610310003_commercial_prices.sql'",
+    );
+    await migrate(db, (sql) => db.exec(sql), true);
+    const plans = (
+      await db.query<{
+        id: string;
+        name: string;
+        price_minor: number;
+        entitlements: { audio: boolean };
+      }>("select * from plans order by price_minor")
+    ).rows;
+    expect(plans.map((p) => [p.id, p.name, p.price_minor])).toEqual([
+      ["standard", "Invitación básica", 3500000],
+      ["premium", "Invitación interactiva", 6000000],
+      ["custom", "Invitación premium", 10000000],
+    ]);
+    expect(plans[0].entitlements.audio).toBe(true);
+    const fresh = (await createInvitation(a, "pixvo-free-xv")).id;
+    for (const [key, value] of Object.entries({
+      PAYMENTS_ENABLED: "true",
+      MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
+      MERCADOPAGO_WEBHOOK_SECRET: "test-only-secret",
+      MERCADOPAGO_COLLECTOR_ID: "test-merchant",
+      NEXT_PUBLIC_APP_URL: "https://example.test",
+      MERCADOPAGO_ENV: "sandbox",
+    }))
+      vi.stubEnv(key, value);
+    try {
+      for (const plan of plans) {
+        const order = await createOrder(a, fresh, plan.id);
+        const stored = (
+          await db.query<{
+            amount_minor: number;
+            currency: string;
+            plan_snapshot: { name: string; price_minor: number };
+          }>(
+            "select amount_minor,currency,plan_snapshot from orders where id=$1",
+            [order.id],
+          )
+        ).rows[0];
+        expect(stored.amount_minor).toBe(plan.price_minor);
+        expect(stored.currency).toBe("ARS");
+        expect(stored.plan_snapshot).toMatchObject({
+          name: plan.name,
+          price_minor: plan.price_minor,
+        });
+      }
+      await db.query(
+        "update plans set price_minor=3600000 where id='standard'",
+      );
+      await migrate(db, (sql) => db.exec(sql), true);
+      await seed(db);
+      expect(
+        (
+          await db.query<{ price_minor: number }>(
+            "select price_minor from plans where id='standard'",
+          )
+        ).rows[0].price_minor,
+      ).toBe(3600000);
+      expect(
+        (
+          await db.query<{ amount_minor: number }>(
+            "select amount_minor from orders where invitation_id=$1 and plan_snapshot->>'id'='standard'",
+            [fresh],
+          )
+        ).rows[0].amount_minor,
+      ).toBe(3500000);
+    } finally {
+      await db.query(
+        "update plans set price_minor=3500000 where id='standard'",
+      );
+      await db.query("delete from orders where invitation_id=$1", [fresh]);
+      await db.query("delete from invitations where id=$1", [fresh]);
+      vi.unstubAllEnvs();
+    }
+  });
   it("elimina datos de bloques desactivados y propiedades ajenas del público", () => {
     const d = makeDocument("pixvo-glam-pink");
     d.blocks.find((b) => b.type === "gifts")!.props.alias =
@@ -553,7 +635,7 @@ describe("publicación, archivos y RSVP", () => {
     const d = makeDocument("pixvo-neon-party");
     expect(() =>
       validatePlan(d, defaultPlans[0].entitlements as never),
-    ).toThrow("Premium");
+    ).toThrow("interactiva o premium");
   });
 });
 

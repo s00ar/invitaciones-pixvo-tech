@@ -18,6 +18,27 @@ test("landing y catálogo responsive, 27 presets y cinco familias", async ({
   await expect(
     page.getByRole("heading", { name: /Tu gran momento/ }),
   ).toBeVisible();
+  for (const route of ["/precios", "/"]) {
+    await page.goto(route);
+    for (const [name, amount] of [
+      ["Invitación básica", "35.000"],
+      ["Invitación interactiva", "60.000"],
+      ["Invitación premium", "100.000"],
+    ]) {
+      const card = page
+        .locator(".plan-card")
+        .filter({ has: page.getByRole("heading", { name, exact: true }) });
+      await expect(card.locator(".plan-price")).toHaveText(
+        new RegExp(`\\$\\s*${amount.replaceAll(".", "\\.")}`),
+      );
+    }
+    await expect(page.locator(".plans-note")).toContainText(
+      "Se pueden agregar adicionales según funcionalidades extra",
+    );
+    await expect(page.locator(".plan-integration-status")).toContainText(
+      "Google Sheets: integración pendiente",
+    );
+  }
   await page.screenshot({
     caret: "initial",
     path: "test-results/evidence/landing-desktop.png",
@@ -43,6 +64,29 @@ test("landing y catálogo responsive, 27 presets y cinco familias", async ({
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
+    await page.goto("/precios");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    if (width === 390) {
+      const result = await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze();
+      expect(result.violations.map((v) => v.id)).toEqual([]);
+      await page.screenshot({
+        path: "test-results/evidence/precios-mobile.png",
+        fullPage: true,
+        caret: "initial",
+      });
+    }
+    if (width === 1440)
+      await page.screenshot({
+        path: "test-results/evidence/precios-desktop.png",
+        fullPage: true,
+        caret: "initial",
+      });
     for (const family of [
       "editorial",
       "ornamental",

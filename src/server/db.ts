@@ -30,8 +30,8 @@ export async function seed(db: DB) {
     );
   for (const p of defaultPlans)
     await db.query(
-      "insert into plans(id,name,entitlements) values($1,$2,$3) on conflict(id) do nothing",
-      [p.id, p.name, JSON.stringify(p.entitlements)],
+      "insert into plans(id,name,price_minor,currency,entitlements) values($1,$2,$3,$4,$5) on conflict(id) do nothing",
+      [p.id, p.name, p.price_minor, p.currency, JSON.stringify(p.entitlements)],
     );
 }
 export async function migrate(

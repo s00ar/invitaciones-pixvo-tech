@@ -82,7 +82,7 @@ export function TemplateCard({
           </p>
         </div>
         <span className={`badge ${t.tier === "premium" ? "premium" : ""}`}>
-          {t.tier === "premium" ? "Premium" : "Estándar"}
+          {t.tier === "premium" ? "Interactiva / Premium" : "Básica"}
         </span>
       </div>
     </article>
@@ -155,8 +155,8 @@ export function Catalog({ activeIds }: { activeIds?: string[] }) {
               onChange={(e) => update("plan", e.target.value)}
             >
               <option value="">Todos los planes</option>
-              <option value="standard">Estándar</option>
-              <option value="premium">Premium</option>
+              <option value="standard">Básica</option>
+              <option value="premium">Interactiva / Premium</option>
             </select>
           </label>
           <span>{filtered.length} diseños</span>

@@ -13,7 +13,7 @@
 
 Se usa **Preferences API** (`/checkout/preferences`) y consulta `/v1/payments/:id`, sin mezclar contratos de Orders API. Crear preferencia no ejecuta cobros desde el servidor.
 
-1. Configurar precios positivos en centavos ARS y beneficios en `/admin`. Null bloquea checkout.
+1. Aplicar `202610310003_commercial_prices.sql` con el runner de migraciones: configura Básica $35.000, Interactiva $60.000 y Premium $100.000 ARS (centavos en base de datos), y habilita audio para nuevas compras de Básica. Nombres/IDs: standard → básica, premium → interactiva, custom → premium. No cambia snapshots de órdenes previas. El seed crea planes con estos valores y conserva ajustes administrativos posteriores; la migración se ejecuta una sola vez. Null sigue bloqueando checkout.
 2. Staging: MERCADOPAGO_ENV=sandbox, access token y collector de pruebas, webhook secret y URL HTTPS. Registrar `/api/webhooks/mercadopago`, eventos payment.
 3. Activar PAYMENTS_ENABLED=true solo en ese entorno. Comprar con comprador/tarjeta de prueba. No usar cuentas ni tarjetas reales para verificar implementación.
 4. Verificar firma, consulta al proveedor, collector, live_mode=false, orden/external_reference, importe y moneda. Cubrir aprobado, pendiente, rechazado, duplicado, concurrencia, devolución y contracargo.
@@ -36,7 +36,7 @@ Proyección pública elimina bloques desactivados y propiedades ajenas al tipo. 
 
 `npm ci` → lint → typecheck → unit/integración → build → migraciones aditivas → staging → E2E con Supabase/MP sandbox → revisión → producción autorizada.
 
-Pendiente del titular: contacto, precios definitivos, términos de compra, privacidad con responsable/contacto/derechos, retención/borrado, cancelaciones y soporte. La página actual lo indica; no es una política comercial final. Mantener PAYMENTS_ENABLED=false hasta completar estas decisiones y sandbox.
+Los tres precios base fueron aprobados por el titular. Pendiente: alcance/cotización de adicionales, contacto, términos de compra, privacidad con responsable/contacto/derechos, retención/borrado, cancelaciones y soporte. La página actual lo indica; no es una política comercial final. Mantener PAYMENTS_ENABLED=false hasta completar estas decisiones y sandbox. Google Sheets no tiene conector implementado; se muestra pendiente y las respuestas permanecen en Pixvo con exportación CSV.
 
 Verificar desde otro dispositivo: QR, correo, 360/390/768/1440 px, uploads detrás del proxy y audio/video en iOS/Android. Chromium local no certifica todos esos entornos.
 

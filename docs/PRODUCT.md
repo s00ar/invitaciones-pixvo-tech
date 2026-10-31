@@ -25,7 +25,8 @@ Toda esta especificación es una PROPUESTA para Pixvo, salvo referencias señala
 - Personalizado: formulario de solicitud guardado, estado de encargo y entrega por admin; no inventar un SLA comercial.
 
 ## Planes configurables
-Definir Standard, Premium y Custom, con nombres comerciales editables. Precio ARS null por defecto: UI muestra Consultar precio/configuración pendiente, no checkout a $0.
+Precios y nombres aprobados por el titular el 2026-10-31: Invitación básica $35.000 ARS, Invitación interactiva $60.000 ARS e Invitación premium $100.000 ARS. Se pueden agregar adicionales según funcionalidades extra. Los IDs internos standard/premium/custom se conservan, respectivamente, para compatibilidad con documentos y órdenes. Los nombres y precios siguen siendo editables por administración; un precio null bloquea el checkout, nunca cobra $0.
+La básica incluye audio autorizado y WhatsApp como complemento del RSVP online persistente. Interactiva ofrece diseño personalizado y formulario RSVP; Google Sheets se señala como integración pendiente (sin conector implementado), con CSV disponible. Premium contempla diseño exclusivo y gestión de invitados; los encargos de diseño se gestionan como servicio, no se promete generación automática de diseños o animaciones a medida.
 Entitlements: templates permitidos, cantidad de fotos, video, audio, galería, QR, edición de estilos, número de republicaciones y vigencia. Fijar precio/beneficios en snapshot de la orden.
 Propuesta de regla: autosaves no consumen ediciones; solo republicación exitosa de cambios cuenta, atómicamente. Primera publicación no consume una edición. Un fallo de publicación no decrementa cupo.
 Toda restricción debe aplicarse en servidor. Ocultar un botón no es control de acceso.

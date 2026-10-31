@@ -35,6 +35,8 @@ node --env-file=.env.local --import tsx scripts/migrate.ts
 
 No hay migraciones automáticas al iniciar producción. `DATABASE_URL` debe permitir `SET LOCAL ROLE service_role`. El Data API del navegador es de solo lectura y aplica RLS; las mutaciones validadas pasan por Next.js.
 
+Precios base aprobados: **Básica $35.000 ARS · Interactiva $60.000 ARS · Premium $100.000 ARS**. Se pueden agregar adicionales según funcionalidades extra. Para una base existente, ejecutar el runner de migraciones para aplicar `202610310003_commercial_prices.sql`; conserva los importes y beneficios de órdenes anteriores. No habilita cobros ni configura proveedores. La conexión a Google Sheets figura como integración pendiente; el RSVP guarda respuestas en Pixvo y permite exportar CSV.
+
 ## Comandos
 
 ```sh
