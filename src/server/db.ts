@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import { readFile, readdir, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { defaultPlans, templates } from "../domain/document";
+import { postgresConfig } from "./postgres-config";
 
 export type Row = Record<string, unknown>;
 export interface DB {
@@ -88,10 +89,7 @@ export async function transaction<T>(work: (db: DB) => Promise<T>): Promise<T> {
   if (localMode()) return (await localDB()).transaction(work);
   if (!process.env.DATABASE_URL)
     throw new Error("Configuración pendiente: Supabase DATABASE_URL");
-  const pool = (globalThis.pixvoPool ??= new Pool({
-    connectionString: process.env.DATABASE_URL,
-    max: 5,
-  }));
+  const pool = (globalThis.pixvoPool ??= new Pool(postgresConfig()));
   const client = await pool.connect();
   try {
     await client.query("begin");

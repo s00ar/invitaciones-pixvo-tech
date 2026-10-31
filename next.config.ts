@@ -6,6 +6,9 @@ const config: NextConfig = {
   outputFileTracingExcludes: {
     "/*": ["./research/**", "./.data/**", "./.test-data/**", "./*.zip"],
   },
+  outputFileTracingIncludes: {
+    "/*": ["./certs/supabase-root-2021.crt"],
+  },
   async headers() {
     return [
       {

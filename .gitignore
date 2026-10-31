@@ -9,6 +9,7 @@ __pycache__/
 .data/
 .test-data/
 .test-data-unit-*/
+.test-data-tls-*/
 test-results/
 playwright-report/
 *.tsbuildinfo

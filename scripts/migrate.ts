@@ -1,8 +1,9 @@
 import { Pool } from "pg";
 import { migrate } from "../src/server/db";
+import { postgresConfig } from "../src/server/postgres-config";
 if (!process.env.DATABASE_URL)
   throw new Error("Falta DATABASE_URL. No se ejecutó ninguna migración.");
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool(postgresConfig());
 const client = await pool.connect();
 try {
   await client.query("begin");

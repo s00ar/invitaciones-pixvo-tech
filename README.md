@@ -19,6 +19,8 @@ El modo local se desactiva con `NODE_ENV=production`. **No sustituye una prueba 
 
 Si la red necesita la CA del sistema, usar `NODE_USE_SYSTEM_CA=1`. No desactivar TLS.
 
+Las conexiones PostgreSQL a hosts de Supabase usan automáticamente su CA pública incluida en `certs/`, con validación de cadena y hostname. No hace falta agregar variables para el certificado habitual. `DATABASE_SSL_CA` es una opción de servidor para sustituir la CA si Supabase rota certificados: admite PEM completo o una sola línea con `\n` entre líneas. Runtime, migraciones y seed comparten la configuración. Para otros hosts se conserva la confianza del driver. Usar `sslmode=verify-full` hace explícita la intención de verificación; el driver no debe configurarse para aceptar certificados desconocidos.
+
 ## Supabase
 
 1. Copiar `.env.example` a `.env.local` y completar URL/anon key, `DATABASE_URL` y service-role solo en servidor. Usar un proyecto separado de staging y TLS.
@@ -50,11 +52,14 @@ npm test
 npx playwright install chromium
 npm run test:e2e       # Servidor aislado en 3001
 npm run build
+npm run verify:certificate # CA incluida en el artefacto de producción
 npm start             # Producción, requiere Supabase
 npm run db:seed        # DATABASE_URL en entorno
 ```
 
 Next carga `.env.local`; los scripts TypeScript directos requieren `--env-file` o variables del entorno. Los resultados reales y limitaciones se registran en `docs/IMPLEMENTATION-STATUS.md`.
+
+Los tests TLS necesitan OpenSSL (incluido en Git for Windows y disponible en el CI Linux). Generan certificados efímeros en una carpeta ignorada, usan la negociación SSLRequest de PostgreSQL y eliminan las claves de prueba al terminar; no se distribuyen claves privadas en el repositorio.
 
 ## Organización
 
