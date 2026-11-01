@@ -179,3 +179,70 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
     await guest.close();
   }
 });
+
+test("video sin respuesta muestra carga, permite reintentar y recupera la reproducción", async ({
+  page,
+}) => {
+  test.setTimeout(90000);
+  await page.goto("/login");
+  await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
+  await page.getByLabel("Contraseña", { exact: true }).fill("FixturePass2027!");
+  await page
+    .getByRole("button", { name: "Iniciar sesión", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/app$/);
+  const created = await page.request.post("/api/invitations", {
+    data: { templateId: "pixvo-disco-night" },
+  });
+  expect(created.status()).toBe(201);
+  const event = (await created.json()).id;
+  const uploaded = await page.request.post(`/api/invitations/${event}/media`, {
+    multipart: {
+      authorized: "true",
+      file: {
+        name: "carga.webm",
+        mimeType: "video/webm",
+        buffer: await footage(page, "#2030d0"),
+      },
+    },
+  });
+  expect(uploaded.status()).toBe(201);
+  const id = (await uploaded.json()).id;
+  await page.goto(`/app/invitaciones/${event}/editar`);
+  await page
+    .getByRole("button", { name: "Estilo y diseño", exact: true })
+    .click();
+  const pattern = `**/api/media/${id}`;
+  // Intentionally leave the request pending: no HTTP error or browser error event.
+  await page.route(pattern, () => {});
+  await page
+    .getByRole("combobox", { name: "Video de fondo (según plan)", exact: true })
+    .selectOption(id);
+  await page.clock.install();
+  await page
+    .getByRole("button", { name: "Reproducir video", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Cargando video…", exact: true }),
+  ).toBeDisabled();
+  await expect(page.locator(".canvas-frame [role=status]")).toContainText(
+    "Cargando video",
+  );
+  await page.clock.fastForward(21000);
+  await expect(page.locator(".canvas-frame [role=status]")).toContainText(
+    "está tardando en cargar",
+  );
+  await expect(
+    page.getByRole("link", { name: "Abrir video por separado ↗", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Reproducir video", exact: true }),
+  ).toBeEnabled();
+  await page.unroute(pattern);
+  await page.clock.resume();
+  await page
+    .getByRole("button", { name: "Reproducir video", exact: true })
+    .click();
+  await advancing(page.locator(".canvas-frame video"));
+  await expect(page.locator(".canvas-frame [role=status]")).toHaveCount(0);
+});

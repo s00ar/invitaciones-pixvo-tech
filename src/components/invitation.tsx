@@ -75,7 +75,20 @@ function Hero({
 }) {
   const player = useRef<HTMLVideoElement>(null),
     [videoPlaying, setVideoPlaying] = useState(false),
+    [videoLoading, setVideoLoading] = useState(false),
     [videoError, setVideoError] = useState("");
+  useEffect(() => {
+    if (!videoLoading) return;
+    const timer = setTimeout(() => {
+      player.current?.pause();
+      setVideoLoading(false);
+      setVideoPlaying(false);
+      setVideoError(
+        "El video está tardando en cargar. Revisá tu conexión, reintentá o abrilo por separado.",
+      );
+    }, 20000);
+    return () => clearTimeout(timer);
+  }, [videoLoading]);
   const date = new Intl.DateTimeFormat("es-AR", {
     day: "2-digit",
     month: "long",
@@ -101,12 +114,22 @@ function Hero({
         <button
           type="button"
           className="inv-button video-toggle"
+          disabled={videoLoading}
           onClick={async () => {
             try {
               if (!player.current) return;
               if (videoPlaying) player.current.pause();
-              else await player.current.play();
-            } catch {
+              else {
+                if (videoError || player.current.error) player.current.load();
+                setVideoError("");
+                setVideoLoading(true);
+                await player.current.play();
+              }
+            } catch (error) {
+              // A pause, source change or timeout can cancel a pending play.
+              if (error instanceof DOMException && error.name === "AbortError")
+                return;
+              setVideoLoading(false);
               setVideoPlaying(false);
               setVideoError(
                 "El video no está disponible. Podés consultar los datos del evento debajo.",
@@ -115,8 +138,17 @@ function Hero({
           }}
         >
           {videoPlaying ? <Pause size={15} /> : <Play size={15} />}{" "}
-          {videoPlaying ? "Pausar video" : "Reproducir video"}
+          {videoLoading
+            ? "Cargando video…"
+            : videoPlaying
+              ? "Pausar video"
+              : "Reproducir video"}
         </button>
+      )}
+      {videoLoading && (
+        <p role="status" className="inv-small">
+          Cargando video. Si la conexión tarda, vas a poder reintentar.
+        </p>
       )}
       {videoError && (
         <p role="status" className="inv-small">
@@ -155,13 +187,28 @@ function Hero({
             className="hero-video"
             aria-label="Video del evento"
             style={{ objectPosition: `${d.theme.focusX}% ${d.theme.focusY}%` }}
+            onPlay={() => {
+              setVideoError("");
+              setVideoLoading(true);
+            }}
+            onWaiting={(event) => {
+              if (!event.currentTarget.paused) setVideoLoading(true);
+            }}
             onPlaying={() => {
+              setVideoLoading(false);
               setVideoPlaying(true);
               setVideoError("");
             }}
-            onPause={() => setVideoPlaying(false)}
-            onEnded={() => setVideoPlaying(false)}
+            onPause={() => {
+              setVideoLoading(false);
+              setVideoPlaying(false);
+            }}
+            onEnded={() => {
+              setVideoLoading(false);
+              setVideoPlaying(false);
+            }}
             onError={(event) => {
+              setVideoLoading(false);
               setVideoPlaying(false);
               setVideoError(
                 event.currentTarget.error?.code === 3 ||
