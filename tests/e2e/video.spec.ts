@@ -202,6 +202,14 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
       .click();
     await advancing(visitor.locator("video"));
     await expect(visitor.locator("video")).not.toHaveAttribute("controls");
+    await visitor
+      .getByRole("button", { name: "Pausar video", exact: true })
+      .click();
+    await page
+      .locator("video")
+      .evaluateAll((nodes) =>
+        nodes.forEach((node) => (node as HTMLVideoElement).pause()),
+      );
     await visitor.screenshot({
       path: "test-results/evidence/video-publico.png",
     });
