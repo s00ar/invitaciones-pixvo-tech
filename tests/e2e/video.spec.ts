@@ -1,41 +1,17 @@
-import { test, expect, type Page, type Locator } from "@playwright/test";
+import { test, expect, type Locator } from "./fixtures";
+import { readFile } from "node:fs/promises";
 
 const fixture = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
 
-// Original animated footage, generated in the browser; no third-party media.
-async function footage(page: Page, color: string) {
-  const bytes = await page.evaluate(async (color) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 320;
-    canvas.height = 180;
-    const ctx = canvas.getContext("2d")!;
-    const draw = () => {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 320, 180);
-      ctx.fillStyle = "white";
-      ctx.fillRect((Date.now() / 10) % 280, 150, 20, 20);
-    };
-    draw();
-    const stream = canvas.captureStream(15);
-    const recorder = new MediaRecorder(stream, {
-      mimeType: "video/webm;codecs=vp8",
-    });
-    const chunks: Blob[] = [];
-    recorder.ondataavailable = (event) => chunks.push(event.data);
-    const stopped = new Promise<void>((resolve) => {
-      recorder.onstop = () => resolve();
-    });
-    const timer = setInterval(draw, 60);
-    recorder.start();
-    await new Promise((resolve) => setTimeout(resolve, 2400));
-    recorder.stop();
-    await stopped;
-    clearInterval(timer);
-    stream.getTracks().forEach((track) => track.stop());
-    return Array.from(new Uint8Array(await new Blob(chunks).arrayBuffer()));
-  }, color);
-  return Buffer.from(bytes);
-}
+// Original footage generated once by scripts/generate-test-videos.mjs.
+// WebKit on Windows can play the files but does not expose canvas.captureStream.
+const footage = (color: string) =>
+  readFile(
+    new URL(
+      `../fixtures/${color === "#d02020" ? "red" : "blue"}.webm`,
+      import.meta.url,
+    ),
+  );
 
 async function advancing(video: Locator) {
   await expect
@@ -62,6 +38,7 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
   for (const [name, color] of [
     ["rojo.webm", "#d02020"],
     ["azul.webm", "#2030d0"],
+    ["error-red.webm", "#2030d0"],
   ]) {
     const response = await page.request.post(
       `/api/invitations/${fixture}/media`,
@@ -71,7 +48,7 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
           file: {
             name,
             mimeType: "video/webm",
-            buffer: await footage(page, color),
+            buffer: await footage(color),
           },
         },
       },
@@ -113,19 +90,59 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
     return Array.from(ctx.getImageData(0, 0, 1, 1).data);
   });
   expect(rgb[2]).toBeGreaterThan(rgb[0] + 80);
-  // Native playback/seek controls must receive pointer events through the cover.
+  // Playback is controlled by an accessible icon; native chrome stays hidden.
+  await expect(video).not.toHaveAttribute("controls");
   expect(
-    await video.evaluate((node) => {
-      const r = node.getBoundingClientRect();
-      return document.elementFromPoint(r.left + 25, r.bottom - 25) === node;
-    }),
+    await page
+      .getByRole("button", { name: "Pausar video", exact: true })
+      .evaluate((node) => {
+        const r = node.getBoundingClientRect();
+        return node.contains(
+          document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2),
+        );
+      }),
   ).toBe(true);
+  await page
+    .getByRole("checkbox", {
+      name: "Reproducción automática sin sonido",
+      exact: true,
+    })
+    .check();
+  await page
+    .getByRole("checkbox", { name: "Reproducir video en bucle", exact: true })
+    .check();
+  await advancing(video);
+  expect(await video.evaluate((node: HTMLVideoElement) => node.muted)).toBe(
+    true,
+  );
+  await page
+    .getByRole("button", { name: "Activar sonido", exact: true })
+    .click();
+  expect(await video.evaluate((node: HTMLVideoElement) => node.muted)).toBe(
+    false,
+  );
+  await page
+    .getByRole("button", { name: "Silenciar video", exact: true })
+    .click();
   await expect(page.locator(".editor-title small")).toContainText("Guardado");
+  await page.reload();
+  await page
+    .getByRole("button", { name: "Estilo y diseño", exact: true })
+    .click();
+  await expect(
+    page.getByRole("checkbox", {
+      name: "Reproducción automática sin sonido",
+      exact: true,
+    }),
+  ).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", {
+      name: "Reproducir video en bucle",
+      exact: true,
+    }),
+  ).toBeChecked();
   await page.getByRole("button", { name: "Preview", exact: true }).click();
   const dialog = page.getByRole("dialog");
-  await dialog
-    .getByRole("button", { name: "Reproducir video", exact: true })
-    .click();
   await advancing(dialog.locator("video"));
   await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
   const draft = await (
@@ -137,10 +154,11 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
   );
   expect(published.status()).toBe(200);
   // An unavailable draft file shows an error; switching back resets that error.
-  await page.route(`**/api/media/${ids[0]}`, (route) =>
+  // Use a fresh URL: Firefox may retain already decoded media across mounts.
+  await page.route(`**/api/media/${ids[2]}`, (route) =>
     route.fulfill({ status: 503, body: "Unavailable test media" }),
   );
-  await select.selectOption(ids[0]);
+  await select.selectOption(ids[2]);
   await expect(page.locator(".canvas-frame [role=status]")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Reproducir video", exact: true }),
@@ -157,15 +175,31 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
       404,
     );
     await visitor.goto("/i/e2e-video");
+    // A fresh visitor starts without a gesture, silently, and repeats at the end.
+    expect(
+      await visitor
+        .locator("video")
+        .evaluate((node: HTMLVideoElement) => node.muted),
+    ).toBe(true);
+    await advancing(visitor.locator("video"));
+    await expect(visitor.locator("video")).toHaveAttribute("loop");
+    let previousTime = 0;
+    await expect
+      .poll(async () => {
+        const currentTime = await visitor.locator("video").evaluate((node: HTMLVideoElement) => node.currentTime);
+        const restarted = previousTime > 0.5 && currentTime < previousTime - 0.3;
+        previousTime = currentTime;
+        return restarted;
+      })
+      .toBe(true);
+    await visitor
+      .getByRole("button", { name: "Pausar video", exact: true })
+      .click();
     await visitor
       .getByRole("button", { name: "Reproducir video", exact: true })
       .click();
     await advancing(visitor.locator("video"));
-    const controls = await visitor.locator("video").evaluate((node) => {
-      const r = node.getBoundingClientRect();
-      return document.elementFromPoint(r.left + 25, r.bottom - 25) === node;
-    });
-    expect(controls).toBe(true);
+    await expect(visitor.locator("video")).not.toHaveAttribute("controls");
     await visitor.screenshot({
       path: "test-results/evidence/video-publico.png",
     });
@@ -202,7 +236,7 @@ test("video sin respuesta muestra carga, permite reintentar y recupera la reprod
       file: {
         name: "carga.webm",
         mimeType: "video/webm",
-        buffer: await footage(page, "#2030d0"),
+        buffer: await footage("#2030d0"),
       },
     },
   });

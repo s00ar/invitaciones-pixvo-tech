@@ -19,6 +19,8 @@
     "radius": 8,
     "family": "ornamental",
     "backgroundAsset": "assets/backgrounds/pixvo-glam-pink.svg",
+    "videoAutoplay": false,
+    "videoLoop": false,
     "overlay": 0.15,
     "focusX": 50,
     "focusY": 50,

@@ -15,7 +15,10 @@ export default async function SharePage({
     if (e instanceof AppError && e.status === 404) notFound();
     throw e;
   });
-  const url = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/i/${i.slug}`,
+  const url = new URL(
+      `/i/${i.slug}`,
+      process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+    ).href,
     qr =
       i.status === "published" && i.entitlement?.qr
         ? await QRCode.toDataURL(url, {

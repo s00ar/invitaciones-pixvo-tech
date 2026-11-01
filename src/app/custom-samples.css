@@ -253,15 +253,12 @@
 }
 .sample-layout .countdown {
   justify-content: center;
-  gap: 32px;
 }
 .sample-layout .countdown strong {
   color: var(--inv-fg);
-  font-size: 40px;
 }
 .sample-layout .countdown span {
   color: var(--sample-muted);
-  font-size: 10px;
 }
 .sample-layout .venue-grid article {
   background: var(--sample-surface);
@@ -428,15 +425,6 @@
   .sample-layout .sample-quote {
     font-size: 13px;
     max-width: 300px;
-  }
-  .sample-layout .countdown {
-    gap: 19px;
-  }
-  .sample-layout .countdown strong {
-    font-size: 33px;
-  }
-  .sample-layout .countdown span {
-    font-size: 8px;
   }
   .sample-layout .inv-section h2 {
     font-size: 35px;

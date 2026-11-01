@@ -58,8 +58,11 @@ npm run dev:local      # Desarrollo local explícito
 npm run lint
 npm run typecheck
 npm test
-npx playwright install chromium
-npm run test:e2e       # Servidor aislado en 3001
+npx playwright install chromium firefox webkit
+npm run test:e2e -- --browser=chromium # Servidor aislado en 3001
+npm run test:e2e -- --browser=firefox  # Base nueva por ejecución
+npm run test:e2e -- --browser=webkit
+npm run test:smoke      # Comprobaciones sin cobros sobre el sitio HTTPS
 npm run build
 npm run verify:certificate # CA incluida en el artefacto de producción
 npm start             # Producción, requiere Supabase

@@ -26,6 +26,7 @@ import { randomUUID } from "node:crypto";
 import { templates } from "@/domain/document";
 import { sampleStyles } from "@/domain/custom-samples";
 import { maxUploadRequestBytes } from "@/domain/media-policy";
+import { mediaResponse } from "@/server/media-response";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ path: string[] }> };
@@ -176,39 +177,7 @@ async function route(request: Request, ctx: Context) {
           await currentUser(),
           url.searchParams.get("slug") ?? undefined,
         );
-      const total = m.bytes.length,
-        range = request.headers.get("range");
-      let start = 0,
-        end = total - 1,
-        status = 200;
-      if (range) {
-        const match = /^bytes=(\d+)-(\d*)$/.exec(range);
-        if (!match)
-          return new Response(null, {
-            status: 416,
-            headers: { "Content-Range": `bytes */${total}` },
-          });
-        start = Number(match[1]);
-        end = match[2] ? Math.min(Number(match[2]), end) : end;
-        if (start > end || start >= total)
-          return new Response(null, {
-            status: 416,
-            headers: { "Content-Range": `bytes */${total}` },
-          });
-        status = 206;
-      }
-      return new Response(new Uint8Array(m.bytes.subarray(start, end + 1)), {
-        status,
-        headers: {
-          ...noStore,
-          "Content-Type": m.mime,
-          "Accept-Ranges": "bytes",
-          "Content-Length": String(end - start + 1),
-          ...(status === 206
-            ? { "Content-Range": `bytes ${start}-${end}/${total}` }
-            : {}),
-        },
-      });
+      return mediaResponse(m.bytes, m.mime, request.headers.get("range"));
     }
     const user = await requireUser();
     if (p[0] === "invitations") {
@@ -534,3 +503,16 @@ async function route(request: Request, ctx: Context) {
   }
 }
 export { route as GET, route as POST, route as PATCH, route as DELETE };
+export async function HEAD(request: Request, ctx: Context) {
+  const headers = new Headers(request.headers);
+  headers.delete("range");
+  const response = await route(
+    new Request(request, { method: "GET", headers }),
+    ctx,
+  );
+  await response.body?.cancel();
+  return new Response(null, {
+    status: response.status,
+    headers: response.headers,
+  });
+}

@@ -13,7 +13,8 @@ process.env.PIXVO_DATA_DIR = path.join(
   ".test-data",
   `e2e-${Date.now()}`,
 );
-process.env.NEXT_PUBLIC_APP_URL = "http://127.0.0.1:3001";
+// Exercise deployments where the configured site URL has a trailing slash.
+process.env.NEXT_PUBLIC_APP_URL = "http://127.0.0.1:3001/";
 await mkdir(process.env.PIXVO_DATA_DIR, { recursive: true });
 const owner = {
   id: "11111111-1111-4111-8111-111111111111",

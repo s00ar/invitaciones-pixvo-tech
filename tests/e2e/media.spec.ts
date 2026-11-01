@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import sharp from "sharp";
 
 test("favicon original de Pixvo disponible en PNG e ICO", async ({ page }) => {

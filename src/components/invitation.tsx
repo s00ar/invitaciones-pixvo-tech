@@ -13,6 +13,9 @@ import {
   Shirt,
   Play,
   Pause,
+  LoaderCircle,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useRef } from "react";
 import type { InvitationDocument, Block } from "@/domain/document";
@@ -54,7 +57,17 @@ function Countdown({ date }: { date: string }) {
           Math.floor(diff / 1000) % 60,
         ];
   return (
-    <div className="countdown">
+    <div
+      className="countdown"
+      style={
+        {
+          "--countdown-digits": Math.max(
+            2,
+            ...values.map((n) => String(n).length),
+          ),
+        } as CSSProperties
+      }
+    >
       {values.map((n, i) => (
         <div key={i}>
           <strong>{String(n).padStart(2, "0")}</strong>
@@ -76,6 +89,7 @@ function Hero({
   const player = useRef<HTMLVideoElement>(null),
     [videoPlaying, setVideoPlaying] = useState(false),
     [videoLoading, setVideoLoading] = useState(false),
+    [videoMuted, setVideoMuted] = useState(Boolean(d.theme.videoAutoplay)),
     [videoError, setVideoError] = useState("");
   useEffect(() => {
     if (!videoLoading) return;
@@ -89,12 +103,7 @@ function Hero({
     }, 20000);
     return () => clearTimeout(timer);
   }, [videoLoading]);
-  const date = new Intl.DateTimeFormat("es-AR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    timeZone: d.event.timezone,
-  }).format(new Date(d.event.startsAt));
+  const date = dateLabel(d, false);
   const title = <h1>{d.event.title}</h1>;
   const common = (
     <>
@@ -114,6 +123,20 @@ function Hero({
         <button
           type="button"
           className="inv-button video-toggle"
+          aria-label={
+            videoLoading
+              ? "Cargando video…"
+              : videoPlaying
+                ? "Pausar video"
+                : "Reproducir video"
+          }
+          title={
+            videoLoading
+              ? "Cargando video…"
+              : videoPlaying
+                ? "Pausar video"
+                : "Reproducir video"
+          }
           disabled={videoLoading}
           onClick={async () => {
             try {
@@ -137,18 +160,38 @@ function Hero({
             }
           }}
         >
-          {videoPlaying ? <Pause size={15} /> : <Play size={15} />}{" "}
-          {videoLoading
-            ? "Cargando video…"
-            : videoPlaying
-              ? "Pausar video"
-              : "Reproducir video"}
+          {videoLoading ? (
+            <LoaderCircle size={18} aria-hidden="true" />
+          ) : videoPlaying ? (
+            <Pause size={18} aria-hidden="true" />
+          ) : (
+            <Play size={18} aria-hidden="true" />
+          )}
         </button>
       )}
       {videoLoading && (
         <p role="status" className="inv-small">
           Cargando video. Si la conexión tarda, vas a poder reintentar.
         </p>
+      )}
+      {d.theme.videoId && (
+        <button
+          type="button"
+          className="inv-button video-toggle"
+          aria-label={videoMuted ? "Activar sonido" : "Silenciar video"}
+          title={videoMuted ? "Activar sonido" : "Silenciar video"}
+          onClick={() => {
+            if (!player.current) return;
+            player.current.muted = !player.current.muted;
+            setVideoMuted(player.current.muted);
+          }}
+        >
+          {videoMuted ? (
+            <VolumeX size={18} aria-hidden="true" />
+          ) : (
+            <Volume2 size={18} aria-hidden="true" />
+          )}
+        </button>
       )}
       {videoError && (
         <p role="status" className="inv-small">
@@ -217,9 +260,12 @@ function Hero({
                   : "El video no está disponible. Los detalles del evento están debajo.",
               );
             }}
-            controls
+            autoPlay={Boolean(d.theme.videoAutoplay)}
+            loop={Boolean(d.theme.videoLoop)}
+            muted={videoMuted}
+            onVolumeChange={(event) => setVideoMuted(event.currentTarget.muted)}
             playsInline
-            preload="metadata"
+            preload={d.theme.videoAutoplay ? "auto" : "metadata"}
             poster={d.theme.posterId ? mediaURL(d.theme.posterId, slug) : bg}
           >
             Tu navegador no reproduce este video. La información del evento está
@@ -558,7 +604,7 @@ function Section({
   if (b.type === "hero")
     return (
       <Hero
-        key={`${d.theme.videoId ?? "none"}:${slug ?? "draft"}`}
+        key={`${d.theme.videoId ?? "none"}:${Boolean(d.theme.videoAutoplay)}:${slug ?? "draft"}`}
         d={d}
         b={b}
         slug={slug}

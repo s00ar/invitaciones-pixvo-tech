@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "./fixtures";
 import { templates } from "../../src/domain/document";
 import AxeBuilder from "@axe-core/playwright";
 import sharp from "sharp";

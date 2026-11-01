@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, ArrowUp, ArrowDown, Upload } from "lucide-react";
 import {
   applySample,
@@ -87,6 +87,7 @@ function CheckField({
   );
 }
 export function EditorInspector({ id, d, selected, change }: Props) {
+  const filePicker = useRef<HTMLInputElement>(null);
   const [media, setMedia] = useState<Media[]>([]),
     [error, setError] = useState(""),
     [uploading, setUploading] = useState(false),
@@ -417,6 +418,23 @@ export function EditorInspector({ id, d, selected, change }: Props) {
               "video/",
             )}
             <VideoGuidance id="video-background-help" />
+            <CheckField
+              label="Reproducción automática sin sonido"
+              value={d.theme.videoAutoplay ?? false}
+              onChange={(value) => theme("videoAutoplay", value)}
+              disabled={!d.theme.videoId}
+            />
+            <CheckField
+              label="Reproducir video en bucle"
+              value={d.theme.videoLoop ?? false}
+              onChange={(value) => theme("videoLoop", value)}
+              disabled={!d.theme.videoId}
+            />
+            <small>
+              El visitante puede pausar el video y activar el sonido. Si su
+              navegador bloquea el inicio automático, puede tocar Reproducir
+              video.
+            </small>
             {mediaSelect(
               "Poster del video",
               d.theme.posterId,
@@ -497,45 +515,51 @@ export function EditorInspector({ id, d, selected, change }: Props) {
               value={authorized}
               onChange={setAuthorized}
             />
-            <label className="button ghost">
+            <button
+              type="button"
+              className="button ghost"
+              disabled={uploading || !authorized}
+              onClick={() => filePicker.current?.click()}
+            >
               <Upload size={14} />
               {uploading ? "Subiendo…" : "Subir archivo"}
-              <input
-                hidden
-                type="file"
-                disabled={uploading || !authorized}
-                accept={mediaAccept}
-                aria-label="Seleccionar archivo"
-                aria-describedby="media-upload-limits video-upload-help"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  e.currentTarget.value = "";
-                  if (!file) return;
-                  setError("");
-                  const selectionError = mediaSelectionError(file);
-                  if (selectionError) {
-                    setError(selectionError);
-                    return;
-                  }
-                  setUploading(true);
-                  const form = new FormData();
-                  form.set("file", file);
-                  form.set("authorized", String(authorized));
-                  try {
-                    const m = await api<Media>(
-                      `/api/invitations/${id}/media`,
-                      "POST",
-                      form,
-                    );
-                    setMedia((prev) => [m, ...prev]);
-                  } catch (e) {
-                    setError((e as Error).message);
-                  } finally {
-                    setUploading(false);
-                  }
-                }}
-              />
-            </label>
+            </button>
+            <input
+              ref={filePicker}
+              hidden
+              type="file"
+              disabled={uploading || !authorized}
+              accept={mediaAccept}
+              aria-label="Seleccionar archivo"
+              aria-describedby="media-upload-limits video-upload-help"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.currentTarget.value = "";
+                if (!file) return;
+                setError("");
+                const selectionError = mediaSelectionError(file);
+                if (selectionError) {
+                  setError(selectionError);
+                  return;
+                }
+                setUploading(true);
+                const form = new FormData();
+                form.set("file", file);
+                form.set("authorized", String(authorized));
+                try {
+                  const m = await api<Media>(
+                    `/api/invitations/${id}/media`,
+                    "POST",
+                    form,
+                  );
+                  setMedia((prev) => [m, ...prev]);
+                } catch (e) {
+                  setError((e as Error).message);
+                } finally {
+                  setUploading(false);
+                }
+              }}
+            />
             <div className="media-grid">
               {media.map((m) => (
                 <div className="media-item" key={m.id}>

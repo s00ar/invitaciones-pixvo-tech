@@ -1,10 +1,38 @@
 import type { InvitationDocument } from "./document";
-export const dateLabel = (d: InvitationDocument) =>
-  new Intl.DateTimeFormat("es-AR", {
-    dateStyle: "long",
-    timeStyle: "short",
-    timeZone: d.event.timezone,
-  }).format(new Date(d.event.startsAt));
+const months = [
+  "enero",
+  "febrero",
+  "marzo",
+  "abril",
+  "mayo",
+  "junio",
+  "julio",
+  "agosto",
+  "septiembre",
+  "octubre",
+  "noviembre",
+  "diciembre",
+];
+export function dateLabel(d: InvitationDocument, withTime = true) {
+  // ICU punctuation/day periods vary between Node and WebKit. Use numeric parts
+  // and explicit Spanish text so SSR and hydration produce the same string.
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: d.event.timezone,
+      calendar: "gregory",
+      numberingSystem: "latn",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(new Date(d.event.startsAt))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${Number(parts.day)} de ${months[Number(parts.month) - 1]} de ${parts.year}${withTime ? ` · ${parts.hour}:${parts.minute}` : ""}`;
+}
 const escapeICS = (v: string) =>
   v
     .replace(/\\/g, "\\\\")

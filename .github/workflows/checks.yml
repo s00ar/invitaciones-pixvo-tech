@@ -5,6 +5,10 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -19,12 +23,12 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run verify:certificate
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npm run test:e2e -- --browser=${{ matrix.browser }}
       - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: browser-evidence
+          name: browser-evidence-${{ matrix.browser }}
           path: |
             playwright-report/
             test-results/evidence/

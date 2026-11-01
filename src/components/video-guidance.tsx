@@ -28,7 +28,9 @@ export function VideoGuidance({ id }: { id: string }) {
         <p>
           La extensión .mp4 no garantiza compatibilidad: depende de su
           codificación. Los videos no se convierten ni comprimen
-          automáticamente. Empiezan al tocar Reproducir.
+          automáticamente. Podés elegir inicio manual o reproducción automática
+          sin sonido en Estilo y diseño. El sonido requiere una acción del
+          visitante.
         </p>
       </details>
     </div>
