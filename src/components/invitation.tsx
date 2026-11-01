@@ -99,6 +99,7 @@ function Hero({
       </a>
       {d.theme.videoId && (
         <button
+          type="button"
           className="inv-button video-toggle"
           onClick={async () => {
             try {
@@ -106,6 +107,7 @@ function Hero({
               if (videoPlaying) player.current.pause();
               else await player.current.play();
             } catch {
+              setVideoPlaying(false);
               setVideoError(
                 "El video no está disponible. Podés consultar los datos del evento debajo.",
               );
@@ -118,7 +120,14 @@ function Hero({
       )}
       {videoError && (
         <p role="status" className="inv-small">
-          {videoError}
+          {videoError}{" "}
+          <a
+            href={mediaURL(d.theme.videoId!, slug)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Abrir video por separado ↗
+          </a>
         </p>
       )}
     </>
@@ -130,7 +139,7 @@ function Hero({
       : undefined;
   return (
     <section
-      className={`inv-hero hero-${d.theme.family}`}
+      className={`inv-hero hero-${d.theme.family} ${d.theme.videoId ? "has-hero-video" : ""}`}
       style={{
         backgroundImage: bg
           ? `linear-gradient(rgb(0 0 0 / ${d.theme.overlay}),rgb(0 0 0 / ${d.theme.overlay})),url("${bg}")`
@@ -139,28 +148,42 @@ function Hero({
       }}
     >
       {d.theme.videoId && (
-        <video
-          ref={player}
-          className="hero-video"
-          aria-label="Video del evento"
-          style={{ opacity: 1 - d.theme.overlay }}
-          onPlay={() => setVideoPlaying(true)}
-          onPause={() => setVideoPlaying(false)}
-          onEnded={() => setVideoPlaying(false)}
-          onError={() =>
-            setVideoError(
-              "El video no está disponible. Los detalles del evento están debajo.",
-            )
-          }
-          controls
-          playsInline
-          preload="metadata"
-          poster={d.theme.posterId ? mediaURL(d.theme.posterId, slug) : bg}
-        >
-          <source src={mediaURL(d.theme.videoId, slug)} />
-          Tu navegador no reproduce este video. La información del evento está
-          disponible debajo.
-        </video>
+        <>
+          <video
+            ref={player}
+            src={mediaURL(d.theme.videoId, slug)}
+            className="hero-video"
+            aria-label="Video del evento"
+            style={{ objectPosition: `${d.theme.focusX}% ${d.theme.focusY}%` }}
+            onPlaying={() => {
+              setVideoPlaying(true);
+              setVideoError("");
+            }}
+            onPause={() => setVideoPlaying(false)}
+            onEnded={() => setVideoPlaying(false)}
+            onError={(event) => {
+              setVideoPlaying(false);
+              setVideoError(
+                event.currentTarget.error?.code === 3 ||
+                  event.currentTarget.error?.code === 4
+                  ? "No se puede reproducir este archivo. Probá con MP4 (H.264) o WebM."
+                  : "El video no está disponible. Los detalles del evento están debajo.",
+              );
+            }}
+            controls
+            playsInline
+            preload="metadata"
+            poster={d.theme.posterId ? mediaURL(d.theme.posterId, slug) : bg}
+          >
+            Tu navegador no reproduce este video. La información del evento está
+            disponible debajo.
+          </video>
+          <div
+            className="hero-video-shade"
+            aria-hidden="true"
+            style={{ backgroundColor: `rgb(0 0 0 / ${d.theme.overlay})` }}
+          />
+        </>
       )}
       <div className="hero-content">
         {d.theme.sampleStyle ? (
@@ -485,7 +508,15 @@ function Section({
   guest?: string;
 }) {
   const p = b.props;
-  if (b.type === "hero") return <Hero d={d} b={b} slug={slug} />;
+  if (b.type === "hero")
+    return (
+      <Hero
+        key={`${d.theme.videoId ?? "none"}:${slug ?? "draft"}`}
+        d={d}
+        b={b}
+        slug={slug}
+      />
+    );
   if (b.type === "rsvp") return <RSVP slug={slug} b={b} guest={guest} />;
   if (b.type === "countdown")
     return (

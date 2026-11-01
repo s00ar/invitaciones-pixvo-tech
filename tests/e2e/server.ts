@@ -48,8 +48,11 @@ await transaction(async (db) => {
   for (const [id, slug] of [
     ["aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "e2e-celebracion"],
     ["bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "e2e-publica"],
+    ["dddddddd-dddd-4ddd-8ddd-dddddddddddd", "e2e-video"],
   ]) {
-    const doc = makeDocument("pixvo-glam-pink");
+    const doc = makeDocument(
+      slug === "e2e-video" ? "pixvo-disco-night" : "pixvo-glam-pink",
+    );
     doc.event.title = "Celebración de prueba";
     doc.blocks.find((b) => b.type === "calendar")!.enabled = true;
     doc.blocks.find((b) => b.type === "venues")!.props.items = [
