@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "./fixtures";
 import sharp from "sharp";
+import type { Route } from "@playwright/test";
 
 async function draft(page: Page) {
   await page.goto("/login");
@@ -15,6 +16,30 @@ async function draft(page: Page) {
   expect(response.status()).toBe(201);
   return (await response.json()).id as string;
 }
+
+test("editor espera a estar listo antes de aceptar la primera edición", async ({
+  page,
+}) => {
+  const id = await draft(page);
+  const pending: Route[] = [];
+  let released = false;
+  await page.route("**/_next/static/chunks/**", (route) => {
+    if (released) return route.continue();
+    pending.push(route);
+  });
+  await page.goto(`/app/invitaciones/${id}/editar`, { waitUntil: "commit" });
+  const name = page.getByLabel("Nombre del evento", { exact: true });
+  await expect(name).toBeDisabled();
+  released = true;
+  await Promise.all(pending.map((route) => route.continue()));
+  await expect(name).toBeEnabled();
+  await name.fill("Primera edición conservada");
+  await expect(page.locator(".editor-title small")).toContainText("Guardado");
+  const stored = await (
+    await page.request.get(`/api/invitations/${id}`)
+  ).json();
+  expect(stored.draft_json.event.title).toBe("Primera edición conservada");
+});
 
 test("cuenta regresiva cabe en canvas móvil con navegador desktop", async ({
   page,

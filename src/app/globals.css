@@ -1859,6 +1859,16 @@ table button {
   flex-direction: column;
   background: #0b0813;
 }
+.editor-interactions {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
 .editor-toolbar {
   display: flex;
   align-items: center;

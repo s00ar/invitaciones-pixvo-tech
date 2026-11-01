@@ -4,11 +4,18 @@ export const test = base.extend<{ runtimeErrors: void }>({
   runtimeErrors: [
     async ({ page, context }, use) => {
       const errors: string[] = [];
+      const failedRequests: { url: string; reason: string }[] = [];
       const observed = new Set<Page>();
       const observe = (target: Page) => {
         if (observed.has(target)) return;
         observed.add(target);
         target.on("pageerror", (error) => errors.push(error.message));
+        target.on("requestfailed", (request) =>
+          failedRequests.push({
+            url: request.url(),
+            reason: request.failure()?.errorText ?? "",
+          }),
+        );
         target.on("console", (message) => {
           if (
             message.type() === "error" &&
@@ -22,7 +29,7 @@ export const test = base.extend<{ runtimeErrors: void }>({
       await use();
       expect(
         errors,
-        "errores de ejecución o hidratación del navegador",
+        `errores de ejecución o hidratación del navegador; red: ${JSON.stringify(failedRequests)}`,
       ).toEqual([]);
     },
     { auto: true },

@@ -246,7 +246,20 @@ function Hero({
               setVideoLoading(false);
               setVideoPlaying(false);
             }}
-            onEnded={() => {
+            onEnded={async (event) => {
+              if (d.theme.videoLoop) {
+                try {
+                  const video = event.currentTarget;
+                  video.currentTime = 0;
+                  setVideoLoading(true);
+                  await video.play();
+                  return;
+                } catch {
+                  setVideoError(
+                    "No se pudo repetir el video. Podés reintentar o abrirlo por separado.",
+                  );
+                }
+              }
               setVideoLoading(false);
               setVideoPlaying(false);
             }}
@@ -261,7 +274,6 @@ function Hero({
               );
             }}
             autoPlay={Boolean(d.theme.videoAutoplay)}
-            loop={Boolean(d.theme.videoLoop)}
             muted={videoMuted}
             onVolumeChange={(event) => setVideoMuted(event.currentTarget.muted)}
             playsInline

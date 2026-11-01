@@ -182,12 +182,14 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
         .evaluate((node: HTMLVideoElement) => node.muted),
     ).toBe(true);
     await advancing(visitor.locator("video"));
-    await expect(visitor.locator("video")).toHaveAttribute("loop");
     let previousTime = 0;
     await expect
       .poll(async () => {
-        const currentTime = await visitor.locator("video").evaluate((node: HTMLVideoElement) => node.currentTime);
-        const restarted = previousTime > 0.5 && currentTime < previousTime - 0.3;
+        const currentTime = await visitor
+          .locator("video")
+          .evaluate((node: HTMLVideoElement) => node.currentTime);
+        const restarted =
+          previousTime > 0.5 && currentTime < previousTime - 0.3;
         previousTime = currentTime;
         return restarted;
       })

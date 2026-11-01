@@ -56,7 +56,6 @@ export function AuthForm({
   configured: boolean;
 }) {
   const params = useSearchParams(),
-    router = useRouter(),
     [message, setMessage] = useState(""),
     [error, setError] = useState(false),
     [busy, setBusy] = useState(false);
@@ -126,8 +125,9 @@ export function AuthForm({
                 "Revisá tu email para confirmar la cuenta. Tu selección se conserva en el enlace de confirmación.",
               );
             else {
-              router.push(data.next);
-              router.refresh();
+              // Start with a fresh authenticated document, not prefetched RSC
+              // generated before the session cookie existed.
+              window.location.assign(data.next);
             }
           } catch (err) {
             setError(true);

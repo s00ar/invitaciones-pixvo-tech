@@ -30,7 +30,6 @@ export function CreateInvitation({
         if (!cancelled) {
           delete (window as unknown as Record<string, unknown>)[key];
           router.replace(`/app/invitaciones/${d.id}/editar`);
-          router.refresh();
         }
       })
       .catch((e) => {

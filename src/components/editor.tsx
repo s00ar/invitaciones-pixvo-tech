@@ -46,6 +46,7 @@ export function Editor({
 }) {
   const router = useRouter();
   const [d, setD] = useState(initial.draft_json),
+    [interactive, setInteractive] = useState(false),
     [revision, setRevision] = useState(initial.revision),
     [status, setStatus] = useState("Guardado"),
     [error, setError] = useState(""),
@@ -69,6 +70,9 @@ export function Editor({
     rev = useRef(initial.revision),
     flight = useRef(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    queueMicrotask(() => setInteractive(true));
+  }, []);
   useEffect(() => {
     if (!modal) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -274,7 +278,8 @@ export function Editor({
     }
   }
   return (
-    <main className="editor-shell">
+    <main className="editor-shell" aria-busy={!interactive}>
+      <fieldset className="editor-interactions" disabled={!interactive}>
       <header className="editor-toolbar">
         <div className="editor-title">
           <Link href="/app" aria-label="Volver a mis invitaciones">
@@ -682,6 +687,7 @@ export function Editor({
           </div>
         </div>
       )}
+      </fieldset>
     </main>
   );
 }
