@@ -44,6 +44,12 @@ Si configurás Supabase desde su panel y no tenés una terminal con las credenci
 
 Precios base aprobados: **Básica $35.000 ARS · Interactiva $60.000 ARS · Premium $100.000 ARS**. Se pueden agregar adicionales según funcionalidades extra. Para una base existente, ejecutar el runner de migraciones para aplicar `202610310003_commercial_prices.sql`; conserva los importes y beneficios de órdenes anteriores. No habilita cobros ni configura proveedores. La conexión a Google Sheets figura como integración pendiente; el RSVP guarda respuestas en Pixvo y permite exportar CSV.
 
+## Archivos y videos
+
+Imágenes JPG/PNG/WebP hasta **10 MB**, videos MP4/WebM hasta **10 MB** y música MP3 hasta **15 MB**, con cuota de **250 MB por evento**. Los límites se comparten entre navegador y servidor y se verifican por el formato real del archivo. La guía en Archivos y Estilo y diseño recomienda MP4 H.264/AAC, 30 FPS, 720p/1080p y orientación según el dispositivo; 10–20 segundos es una recomendación para fondos. La plataforma no convierte ni comprime videos. Los recursos existentes conservan sus referencias.
+
+El favicon original de Pixvo se distribuye en PNG e ICO mediante las convenciones de Next.js, con origen y hash registrados en brand/README.md y public/assets/provenance.json.
+
 ## Comandos
 
 ```sh

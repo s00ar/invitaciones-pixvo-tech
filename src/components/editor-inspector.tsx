@@ -16,6 +16,13 @@ import { customSamples, type SampleStyle } from "@/domain/custom-samples";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { api } from "./auth";
 import { Notice } from "./ui";
+import { VideoGuidance } from "./video-guidance";
+import {
+  mediaAccept,
+  mediaLimits,
+  mediaLibraryLimit,
+  mediaSelectionError,
+} from "@/domain/media-policy";
 type Media = { id: string; mime: string; bytes: number; filename: string };
 type Props = {
   id: string;
@@ -116,6 +123,9 @@ export function EditorInspector({ id, d, selected, change }: Props) {
       {label}
       <select
         value={value ?? ""}
+        aria-describedby={
+          mime === "video/" ? "video-background-help" : undefined
+        }
         onChange={(e) => onChange(e.target.value || undefined)}
       >
         <option value="">Sin archivo</option>
@@ -406,6 +416,7 @@ export function EditorInspector({ id, d, selected, change }: Props) {
               (v) => theme("videoId", v),
               "video/",
             )}
+            <VideoGuidance id="video-background-help" />
             {mediaSelect(
               "Poster del video",
               d.theme.posterId,
@@ -473,11 +484,14 @@ export function EditorInspector({ id, d, selected, change }: Props) {
         )}
         {selected === "media" && (
           <>
-            <p className="notice">
-              JPG, PNG y WebP hasta 10 MB; MP3 hasta 15 MB; MP4/WebM hasta 50
-              MB. Cuota total: 250 MB por evento. Las imágenes se optimizan y se
-              eliminan los metadatos.
+            <p className="notice" id="media-upload-limits">
+              JPG, PNG y WebP: máximo {mediaLimits.image / 1e6} MB. MP3: máximo{" "}
+              {mediaLimits.audio / 1e6} MB. MP4 y WebM: máximo{" "}
+              {mediaLimits.video / 1e6} MB. Cuota total:{" "}
+              {mediaLibraryLimit / 1e6} MB por evento. Las imágenes se optimizan
+              y se eliminan los metadatos.
             </p>
+            <VideoGuidance id="video-upload-help" />
             <CheckField
               label="Tengo autorización para usar estos archivos"
               value={authorized}
@@ -490,12 +504,20 @@ export function EditorInspector({ id, d, selected, change }: Props) {
                 hidden
                 type="file"
                 disabled={uploading || !authorized}
-                accept="image/jpeg,image/png,image/webp,audio/mpeg,video/mp4,video/webm"
+                accept={mediaAccept}
+                aria-label="Seleccionar archivo"
+                aria-describedby="media-upload-limits video-upload-help"
                 onChange={async (e) => {
                   const file = e.target.files?.[0];
+                  e.currentTarget.value = "";
                   if (!file) return;
-                  setUploading(true);
                   setError("");
+                  const selectionError = mediaSelectionError(file);
+                  if (selectionError) {
+                    setError(selectionError);
+                    return;
+                  }
+                  setUploading(true);
                   const form = new FormData();
                   form.set("file", file);
                   form.set("authorized", String(authorized));

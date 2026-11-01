@@ -39,7 +39,8 @@ import {
   configurePlan,
   type Invitation,
 } from "../src/server/services";
-import { upload, getMedia, duplicate } from "../src/server/media";
+import { upload, getMedia, duplicate, listMedia } from "../src/server/media";
+import { mediaLimits, maxUploadBytes } from "../src/domain/media-policy";
 import type { User } from "../src/server/auth";
 import sharp from "sharp";
 import { publicProjection } from "../src/domain/public-projection";
@@ -822,6 +823,49 @@ describe("publicación, archivos y RSVP", () => {
         { mediaId: m.id, alt: "Prueba propia" },
       ];
     });
+  });
+  it("aplica 10 MB al video detectado por bytes aunque se declare como audio", async () => {
+    const before = (await listMedia(a, event)).length;
+    const bytes = new Uint8Array(mediaLimits.video + 1);
+    bytes.set(
+      Buffer.from(
+        "000000206674797069736f6d0000020069736f6d69736f32617663316d703431",
+        "hex",
+      ),
+    );
+    await expect(
+      upload(
+        a,
+        event,
+        new File([bytes], "disfraz.mp3", { type: "audio/mpeg" }),
+        true,
+      ),
+    ).rejects.toMatchObject({
+      status: 413,
+      message: expect.stringContaining("El video supera el límite de 10 MB"),
+    });
+    expect((await listMedia(a, event)).length).toBe(before);
+    const accepted = await upload(
+      a,
+      event,
+      new File([bytes.subarray(0, mediaLimits.video)], "limite.mp4", {
+        type: "video/mp4",
+      }),
+      true,
+    );
+    expect(accepted.mime).toBe("video/mp4");
+  });
+  it("rechaza el máximo global antes de leer bytes o escribir almacenamiento", async () => {
+    const file = new File([new Uint8Array(maxUploadBytes + 1)], "grande.mp3", {
+      type: "audio/mpeg",
+    });
+    const read = vi.spyOn(file, "arrayBuffer");
+    const before = (await listMedia(a, event)).length;
+    await expect(upload(a, event, file, true)).rejects.toMatchObject({
+      status: 413,
+    });
+    expect(read).not.toHaveBeenCalled();
+    expect((await listMedia(a, event)).length).toBe(before);
   });
   it("publica snapshot saneado y preserva borrador separado", async () => {
     const i = await getInvitation(a, event);

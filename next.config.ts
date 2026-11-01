@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
+import { maxUploadRequestBytes } from "./src/domain/media-policy";
 const config: NextConfig = {
   serverExternalPackages: ["@electric-sql/pglite", "pg", "sharp"],
   poweredByHeader: false,
-  experimental: { proxyClientMaxBodySize: "51mb" },
+  experimental: { proxyClientMaxBodySize: maxUploadRequestBytes },
   outputFileTracingExcludes: {
     "/*": ["./research/**", "./.data/**", "./.test-data/**", "./*.zip"],
   },

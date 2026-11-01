@@ -2,6 +2,12 @@
   "fonts": "Sin archivos redistribuidos: fallbacks locales explícitos",
   "assets": [
     {
+      "path": "/brand/pixvo-favicon.png",
+      "source": "brand/pixvo-favicon.png",
+      "license": "Identidad de Pixvo proporcionada por el titular",
+      "sha256": "90fc87b772afe7137701ab6100d161662cc2b95b2d2aa93161fc269e41358691"
+    },
+    {
       "path": "/brand/pixvo-logo-footer.webp",
       "source": "brand/pixvo-logo-footer.webp",
       "license": "Identidad de Pixvo proporcionada por el titular",

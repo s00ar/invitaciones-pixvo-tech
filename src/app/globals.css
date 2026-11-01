@@ -2075,6 +2075,28 @@ table button {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
+.video-guidance {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #937aff0a;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.video-guidance p {
+  margin: 0 0 10px;
+}
+.video-guidance summary {
+  cursor: pointer;
+  color: var(--violet);
+}
+.video-guidance ul {
+  padding-left: 18px;
+  margin-block: 10px;
+}
+.video-guidance p:last-child {
+  margin-bottom: 0;
+}
 .media-item {
   border: 1px solid var(--border);
   border-radius: 5px;

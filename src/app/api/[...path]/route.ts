@@ -25,6 +25,7 @@ import { csv, calendarICS } from "@/domain/format";
 import { randomUUID } from "node:crypto";
 import { templates } from "@/domain/document";
 import { sampleStyles } from "@/domain/custom-samples";
+import { maxUploadRequestBytes } from "@/domain/media-policy";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ path: string[] }> };
@@ -324,13 +325,14 @@ async function route(request: Request, ctx: Context) {
         if (p[2] === "duplicate")
           return send(await media.duplicate(user, id), 201);
         if (p[2] === "media") {
-          if (Number(request.headers.get("content-length") ?? 0) > 51e6)
-            fail(413, "El archivo supera 50 MB");
-          const body = await new Response(await limitedBody(request, 51e6), {
-              headers: {
-                "Content-Type": request.headers.get("content-type") ?? "",
+          const body = await new Response(
+              await limitedBody(request, maxUploadRequestBytes),
+              {
+                headers: {
+                  "Content-Type": request.headers.get("content-type") ?? "",
+                },
               },
-            }).formData(),
+            ).formData(),
             file = body.get("file");
           if (!(file instanceof File)) fail(422, "Seleccioná un archivo");
           return send(

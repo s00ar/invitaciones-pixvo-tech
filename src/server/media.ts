@@ -16,6 +16,12 @@ import {
 } from "./services";
 import type { User } from "./auth";
 import { referencedMedia, type InvitationDocument } from "../domain/document";
+import {
+  mediaKind,
+  mediaSizeError,
+  maxUploadBytes,
+  mediaLibraryLimit,
+} from "../domain/media-policy";
 export type Media = {
   id: string;
   owner_id: string;
@@ -37,14 +43,6 @@ const storage = () => {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false } },
   ).storage.from("pixvo-private");
-};
-const limits: Record<string, number> = {
-  "image/jpeg": 10e6,
-  "image/png": 10e6,
-  "image/webp": 10e6,
-  "audio/mpeg": 15e6,
-  "video/mp4": 50e6,
-  "video/webm": 50e6,
 };
 function localPath(key: string) {
   return path.join(
@@ -82,16 +80,23 @@ export async function upload(
 ) {
   if (!authorized)
     fail(422, "Confirmá que tenés autorización para usar el archivo");
-  if (!file.size || file.size > 50e6)
-    fail(413, "El archivo está vacío o supera 50 MB");
+  if (!file.size) fail(413, "El archivo está vacío. Elegí otro archivo.");
+  if (file.size > maxUploadBytes)
+    fail(
+      413,
+      `El archivo supera el máximo admitido de ${maxUploadBytes / 1e6} MB. Revisá el límite indicado para su formato.`,
+    );
   await transaction((db) => owned(db, eventId, user));
   let bytes = Buffer.from(await file.arrayBuffer());
   const type = await fileTypeFromBuffer(bytes);
-  if (!type || !limits[type.mime] || file.size > limits[type.mime])
+  const kind = type && mediaKind(type.mime);
+  if (!type || !kind)
     fail(
       422,
       "Formato o tamaño inválido. Usá JPG, PNG, WebP, MP3, MP4 o WebM.",
     );
+  const sizeError = mediaSizeError(bytes.length, kind);
+  if (sizeError) fail(413, sizeError);
   let mime = type.mime;
   if (mime.startsWith("image/")) {
     try {
@@ -120,8 +125,11 @@ export async function upload(
         )
       ).rows[0].bytes,
     );
-    if (used + bytes.length > 250e6)
-      fail(413, "La biblioteca alcanzó la cuota de 250 MB");
+    if (used + bytes.length > mediaLibraryLimit)
+      fail(
+        413,
+        `La biblioteca alcanzó la cuota de ${mediaLibraryLimit / 1e6} MB`,
+      );
     const id = randomUUID(),
       key = `${user.id}/${eventId}/${id}`;
     await put(key, bytes, mime);
