@@ -212,6 +212,20 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
       ).status(),
     ).toBe(404);
   } finally {
+    // Stop both looping pipelines before closing WebKit's media process.
+    // Headless runners can otherwise hang in GStreamer/context.close.
+    await Promise.allSettled(
+      [page, ...guest.pages()].map((target) =>
+        target.locator("video").evaluateAll((nodes) => {
+          for (const node of nodes) {
+            const video = node as HTMLVideoElement;
+            video.pause();
+            video.removeAttribute("src");
+            video.load();
+          }
+        }),
+      ),
+    );
     await guest.close();
   }
 });
