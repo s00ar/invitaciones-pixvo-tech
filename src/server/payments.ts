@@ -10,6 +10,7 @@ import {
 import type { User } from "./auth";
 import { fail } from "./errors";
 import { jsonBody } from "./http";
+import { parseCheckoutResponse } from "./mercadopago-response";
 type Order = {
   id: string;
   owner_id: string;
@@ -125,8 +126,23 @@ export const providerOrderSchema = z.object({
     .optional(),
 });
 export type ProviderOrder = z.infer<typeof providerOrderSchema>;
+// Creation and settlement are different contracts: checkout needs identity and
+// an HTTPS URL; only a signed webhook plus provider lookup can approve payment.
+const providerCheckoutSchema = z.object({
+  id: providerOrderSchema.shape.id,
+  checkout_url: z.url(),
+});
+const providerOrderIdentitySchema = providerOrderSchema.pick({
+  id: true,
+  type: true,
+  processing_mode: true,
+  external_reference: true,
+  user_id: true,
+  currency: true,
+  total_amount: true,
+});
 function checkProviderOrder(
-  p: ProviderOrder,
+  p: z.infer<typeof providerOrderIdentitySchema>,
   o: Order,
   account: { id: string; live: boolean },
 ) {
@@ -230,18 +246,26 @@ export async function checkout(user: User, id: string) {
         },
       }),
     });
-    const parsed = providerOrderSchema
-      .extend({ checkout_url: z.url() })
-      .safeParse(response);
-    if (!parsed.success) fail(503, "Respuesta de checkout incompatible");
-    const p = parsed.data;
-    checkProviderOrder(p, o, account);
+    const p = parseCheckoutResponse(
+      providerCheckoutSchema,
+      response,
+      "create_checkout",
+    );
     const url = p.checkout_url;
     if (
       typeof url !== "string" ||
       !/^https:\/\/(?:[a-z0-9-]+\.)?mercadopago\.com(?:\.ar)?\//.test(url)
     )
       fail(503, "Checkout no disponible en el entorno configurado");
+    // Do not require payment timestamps/paid totals on order creation. Read back
+    // the authoritative identity and commercial terms before storing the URL.
+    const verified = parseCheckoutResponse(
+      providerOrderIdentitySchema,
+      await mp(`/v1/orders/${encodeURIComponent(p.id)}`),
+      "verify_checkout",
+    );
+    if (verified.id !== p.id) fail(422, "Identificador de order incorrecto");
+    checkProviderOrder(verified, o, account);
     await db.query(
       "update orders set mercadopago_order_id=$1,checkout_url=$2,payment_environment=$3 where id=$4",
       [p.id, url, process.env.MERCADOPAGO_ENV, o.id],

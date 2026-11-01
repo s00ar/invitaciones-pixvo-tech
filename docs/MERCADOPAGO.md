@@ -49,6 +49,12 @@ En staging, usar comprador y tarjetas de prueba del panel. Comprobar aprobado, p
 
 Las pruebas automatizadas usan un proveedor aislado y PostgreSQL local; no equivalen a una compra aprobada por Mercado Pago. Hasta completar credenciales, migración remota y compra de prueba, la integración externa sigue pendiente. El código no inicia cobros reales ni devoluciones por sí mismo.
 
+## Diagnóstico de respuesta de checkout
+
+Crear el checkout y verificar un pago tienen contratos separados. POST /v1/orders se valida por id y checkout_url; después se consulta GET /v1/orders/:id y se verifican tipo, modo manual, ID, external_reference, vendedor, moneda e importe antes de guardar el enlace. No se requieren fechas de actualización, total pagado ni transacciones al crear el checkout. La creación no concede derechos: el webhook conserva su validación completa del pago acreditado.
+
+Ante respuesta incompatible, el mensaje indica los nombres de los campos afectados. Runtime logs muestra `pixvo.mercadopago.invalid_response` con etapa y códigos de validación. No incluye valores, cuerpo del proveedor, client_token, URL de checkout, token, IDs de cuenta ni texto de errores Zod. Compartir únicamente esa línea de diagnóstico si persiste. Los reintentos conservan el UUID idempotente de la orden; no crear órdenes alternativas para eludir la validación.
+
 ## Fuentes oficiales verificadas el 2026-11-01
 
 - [Crear aplicación y credenciales de prueba](https://www.mercadopago.com.ar/developers/es/docs/checkout-pro-orders/create-application?scope=prod)

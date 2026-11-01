@@ -378,14 +378,26 @@ describe("pagos verificados e idempotencia", () => {
       );
       fetchMock.mockResolvedValueOnce(
         Response.json({
-          ...provider,
+          id,
           checkout_url: `https://www.mercadopago.com.ar/checkout/v1/redirect?order_id=${id}`,
           client_token: "test-only-must-not-be-persisted",
         }),
       );
+      fetchMock.mockResolvedValueOnce(
+        Response.json({
+          ...provider,
+          total_paid_amount: null,
+          last_updated_date: null,
+          status_detail: null,
+        }),
+      );
       const c = await checkout(a, order.id);
       expect((await checkout(a, order.id)).url).toBe(c.url);
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(3);
+      expect(fetchMock.mock.calls[2][0]).toBe(
+        `https://api.mercadopago.com/v1/orders/${id}`,
+      );
+      expect((await getInvitation(a, fresh)).entitlement_order_id).toBeNull();
       const args = fetchMock.mock.calls[1];
       expect(args[0]).toBe("https://api.mercadopago.com/v1/orders");
       expect(args[1]?.headers).toMatchObject({ "X-Idempotency-Key": order.id });
@@ -434,7 +446,7 @@ describe("pagos verificados e idempotencia", () => {
       await expect(webhook(request("invalid"))).rejects.toMatchObject({
         status: 401,
       });
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(3);
       // Untrusted notification fields cannot grant rights: provider still pending.
       fetchMock.mockResolvedValueOnce(
         Response.json({ id: "test-merchant", tags: ["test_user"] }),
@@ -458,9 +470,79 @@ describe("pagos verificados e idempotencia", () => {
       expect((await getInvitation(a, fresh)).entitlement_order_id).toBe(
         order.id,
       );
-      expect(fetchMock.mock.calls[5][0]).toBe(
+      expect(fetchMock.mock.calls[6][0]).toBe(
         `https://api.mercadopago.com/v1/orders/${id}`,
       );
+    } finally {
+      fetchMock.mockRestore();
+      vi.unstubAllEnvs();
+    }
+  });
+  it("verifica identidad e importe por GET antes de guardar un checkout, sin acreditar la compra", async () => {
+    for (const [key, value] of Object.entries({
+      PAYMENTS_ENABLED: "true",
+      MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
+      MERCADOPAGO_WEBHOOK_SECRET: "test-only-secret",
+      MERCADOPAGO_COLLECTOR_ID: "test-merchant",
+      NEXT_PUBLIC_APP_URL: "https://example.test/",
+      MERCADOPAGO_ENV: "sandbox",
+    }))
+      vi.stubEnv(key, value);
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    try {
+      const fresh = (await createInvitation(a, "pixvo-glam-pink")).id;
+      const order = await createOrder(a, fresh, "premium");
+      const id = "ORDTSTREADBACK";
+      const identity = {
+        id,
+        type: "online",
+        processing_mode: "manual",
+        external_reference: order.id,
+        user_id: "test-merchant",
+        currency: "ARS",
+        total_amount: "1234.50",
+      };
+      for (const bad of [
+        { id: "ORDOTHER" },
+        { external_reference: randomUUID() },
+        { user_id: "other" },
+        { currency: "USD" },
+        { total_amount: "1.00" },
+      ]) {
+        fetchMock.mockResolvedValueOnce(
+          Response.json({ id: "test-merchant", tags: ["test_user"] }),
+        );
+        fetchMock.mockResolvedValueOnce(
+          Response.json({
+            id,
+            checkout_url: `https://www.mercadopago.com.ar/checkout/v1/redirect?order_id=${id}`,
+          }),
+        );
+        fetchMock.mockResolvedValueOnce(Response.json({ ...identity, ...bad }));
+        await expect(checkout(a, order.id)).rejects.toMatchObject({
+          status: 422,
+        });
+        const stored = await transaction((db) =>
+          db.query(
+            "select checkout_url,mercadopago_order_id from orders where id=$1",
+            [order.id],
+          ),
+        );
+        expect(stored.rows[0]).toEqual({
+          checkout_url: null,
+          mercadopago_order_id: null,
+        });
+        expect((await getInvitation(a, fresh)).entitlement).toBeNull();
+      }
+      expect(
+        fetchMock.mock.calls
+          .filter(([url]) => url === "https://api.mercadopago.com/v1/orders")
+          .every(
+            ([, init]) =>
+              (init?.headers as Record<string, string>)["X-Idempotency-Key"] ===
+              order.id,
+          ),
+      ).toBe(true);
     } finally {
       fetchMock.mockRestore();
       vi.unstubAllEnvs();

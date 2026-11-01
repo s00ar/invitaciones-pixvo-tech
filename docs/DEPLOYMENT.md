@@ -28,6 +28,8 @@ El webhook responde éxito después de la transacción. Fallos temporales devuel
 
 Órdenes conservan precio/beneficios. La order del proveedor se crea bajo bloqueo y con X-Idempotency-Key igual al UUID local; checkout_url e ID quedan asociados a un entorno y se reutilizan. Se usan montos decimales como strings y retornos config.online normalizados. client_token no se persiste ni se devuelve. Ante caída después de crear y antes de guardar, reintentar con la misma clave; reconciliar por external_reference si el proveedor no conserva esa idempotencia. Su comportamiento externo requiere comprobación en sandbox. Pagos y derechos tienen además claves únicas, bloqueo y transacción local. Un checkout anterior con preference_id requiere revisión antes de abrir un nuevo intento; no se transforma ni duplica automáticamente.
 
+La creación del checkout valida id/URL de POST y consulta la identidad comercial por GET antes de persistir. No exige metadatos de liquidación en esta etapa. El webhook sigue exigiendo estado acreditado, total pagado y fecha de actualización válidos. Un diagnóstico incompatible registra solo campos conocidos, etapa y códigos, sin valores ni cuerpos de proveedor.
+
 Devolución total o parcial y contracargo confirmado pausan el evento cuyo derecho corresponde a esa orden y registran revisión requerida. No borran versiones, medios ni RSVP. La política comercial definitiva requiere decisión del titular; el panel no inicia devoluciones. Estados viejos no revierten una actualización más reciente. Las devoluciones parciales siguen una pausa conservadora para revisión, no una reactivación automática.
 
 ## Publicación y seguridad
