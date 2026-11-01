@@ -19,6 +19,8 @@ type Order = {
   currency: string;
   status: string;
   preference_id: string | null;
+  mercadopago_order_id: string | null;
+  payment_environment: string | null;
   checkout_url: string | null;
 };
 export function paymentConfigured() {
@@ -33,11 +35,12 @@ export function paymentConfigured() {
     )
   );
 }
-async function mp(path: string, init?: RequestInit) {
-  const r = await fetch(`https://api.mercadopago.com${path}`, {
+async function providerRequest(url: string, init?: RequestInit) {
+  const r = await fetch(url, {
     ...init,
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(8000),
     cache: "no-store",
+    redirect: "error",
     headers: {
       Authorization: `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
       "Content-Type": "application/json",
@@ -50,6 +53,90 @@ async function mp(path: string, init?: RequestInit) {
       "Mercado Pago no respondió correctamente. La orden sigue pendiente.",
     );
   return r.json();
+}
+const mp = (path: string, init?: RequestInit) =>
+  providerRequest(`https://api.mercadopago.com${path}`, init);
+
+// Orders responses do not document live_mode. Verify the token's actual
+// seller account instead of trusting a token prefix or unsigned body fields.
+async function providerAccount() {
+  const result = z
+    .object({
+      id: z.union([z.string(), z.number()]).transform(String),
+      tags: z.array(z.string()),
+    })
+    .safeParse(await providerRequest("https://api.mercadolibre.com/users/me"));
+  if (!result.success)
+    fail(503, "No se pudo verificar la cuenta de Mercado Pago");
+  const account = {
+    id: result.data.id,
+    live: !result.data.tags.includes("test_user"),
+  };
+  if (
+    account.id !== process.env.MERCADOPAGO_COLLECTOR_ID ||
+    account.live !== (process.env.MERCADOPAGO_ENV === "production")
+  )
+    fail(
+      503,
+      "La cuenta de Mercado Pago no corresponde al vendedor o entorno configurado",
+    );
+  return account;
+}
+const money = z
+  .string()
+  .max(18)
+  .regex(/^\d+(?:\.\d{1,2})?$/);
+function minor(value: string) {
+  const [whole, cents = ""] = value.split(".");
+  const amount = BigInt(whole) * 100n + BigInt(cents.padEnd(2, "0"));
+  if (amount > BigInt(Number.MAX_SAFE_INTEGER)) fail(422, "Importe inválido");
+  return Number(amount);
+}
+export const providerOrderSchema = z.object({
+  id: z.string().regex(/^ORD[A-Z0-9]+$/),
+  type: z.literal("online"),
+  processing_mode: z.literal("manual"),
+  external_reference: z.uuid(),
+  user_id: z.union([z.string(), z.number()]).transform(String),
+  currency: z.string(),
+  total_amount: money,
+  total_paid_amount: money,
+  status: z.enum([
+    "created",
+    "processed",
+    "processing",
+    "action_required",
+    "failed",
+    "canceled",
+    "expired",
+    "refunded",
+    "charged_back",
+    "in_mediation",
+  ]),
+  status_detail: z.string(),
+  last_updated_date: z
+    .string()
+    .refine((date) => Number.isFinite(Date.parse(date))),
+  transactions: z
+    .object({
+      refunds: z.array(z.object({ status: z.string() })).optional(),
+      chargebacks: z.array(z.object({ status: z.string() })).optional(),
+    })
+    .optional(),
+});
+export type ProviderOrder = z.infer<typeof providerOrderSchema>;
+function checkProviderOrder(
+  p: ProviderOrder,
+  o: Order,
+  account: { id: string; live: boolean },
+) {
+  if (
+    p.external_reference !== o.id ||
+    p.user_id !== account.id ||
+    p.currency !== o.currency ||
+    minor(p.total_amount) !== o.amount_minor
+  )
+    fail(422, "La order de Mercado Pago no coincide con la orden");
 }
 export async function createOrder(user: User, eventId: string, planId: string) {
   if (!paymentConfigured())
@@ -98,43 +185,66 @@ export async function checkout(user: User, id: string) {
     ).rows[0];
     if (!o || o.owner_id !== user.id) fail(404, "Orden no encontrada");
     if (o.status !== "pending") fail(409, "La orden ya fue procesada");
-    if (o.checkout_url) return { url: o.checkout_url };
-    const base = process.env.NEXT_PUBLIC_APP_URL!;
-    const pref = await mp("/checkout/preferences", {
+    if (
+      o.payment_environment &&
+      o.payment_environment !== process.env.MERCADOPAGO_ENV
+    )
+      fail(409, "La orden pertenece a otro entorno de pagos");
+    if (o.preference_id)
+      fail(
+        409,
+        "Esta orden usa un checkout anterior y requiere revisión antes de reintentar",
+      );
+    if (o.checkout_url && o.mercadopago_order_id)
+      return { url: o.checkout_url };
+    const account = await providerAccount();
+    const back = new URL(
+      "/app/pagos",
+      process.env.NEXT_PUBLIC_APP_URL!,
+    ).toString();
+    const response = await mp("/v1/orders", {
       method: "POST",
       headers: { "X-Idempotency-Key": o.id },
       body: JSON.stringify({
+        type: "online",
+        processing_mode: "manual",
+        capture_mode: "automatic_async",
+        total_amount: (o.amount_minor / 100).toFixed(2),
         items: [
           {
-            id: o.plan_snapshot.id,
+            external_code: o.plan_snapshot.id,
             title: `Pixvo Invitaciones · ${o.plan_snapshot.name}`,
             quantity: 1,
-            currency_id: o.currency,
-            unit_price: o.amount_minor / 100,
+            unit_price: (o.amount_minor / 100).toFixed(2),
           },
         ],
         external_reference: o.id,
-        notification_url: `${base}/api/webhooks/mercadopago`,
-        back_urls: {
-          success: `${base}/app/pagos`,
-          failure: `${base}/app/pagos`,
-          pending: `${base}/app/pagos`,
+        config: {
+          online: {
+            success_url: back,
+            failure_url: back,
+            pending_url: back,
+            auto_return: "approved",
+            retries: { allowed: false },
+          },
         },
-        auto_return: "approved",
       }),
     });
-    const url =
-      process.env.MERCADOPAGO_ENV === "production"
-        ? pref.init_point
-        : pref.sandbox_init_point;
+    const parsed = providerOrderSchema
+      .extend({ checkout_url: z.url() })
+      .safeParse(response);
+    if (!parsed.success) fail(503, "Respuesta de checkout incompatible");
+    const p = parsed.data;
+    checkProviderOrder(p, o, account);
+    const url = p.checkout_url;
     if (
       typeof url !== "string" ||
       !/^https:\/\/(?:[a-z0-9-]+\.)?mercadopago\.com(?:\.ar)?\//.test(url)
     )
       fail(503, "Checkout no disponible en el entorno configurado");
     await db.query(
-      "update orders set preference_id=$1,checkout_url=$2 where id=$3",
-      [String(pref.id), url, o.id],
+      "update orders set mercadopago_order_id=$1,checkout_url=$2,payment_environment=$3 where id=$4",
+      [p.id, url, process.env.MERCADOPAGO_ENV, o.id],
     );
     return { url };
   });
@@ -195,13 +305,14 @@ export async function applyPayment(
   live: boolean,
 ) {
   const p = providerPaymentSchema.parse(input),
-    provider = String(p.id),
     o = (
       await db.query<Order>("select * from orders where id=$1 for update", [
         p.external_reference,
       ])
     ).rows[0];
   if (!o) fail(422, "Orden desconocida");
+  if (o.mercadopago_order_id)
+    fail(422, "Esta orden requiere una notificación de Orders API");
   if (
     String(p.collector_id) !== collector ||
     p.live_mode !== live ||
@@ -209,6 +320,10 @@ export async function applyPayment(
     Math.abs(p.transaction_amount * 100 - o.amount_minor) > 0.001
   )
     fail(422, "El pago no coincide con la orden");
+  return settleOrder(db, o, p);
+}
+async function settleOrder(db: DB, o: Order, p: ProviderPayment) {
+  const provider = String(p.id);
   const previous = (
     await db.query<{ order_id: string; updated_at: string }>(
       "select order_id,updated_at from payments where provider_id=$1",
@@ -291,6 +406,58 @@ export async function applyPayment(
   );
   return { processed: true };
 }
+export async function applyProviderOrder(
+  db: DB,
+  input: ProviderOrder,
+  account: { id: string; live: boolean },
+) {
+  const p = providerOrderSchema.parse(input);
+  const o = (
+    await db.query<Order>("select * from orders where id=$1 for update", [
+      p.external_reference,
+    ])
+  ).rows[0];
+  if (!o) fail(422, "Orden desconocida");
+  checkProviderOrder(p, o, account);
+  if (
+    o.mercadopago_order_id !== p.id ||
+    o.payment_environment !== (account.live ? "production" : "sandbox")
+  )
+    fail(422, "Identificador o entorno de order incorrecto");
+  const chargeback =
+    p.status === "charged_back" || !!p.transactions?.chargebacks?.length;
+  const refund =
+    p.status === "refunded" ||
+    p.status_detail === "partially_refunded" ||
+    p.transactions?.refunds?.some((r) => r.status === "processed");
+  const approved = p.status === "processed" && p.status_detail === "accredited";
+  if (
+    approved &&
+    !refund &&
+    !chargeback &&
+    minor(p.total_paid_amount) !== o.amount_minor
+  )
+    fail(422, "El importe acreditado no coincide con la orden");
+  // One aggregate record prevents an earlier approved attempt surviving a refund.
+  return settleOrder(db, o, {
+    id: `mp-order:${p.id}`,
+    external_reference: o.id,
+    collector_id: account.id,
+    live_mode: account.live,
+    transaction_amount: o.amount_minor / 100,
+    currency_id: o.currency,
+    date_last_updated: p.last_updated_date,
+    status: chargeback
+      ? "charged_back"
+      : refund
+        ? "refunded"
+        : approved
+          ? "approved"
+          : ["failed", "canceled", "expired"].includes(p.status)
+            ? "rejected"
+            : "pending",
+  });
+}
 export async function webhook(request: Request) {
   if (!paymentConfigured()) fail(503, "Webhook pendiente de configuración");
   const url = new URL(request.url),
@@ -307,10 +474,23 @@ export async function webhook(request: Request) {
     fail(401, "Firma de webhook inválida");
   const body = await jsonBody(request);
   if (
-    body.type !== "payment" ||
+    !["order", "payment"].includes(body.type) ||
     String(body.data?.id).toLowerCase() !== id.toLowerCase()
   )
     fail(422, "Notificación incompatible");
+  if (body.type === "order") {
+    if (!/^ORD[A-Z0-9]+$/i.test(id))
+      fail(422, "Identificador de order inválido");
+    const account = await providerAccount();
+    if (body.live_mode !== account.live || String(body.user_id) !== account.id)
+      fail(422, "La notificación pertenece a otro entorno o vendedor");
+    const p = providerOrderSchema.parse(
+      await mp(`/v1/orders/${encodeURIComponent(id)}`),
+    );
+    if (p.id.toLowerCase() !== id.toLowerCase())
+      fail(422, "Identificador de order incorrecto");
+    return transaction((db) => applyProviderOrder(db, p, account));
+  }
   const p = providerPaymentSchema.parse(
     await mp(`/v1/payments/${encodeURIComponent(id)}`),
   );

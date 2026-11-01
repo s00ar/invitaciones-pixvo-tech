@@ -135,6 +135,21 @@ $pixvo_migration_2$;
   end if;
 end $pixvo_apply_2$;
 
+do $pixvo_apply_3$ begin
+  if not exists (select 1 from public.pixvo_migrations where name='202611010004_mercadopago_orders.sql') then
+    execute $pixvo_migration_3$
+-- Additive: legacy preferences and payment history remain intact.
+alter table orders add column mercadopago_order_id text unique;
+alter table orders add column payment_environment text
+  check (payment_environment in ('sandbox','production'));
+alter table orders add constraint orders_provider_environment
+  check ((mercadopago_order_id is null) = (payment_environment is null));
+
+$pixvo_migration_3$;
+    insert into public.pixvo_migrations(name) values('202611010004_mercadopago_orders.sql');
+  end if;
+end $pixvo_apply_3$;
+
 insert into public.templates(id,version,category,config) values('pixvo-editorial-minimal',1,'weddings','{"id":"pixvo-editorial-minimal","version":1,"name":"Votos Editoriales","category":"weddings","tier":"standard","family":"editorial","freeStyle":false,"theme":{"accent":"#6d6351","background":"#14100a","foreground":"#ffffff","headingFont":"Playfair Display","bodyFont":"Inter Tight","radius":8},"backgroundAsset":"assets/backgrounds/pixvo-editorial-minimal.svg","blocks":["hero","countdown","venues","message","rsvp"],"optionalBlocks":["calendar","gallery","dressCode","gifts","music","social","songRequests","agenda"],"layoutNotes":"Hero centrado, tipografía serif, separadores finos y espacios amplios."}'::jsonb) on conflict(id) do nothing;
 
 insert into public.templates(id,version,category,config) values('pixvo-romantic-garden',1,'weddings','{"id":"pixvo-romantic-garden","version":1,"name":"Jardín de Seda","category":"weddings","tier":"standard","family":"ornamental","freeStyle":false,"theme":{"accent":"#f0b5b5","background":"#1a0d10","foreground":"#ffffff","headingFont":"DM Serif Display","bodyFont":"Inter Tight","radius":8},"backgroundAsset":"assets/backgrounds/pixvo-romantic-garden.svg","blocks":["hero","countdown","venues","message","rsvp"],"optionalBlocks":["calendar","gallery","dressCode","gifts","music","social","songRequests","agenda"],"layoutNotes":"Marco ornamental, nombres protagonistas y tarjetas delicadas."}'::jsonb) on conflict(id) do nothing;

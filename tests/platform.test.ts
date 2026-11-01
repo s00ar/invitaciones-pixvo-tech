@@ -17,11 +17,13 @@ import {
 import { csv, calendarICS } from "../src/domain/format";
 import {
   applyPayment,
+  applyProviderOrder,
   verifySignature,
   createOrder,
   checkout,
   webhook,
   type ProviderPayment,
+  type ProviderOrder,
 } from "../src/server/payments";
 import {
   createInvitation,
@@ -147,7 +149,7 @@ describe("documento y exportación", () => {
       MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
       MERCADOPAGO_WEBHOOK_SECRET: "test-only-secret",
       MERCADOPAGO_COLLECTOR_ID: "test-merchant",
-      NEXT_PUBLIC_APP_URL: "https://example.test",
+      NEXT_PUBLIC_APP_URL: "https://example.test/",
       MERCADOPAGO_ENV: "sandbox",
     }))
       vi.stubEnv(key, value);
@@ -343,7 +345,7 @@ describe("pagos verificados e idempotencia", () => {
       MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
       MERCADOPAGO_WEBHOOK_SECRET: "test-only-secret",
       MERCADOPAGO_COLLECTOR_ID: "test-merchant",
-      NEXT_PUBLIC_APP_URL: "https://example.test",
+      NEXT_PUBLIC_APP_URL: "https://example.test/",
       MERCADOPAGO_ENV: "sandbox",
     }))
       vi.stubEnv(key, value);
@@ -354,26 +356,62 @@ describe("pagos verificados e idempotencia", () => {
       );
       const order = await createOrder(a, fresh, "premium");
       expect((await createOrder(a, fresh, "premium")).id).toBe(order.id);
+      await expect(checkout(b, order.id)).rejects.toMatchObject({
+        status: 404,
+      });
+      const id = "ORDTSTCHECKOUT123";
+      const provider: ProviderOrder = {
+        id,
+        external_reference: order.id,
+        user_id: "test-merchant",
+        type: "online",
+        processing_mode: "manual",
+        currency: "ARS",
+        total_amount: "1234.50",
+        total_paid_amount: "0.00",
+        status: "created",
+        status_detail: "created",
+        last_updated_date: new Date().toISOString(),
+      };
+      fetchMock.mockResolvedValueOnce(
+        Response.json({ id: "test-merchant", tags: ["test_user"] }),
+      );
       fetchMock.mockResolvedValueOnce(
         Response.json({
-          id: "test-preference",
-          sandbox_init_point:
-            "https://sandbox.mercadopago.com.ar/checkout/v1/redirect?pref_id=test",
+          ...provider,
+          checkout_url: `https://www.mercadopago.com.ar/checkout/v1/redirect?order_id=${id}`,
+          client_token: "test-only-must-not-be-persisted",
         }),
       );
       const c = await checkout(a, order.id);
       expect((await checkout(a, order.id)).url).toBe(c.url);
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      const args = fetchMock.mock.calls[0];
-      expect(args[0]).toBe("https://api.mercadopago.com/checkout/preferences");
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      const args = fetchMock.mock.calls[1];
+      expect(args[0]).toBe("https://api.mercadopago.com/v1/orders");
+      expect(args[1]?.headers).toMatchObject({ "X-Idempotency-Key": order.id });
       const body = JSON.parse(String(args[1]?.body));
       expect(body.external_reference).toBe(order.id);
-      expect(body.items[0].unit_price).toBe(1234.5);
+      expect(body.items[0].unit_price).toBe("1234.50");
+      expect(body.total_amount).toBe("1234.50");
+      expect(body.processing_mode).toBe("manual");
+      expect(body.config.online.success_url).toBe(
+        "https://example.test/app/pagos",
+      );
+      const stored = await transaction((db) =>
+        db.query("select * from orders where id=$1", [order.id]),
+      );
+      expect(stored.rows[0]).toMatchObject({
+        mercadopago_order_id: id,
+        payment_environment: "sandbox",
+        status: "pending",
+      });
+      expect(JSON.stringify(stored.rows)).not.toContain(
+        "test-only-must-not-be-persisted",
+      );
       const ts = String(Math.floor(Date.now() / 1000)),
         rid = "stub-request",
-        id = "12345",
         sig = createHmac("sha256", "test-only-secret")
-          .update(`id:${id};request-id:${rid};ts:${ts};`)
+          .update(`id:${id.toLowerCase()};request-id:${rid};ts:${ts};`)
           .digest("hex");
       const request = (signature: string) =>
         new Request(
@@ -385,31 +423,227 @@ describe("pagos verificados e idempotencia", () => {
               "x-signature": signature,
               "x-request-id": rid,
             },
-            body: JSON.stringify({ type: "payment", data: { id } }),
+            body: JSON.stringify({
+              type: "order",
+              data: { id, status: "processed", total_paid_amount: "999999" },
+              live_mode: false,
+              user_id: "test-merchant",
+            }),
           },
         );
       await expect(webhook(request("invalid"))).rejects.toMatchObject({
         status: 401,
       });
-      expect(fetchMock).toHaveBeenCalledTimes(1);
-      const p = {
-        id,
-        external_reference: order.id,
-        collector_id: "test-merchant",
-        transaction_amount: 1234.5,
-        currency_id: "ARS",
-        status: "approved",
-        live_mode: false,
-        date_last_updated: new Date().toISOString(),
-      };
-      fetchMock.mockResolvedValueOnce(Response.json(p));
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      // Untrusted notification fields cannot grant rights: provider still pending.
+      fetchMock.mockResolvedValueOnce(
+        Response.json({ id: "test-merchant", tags: ["test_user"] }),
+      );
+      fetchMock.mockResolvedValueOnce(Response.json(provider));
+      await webhook(request(`ts=${ts},v1=${sig}`));
+      expect((await getInvitation(a, fresh)).entitlement_order_id).toBeNull();
+      fetchMock.mockResolvedValueOnce(
+        Response.json({ id: "test-merchant", tags: ["test_user"] }),
+      );
+      fetchMock.mockResolvedValueOnce(
+        Response.json({
+          ...provider,
+          status: "processed",
+          status_detail: "accredited",
+          total_paid_amount: "1234.50",
+          last_updated_date: new Date(Date.now() + 1000).toISOString(),
+        }),
+      );
       await webhook(request(`ts=${ts},v1=${sig}`));
       expect((await getInvitation(a, fresh)).entitlement_order_id).toBe(
         order.id,
       );
+      expect(fetchMock.mock.calls[5][0]).toBe(
+        `https://api.mercadopago.com/v1/orders/${id}`,
+      );
     } finally {
       fetchMock.mockRestore();
       vi.unstubAllEnvs();
+    }
+  });
+  it("bloquea credenciales del vendedor o entorno equivocado antes de crear un cobro", async () => {
+    for (const [key, value] of Object.entries({
+      PAYMENTS_ENABLED: "true",
+      MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
+      MERCADOPAGO_WEBHOOK_SECRET: "test-only-secret",
+      MERCADOPAGO_COLLECTOR_ID: "test-merchant",
+      NEXT_PUBLIC_APP_URL: "https://example.test/",
+      MERCADOPAGO_ENV: "sandbox",
+    }))
+      vi.stubEnv(key, value);
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    try {
+      const fresh = (await createInvitation(a, "pixvo-glam-pink")).id;
+      const order = await createOrder(a, fresh, "premium");
+      for (const account of [
+        { id: "test-merchant", tags: ["normal"] },
+        { id: "another-merchant", tags: ["test_user"] },
+      ]) {
+        fetchMock.mockResolvedValueOnce(Response.json(account));
+        await expect(checkout(a, order.id)).rejects.toMatchObject({
+          status: 503,
+        });
+      }
+      expect(
+        fetchMock.mock.calls.every(
+          ([url]) => url === "https://api.mercadolibre.com/users/me",
+        ),
+      ).toBe(true);
+    } finally {
+      fetchMock.mockRestore();
+      vi.unstubAllEnvs();
+    }
+  });
+  async function ordersFixture() {
+    const fresh = (await createInvitation(a, "pixvo-glam-pink")).id;
+    const { o } = await paid(fresh);
+    const id = `ORDTST${randomUUID().replaceAll("-", "").toUpperCase()}`;
+    await transaction((db) =>
+      db.query(
+        "update orders set mercadopago_order_id=$1,payment_environment='sandbox' where id=$2",
+        [id, o],
+      ),
+    );
+    const p: ProviderOrder = {
+      id,
+      external_reference: o,
+      user_id: "test-merchant",
+      type: "online",
+      processing_mode: "manual",
+      currency: "ARS",
+      total_amount: "1234.50",
+      total_paid_amount: "1234.50",
+      status: "processed",
+      status_detail: "accredited",
+      last_updated_date: new Date().toISOString(),
+    };
+    return { fresh, o, p };
+  }
+  const account = { id: "test-merchant", live: false };
+  it("rechaza order, vendedor, entorno, moneda, importe y acreditación ajenos", async () => {
+    const { p } = await ordersFixture();
+    for (const bad of [
+      { id: "ORDOTHER" },
+      { external_reference: randomUUID() },
+      { user_id: "other" },
+      { currency: "USD" },
+      { total_amount: "1.00" },
+      { total_paid_amount: "1.00" },
+    ]) {
+      await expect(
+        transaction((db) => applyProviderOrder(db, { ...p, ...bad }, account)),
+      ).rejects.toMatchObject({ status: 422 });
+    }
+    await expect(
+      transaction((db) =>
+        applyProviderOrder(db, p, { ...account, live: true }),
+      ),
+    ).rejects.toMatchObject({ status: 422 });
+    await expect(
+      transaction((db) =>
+        applyPayment(
+          db,
+          {
+            id: randomUUID(),
+            external_reference: p.external_reference,
+            collector_id: account.id,
+            live_mode: false,
+            currency_id: "ARS",
+            transaction_amount: 1234.5,
+            status: "approved",
+            date_last_updated: p.last_updated_date,
+          },
+          account.id,
+          false,
+        ),
+      ),
+    ).rejects.toMatchObject({ status: 422 });
+  });
+  it("procesa Orders concurrentes una vez, ignora estados viejos y pausa ante devoluciones sin perder RSVP", async () => {
+    for (const status of [
+      "refunded",
+      "charged_back",
+      "partially_refunded",
+    ] as const) {
+      const { fresh, o, p } = await ordersFixture();
+      const outcomes = await Promise.all([
+        transaction((db) => applyProviderOrder(db, p, account)),
+        transaction((db) => applyProviderOrder(db, p, account)),
+      ]);
+      expect(outcomes.filter((r) => "duplicate" in r)).toHaveLength(1);
+      const i = await getInvitation(a, fresh);
+      const { slug } = await publish(a, fresh, i.revision);
+      await respond(
+        slug,
+        { name: "Invitado", response: "yes", attendees: 1 },
+        `orders-${o}`,
+      );
+      await expect(
+        transaction((db) =>
+          applyProviderOrder(
+            db,
+            {
+              ...p,
+              status: "processing",
+              status_detail: "in_process",
+              last_updated_date: new Date(
+                Date.parse(p.last_updated_date) - 1000,
+              ).toISOString(),
+            },
+            account,
+          ),
+        ),
+      ).resolves.toEqual({ stale: true });
+      const reversed: ProviderOrder = {
+        ...p,
+        status: status === "partially_refunded" ? "processed" : status,
+        status_detail: status,
+        last_updated_date: new Date(
+          Date.parse(p.last_updated_date) + 1000,
+        ).toISOString(),
+      };
+      await transaction((db) => applyProviderOrder(db, reversed, account));
+      expect(await getInvitation(a, fresh)).toMatchObject({
+        status: "paused",
+        entitlement: null,
+        entitlement_order_id: o,
+      });
+      expect(await responses(a, fresh)).toHaveLength(1);
+      await expect(getPublic(slug)).rejects.toMatchObject({ status: 404 });
+      await expect(
+        transaction((db) => applyProviderOrder(db, p, account)),
+      ).resolves.toEqual({ duplicate: true });
+      expect((await getInvitation(a, fresh)).entitlement).toBeNull();
+    }
+  });
+  it("mantiene pendientes los estados no acreditados y registra el rechazo", async () => {
+    for (const [status, detail] of [
+      ["created", "created"],
+      ["processing", "in_process"],
+      ["action_required", "waiting_capture"],
+      ["failed", "processing_error"],
+      ["canceled", "canceled"],
+    ] as const) {
+      const { p, fresh, o } = await ordersFixture();
+      await transaction((db) =>
+        applyProviderOrder(
+          db,
+          { ...p, status, status_detail: detail, total_paid_amount: "0" },
+          account,
+        ),
+      );
+      expect((await getInvitation(a, fresh)).entitlement).toBeNull();
+      const row = await transaction((db) =>
+        db.query("select status from orders where id=$1", [o]),
+      );
+      expect(row.rows[0].status).toBe(
+        ["failed", "canceled"].includes(status) ? "rejected" : "pending",
+      );
     }
   });
   it("verifica HMAC, datos firmados y ventana de replay", () => {

@@ -15,3 +15,9 @@ Capturas generadas con Chromium y datos ficticios en la base de tests aislada.
 El QR se decodifica automáticamente y coincide con la URL abierta desde otro contexto de navegador. No se comprobó todavía el escaneo con cámara física ni Safari/iOS. Las comprobaciones axe se ejecutan en landing, catálogo, login, preview y las cinco muestras personalizadas; no certifican por sí solas toda la accesibilidad de contenido personalizado por clientes.
 
 Las rutas localhost de las capturas pertenecen al servidor de test efímero en puerto 3001. Los pagos usados en ese recorrido son fixtures; no son una transacción de Mercado Pago sandbox.
+
+## Orders API (2026-11-01)
+
+Contrato HTTP aislado: cuenta del vendedor, POST /v1/orders con UUID idempotente, reuse de checkout, montos string y retornos sin barra doble; respuesta client_token descartada. HMAC inválido no consulta al proveedor. Un webhook con datos de acreditación falsos sigue pendiente si el GET de la order no confirma el pago. Se prueba acreditación, importe parcial rechazado, moneda/vendedor/entorno/ID ajenos, concurrencia, duplicados, estados viejos, devolución parcial/total y contracargo preservando RSVP. Los tests E2E usan fixtures; queda pendiente la compra en el sandbox externo.
+
+El SQL se prueba contra PostgreSQL local: nueva instalación, repetición sin sobrescrituras y upgrade desde tres migraciones conservando órdenes heredadas. El primer test nuevo falló con `AssertionError: expected -1 to be greater than 0` al buscar `do $pixvo_migration_3$`; el bloque del generador se llama `do $pixvo_apply_3$`. Tras corregir el selector, `vitest run tests/bootstrap.test.ts` pasa 3/3. La migración no necesitó cambios para resolverlo.

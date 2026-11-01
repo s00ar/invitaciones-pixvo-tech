@@ -32,7 +32,7 @@ it("el SQL entregado aplica el esquema completo una vez y conserva ajustes y dat
     expect((await db.query("select * from templates")).rows).toHaveLength(27);
     expect(
       (await db.query("select * from pixvo_migrations")).rows,
-    ).toHaveLength(3);
+    ).toHaveLength(4);
     expect(
       (
         await db.query<{ price_minor: number }>(
@@ -109,6 +109,63 @@ it("el bootstrap rechaza una base ajena sin cambios parciales", async () => {
         )
       ).rows.map((r) => r.table_name),
     ).toEqual(["unrelated"]);
+  } finally {
+    await db.close();
+  }
+});
+
+it("actualiza una base de tres migraciones conservando órdenes previas y restringe asociación de proveedor", async () => {
+  const db = await emptySupabaseFixture();
+  const sql = await buildBootstrapSQL();
+  const marker = "do $pixvo_apply_3$";
+  const start = sql.indexOf(marker);
+  const end =
+    sql.indexOf("end $pixvo_apply_3$;", start) + "end $pixvo_apply_3$;".length;
+  try {
+    expect(start).toBeGreaterThan(0);
+    await db.exec(sql.slice(0, start) + sql.slice(end));
+    await db.exec(`
+      insert into auth.users(id) values('11111111-1111-4111-8111-111111111111');
+      insert into profiles(id) values('11111111-1111-4111-8111-111111111111');
+      insert into invitations(id,owner_id,slug,draft_json) values('22222222-2222-4222-8222-222222222222','11111111-1111-4111-8111-111111111111','orders-upgrade','{}');
+      insert into orders(id,owner_id,invitation_id,plan_snapshot,amount_minor,currency,preference_id,checkout_url) values('33333333-3333-4333-8333-333333333333','11111111-1111-4111-8111-111111111111','22222222-2222-4222-8222-222222222222','{"id":"standard"}',3500000,'ARS','legacy-fixture','https://www.mercadopago.com.ar/checkout/legacy');
+    `);
+    expect(
+      (await db.query("select * from pixvo_migrations")).rows,
+    ).toHaveLength(3);
+    await db.exec(sql);
+    expect(
+      (await db.query("select * from pixvo_migrations")).rows,
+    ).toHaveLength(4);
+    expect(
+      (
+        await db.query(
+          "select preference_id,amount_minor,mercadopago_order_id,payment_environment from orders",
+        )
+      ).rows,
+    ).toEqual([
+      {
+        preference_id: "legacy-fixture",
+        amount_minor: 3500000,
+        mercadopago_order_id: null,
+        payment_environment: null,
+      },
+    ]);
+    await expect(
+      db.query("update orders set mercadopago_order_id='ORDTSTUPGRADE'"),
+    ).rejects.toMatchObject({ code: "23514" });
+    await db.query(
+      "update orders set mercadopago_order_id='ORDTSTUPGRADE',payment_environment='sandbox'",
+    );
+    await expect(
+      db.query(
+        "insert into orders(id,owner_id,invitation_id,plan_snapshot,amount_minor,currency,mercadopago_order_id,payment_environment) select '44444444-4444-4444-8444-444444444444',owner_id,invitation_id,plan_snapshot,amount_minor,currency,mercadopago_order_id,payment_environment from orders",
+      ),
+    ).rejects.toMatchObject({ code: "23505" });
+    await db.exec(sql);
+    expect(
+      (await db.query("select mercadopago_order_id from orders")).rows[0],
+    ).toEqual({ mercadopago_order_id: "ORDTSTUPGRADE" });
   } finally {
     await db.close();
   }
