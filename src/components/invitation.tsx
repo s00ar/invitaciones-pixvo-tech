@@ -823,6 +823,7 @@ export function InvitationRenderer({
     "--inv-body": fontStack(d.theme.bodyFont),
     "--inv-radius": `${d.theme.radius}px`,
     "--inv-scale": d.theme.scale,
+    "--inv-button-scale": d.theme.buttonScale ?? 1,
     "--inv-spacing": d.theme.spacing,
     ...(sample
       ? {

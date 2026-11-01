@@ -221,6 +221,12 @@
           "minimum": 0.7,
           "maximum": 1.5
         },
+        "buttonScale": {
+          "default": 1,
+          "type": "number",
+          "minimum": 0.7,
+          "maximum": 1.25
+        },
         "spacing": {
           "type": "number",
           "minimum": 0.5,
@@ -253,6 +259,7 @@
         "focusY",
         "align",
         "scale",
+        "buttonScale",
         "spacing"
       ],
       "additionalProperties": false

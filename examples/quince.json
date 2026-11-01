@@ -26,6 +26,7 @@
     "focusY": 50,
     "align": "center",
     "scale": 1,
+    "buttonScale": 1,
     "spacing": 1
   },
   "blocks": [

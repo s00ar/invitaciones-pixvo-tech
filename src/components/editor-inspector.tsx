@@ -441,6 +441,27 @@ export function EditorInspector({ id, d, selected, change }: Props) {
               (v) => theme("posterId", v),
               "image/",
             )}
+            <label className="field">
+              <span>
+                Tamaño de botones:{" "}
+                {Math.round((d.theme.buttonScale ?? 1) * 100)}%
+              </span>
+              <input
+                aria-label="Tamaño de botones"
+                type="range"
+                min={70}
+                max={125}
+                step={5}
+                value={Math.round((d.theme.buttonScale ?? 1) * 100)}
+                onChange={(e) =>
+                  theme("buttonScale", Number(e.target.value) / 100)
+                }
+              />
+              <small>
+                Ajusta los botones de la invitación y los íconos de video, sin
+                cambiar el tamaño de los títulos.
+              </small>
+            </label>
             {(
               [
                 "overlay",

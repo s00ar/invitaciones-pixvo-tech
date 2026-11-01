@@ -67,6 +67,12 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
   const video = page.locator(".canvas-frame video");
   await select.selectOption(ids[0]);
   await page
+    .getByRole("slider", { name: "Tamaño de botones", exact: true })
+    .press("Home");
+  await expect(
+    page.getByRole("button", { name: "Reproducir video", exact: true }),
+  ).toHaveCSS("width", "32px");
+  await page
     .getByRole("button", { name: "Reproducir video", exact: true })
     .click();
   await advancing(video);
@@ -130,6 +136,9 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
     .getByRole("button", { name: "Estilo y diseño", exact: true })
     .click();
   await expect(
+    page.getByRole("slider", { name: "Tamaño de botones", exact: true }),
+  ).toHaveValue("70");
+  await expect(
     page.getByRole("checkbox", {
       name: "Reproducción automática sin sonido",
       exact: true,
@@ -175,6 +184,10 @@ test("video real: cargar, reemplazar, controles, preview y publicación privada"
       404,
     );
     await visitor.goto("/i/e2e-video");
+    await expect(visitor.locator(".video-toggle").first()).toHaveCSS(
+      "width",
+      "32px",
+    );
     // A fresh visitor starts without a gesture, silently, and repeats at the end.
     expect(
       await visitor

@@ -82,6 +82,93 @@ test("cuenta regresiva cabe en canvas móvil con navegador desktop", async ({
   }
 });
 
+test("tamaño de botones: cinco familias, muestras, guardado y preview móvil", async ({
+  page,
+}) => {
+  const id = await draft(page);
+  await page.goto(`/app/invitaciones/${id}/editar`);
+  await page.getByRole("button", { name: "Vista móvil", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Estilo y diseño", exact: true })
+    .click();
+  const size = page.getByRole("slider", {
+    name: "Tamaño de botones",
+    exact: true,
+  });
+  const cta = page.locator(".canvas-frame .inv-hero a.inv-button");
+  const headerButton = page.getByRole("button", {
+    name: "Preview",
+    exact: true,
+  });
+  const headerSize = await headerButton.boundingBox();
+  async function smaller() {
+    await size.press("Home");
+    for (let i = 0; i < 6; i++) await size.press("ArrowRight");
+    await expect(size).toHaveValue("100");
+    const original = await cta.boundingBox();
+    const padding = await cta.evaluate((node) =>
+      parseFloat(getComputedStyle(node).paddingLeft),
+    );
+    await size.press("Home");
+    await expect(size).toHaveValue("70");
+    const reduced = await cta.boundingBox();
+    // Editorial's narrow grid can constrain both sizes to the same column width.
+    expect(reduced!.width).toBeLessThanOrEqual(original!.width);
+    expect(reduced!.height).toBeLessThan(original!.height);
+    expect(reduced!.height).toBeGreaterThanOrEqual(32);
+    expect(
+      await cta.evaluate((node) =>
+        parseFloat(getComputedStyle(node).paddingLeft),
+      ),
+    ).toBeLessThan(padding);
+  }
+  for (const family of [
+    "party",
+    "editorial",
+    "ornamental",
+    "kids",
+    "corporate",
+  ]) {
+    await page
+      .getByRole("combobox", { name: /^Composición/ })
+      .selectOption(family);
+    await smaller();
+  }
+  const sample = page.getByRole("combobox", {
+    name: "Muestra personalizada XV",
+    exact: true,
+  });
+  for (const style of ["romantic", "neon", "royal", "butterfly", "envelope"]) {
+    await sample.selectOption(style);
+    await smaller();
+  }
+  await page
+    .getByRole("combobox", { name: "Template", exact: true })
+    .selectOption("pixvo-editorial-minimal");
+  await page
+    .getByRole("button", { name: "Aplicar este diseño", exact: true })
+    .click();
+  await expect(size).toHaveValue("70");
+  await expect(page.locator(".editor-title small")).toContainText("Guardado");
+  expect((await headerButton.boundingBox())!.width).toBe(headerSize!.width);
+  await page.reload();
+  await page
+    .getByRole("button", { name: "Estilo y diseño", exact: true })
+    .click();
+  await expect(size).toHaveValue("70");
+  const stored = await (
+    await page.request.get(`/api/invitations/${id}`)
+  ).json();
+  expect(stored.draft_json.theme.buttonScale).toBe(0.7);
+  await headerButton.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.locator(".invitation")).toHaveCSS(
+    "--inv-button-scale",
+    "0.7",
+  );
+  await dialog.getByRole("button", { name: "Cerrar", exact: true }).click();
+});
+
 test("medios: rangos de sufijo, rango abierto y HEAD conservan privacidad", async ({
   page,
   browser,

@@ -217,6 +217,7 @@ export const documentSchema = z
         focusY: z.number().min(0).max(100),
         align: z.enum(["left", "center", "right"]),
         scale: z.number().min(0.7).max(1.5),
+        buttonScale: z.number().min(0.7).max(1.25).default(1),
         spacing: z.number().min(0.5).max(2),
         sampleStyle: z.enum(sampleStyles).optional(),
       })
@@ -374,6 +375,7 @@ export function changeTemplate(
       videoId: d.theme.videoId,
       videoAutoplay: d.theme.videoAutoplay ?? false,
       videoLoop: d.theme.videoLoop ?? false,
+      buttonScale: d.theme.buttonScale ?? 1,
       posterId: d.theme.posterId,
     },
     blocks: d.blocks,

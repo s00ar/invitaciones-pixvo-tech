@@ -1037,15 +1037,19 @@ small {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+  width: max(32px, calc(44px * var(--inv-button-scale, 1)));
+  height: max(32px, calc(44px * var(--inv-button-scale, 1)));
+  min-width: max(32px, calc(44px * var(--inv-button-scale, 1)));
   padding: 0;
   border-radius: 50%;
   vertical-align: middle;
 }
 .video-toggle svg {
   flex-shrink: 0;
+}
+.invitation .video-toggle svg {
+  width: max(14px, calc(18px * var(--inv-button-scale, 1)));
+  height: max(14px, calc(18px * var(--inv-button-scale, 1)));
 }
 .hero-video {
   position: absolute;
@@ -1092,19 +1096,26 @@ small {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: calc(12px * var(--inv-button-scale, 1));
   border: 1px solid currentColor;
   border-radius: var(--inv-radius);
   background: var(--inv-accent);
   color: var(--inv-bg);
-  padding: 12px 22px;
-  font-size: 12px;
+  padding: calc(12px * var(--inv-button-scale, 1))
+    calc(22px * var(--inv-button-scale, 1));
+  font-size: max(10px, calc(12px * var(--inv-button-scale, 1)));
+  min-height: 32px;
   line-height: 1.5;
   margin-top: 20px;
   font-weight: 600;
   max-width: 100%;
   overflow-wrap: anywhere;
   white-space: normal;
+}
+.inv-button svg {
+  flex-shrink: 0;
+  width: max(12px, calc(16px * var(--inv-button-scale, 1)));
+  height: max(12px, calc(16px * var(--inv-button-scale, 1)));
 }
 .inv-section {
   padding: calc(75px * var(--inv-spacing)) 7%;

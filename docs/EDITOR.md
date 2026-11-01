@@ -6,7 +6,7 @@ Desktop: navegación de bloques izquierda, canvas central, inspector derecho; ba
 | Grupo | Campos / reglas |
 |---|---|
 | Evento | categoría, título, anfitriones, mensaje, inicio/fin, zona, fecha límite RSVP |
-| Estilo | paleta, título/body de lista segura, escala tipográfica, radios, espaciado, alineación |
+| Estilo | paleta, título/body de lista segura, escala tipográfica, tamaño de botones (70–125%), radios, espaciado, alineación |
 | Fondo | SVG propio, imagen, video, color/gradiente; foco x/y, recorte, overlay y poster |
 | Ubicaciones | nombre, dirección, hora, URL Maps validada; múltiples sedes |
 | Galería | upload, ordenar, alt, leyenda, borrar y recorte no destructivo |
@@ -22,6 +22,7 @@ Desktop: navegación de bloques izquierda, canvas central, inspector derecho; ba
 Documento con schemaVersion, templateVersion y revision. Autosave con debounce propuesto de 800 ms y estados Guardando/Guardado/Sin conexión/Error. Cola local de recuperación con aviso: no sustituye base remota. Comprobar revisión para no pisar cambios entre pestañas (409).
 Undo/redo local hasta 50 operaciones; guardar snapshot antes de cambiar template. Reordenar también con teclado; solo los bloques declarados repetibles admiten duplicación. Secciones obligatorias protegidas.
 Al cambiar plantilla, mapear contenido semántico; mantener medios y RSVP. Cambios incompatibles requieren una confirmación específica mostrando qué se pierde.
+El control Tamaño de botones cambia texto, padding e íconos de los botones de la invitación, incluidos play/pausa y sonido; no modifica las herramientas del editor. Se guarda como `theme.buttonScale`, con 100% por defecto para documentos existentes. Se conserva al cambiar template o muestra y se aplica en preview y publicación. Altura mínima de 32 px e íconos de video de al menos 32 × 32 px. Editar el borrador no altera la versión publicada hasta republicar.
 Vista previa usa el renderer público con documento de borrador y marcas Preview; botones de RSVP/pago no transmiten datos. Preview no indexable y privada con acceso firmado/expiración.
 Publicación crea snapshot inmutable dentro de transacción; rollback cambia publishedVersionId a una versión previa autorizada sin perder respuestas. Assets de versiones publicadas se conservan mientras existan referencias.
 
