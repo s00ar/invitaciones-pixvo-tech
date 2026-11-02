@@ -17,6 +17,24 @@ import { googleCalendarUrl } from "@/domain/format";
 
 import "./azul-invitation.css";
 
+function OrnamentalCrown() {
+  return <svg className="azul-crown" viewBox="0 0 180 68" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 56 Q90 43 165 56 L161 62 Q90 51 19 62 Z" />
+    <path d="M18 55 9 29 Q27 32 35 47 L42 18 Q60 26 65 44 L90 5 115 44 Q120 26 138 18 L145 47 Q153 32 171 29 L162 55" />
+    <path d="M90 12 C69 31 74 44 90 49 C106 44 111 31 90 12Z M90 20V47 M90 38 C68 24 66 44 85 45 M90 38 C112 24 114 44 95 45" />
+    <path d="M43 25 C32 39 38 48 51 49 C61 41 54 32 43 25Z M44 33 50 48 M137 25 C148 39 142 48 129 49 C119 41 126 32 137 25Z M136 33 130 48" />
+    <path d="M21 40 Q18 50 30 52 M159 40 Q162 50 150 52 M61 49 Q65 39 71 48 M119 49 Q115 39 109 48" />
+    <circle cx="90" cy="5" r="2.4" fill="currentColor" /><circle cx="42" cy="18" r="2" fill="currentColor" /><circle cx="138" cy="18" r="2" fill="currentColor" /><circle cx="9" cy="29" r="2" fill="currentColor" /><circle cx="171" cy="29" r="2" fill="currentColor" />
+  </svg>;
+}
+
+function ButterflyDetail() {
+  return <svg className="azul-butterfly" viewBox="0 0 60 56" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.2">
+    <path d="M30 27C15 1 1 6 9 25Q11 31 24 32C5 29 12 54 28 37M30 27C45 1 59 6 51 25Q49 31 36 32C55 29 48 54 32 37M30 22V42M29 24Q23 14 20 16M31 24Q37 14 40 16M27 29 12 16M33 29 48 16M26 35 17 42M34 35 43 42" />
+    <path d="M23 25Q12 10 13 22M37 25Q48 10 47 22M24 37Q15 33 18 40M36 37Q45 33 42 40" />
+  </svg>;
+}
+
 export function AzulInvitation({
   document: d,
   slug,
@@ -151,9 +169,7 @@ export function AzulInvitation({
         </div>
         <div className="azul-envelope">
           <div className="azul-envelope-card">
-            <span className="azul-crown" aria-hidden="true">
-              ♕
-            </span>
+            <OrnamentalCrown />
             <span className="azul-script">{name}</span>
             <span className="azul-kicker">MIS QUINCE AÑOS</span>
             <span>{numericDate}</span>
@@ -161,11 +177,13 @@ export function AzulInvitation({
           <div className="azul-envelope-fold" aria-hidden="true">
             <div className="azul-envelope-lettering">
               <span className="azul-kicker">MIS XV</span>
+              <OrnamentalCrown />
               <span className="azul-script">{name}</span>
               <span className="azul-envelope-date">{numericDate}</span>
             </div>
           </div>
           <div className="azul-envelope-cord" aria-hidden="true" />
+          <div className="azul-envelope-bouquet" aria-hidden="true" />
           <button
             className="azul-seal"
             aria-label={`Abrir invitación de ${name}`}
@@ -211,20 +229,14 @@ export function AzulInvitation({
         <section className="azul-hero">
           <div className="azul-glass">
             <div className="azul-glass-inner">
-              <span className="azul-crown" aria-hidden="true">
-                ♕
-              </span>
+              <OrnamentalCrown />
               <p className="azul-kicker">MIS QUINCE AÑOS</p>
               <h1 className="azul-script">{name}</h1>
               <p className="azul-quote">{d.event.message}</p>
               <div className="azul-date">
-                <span>{part("weekday").toUpperCase()}</span>
-                <strong>{part("day")}</strong>
-                <span>
-                  {part("month").toUpperCase()}
-                  <br />
-                  {part("year")}
-                </span>
+                <span className="azul-date-side">{part("weekday").toUpperCase()}</span>
+                <div className="azul-date-center"><span>{part("month").toUpperCase()}</span><strong>{part("day")}</strong></div>
+                <span className="azul-date-side">{part("year")}</span>
               </div>
               <p className="azul-time">
                 De {hour(d.event.startsAt)}
@@ -233,6 +245,7 @@ export function AzulInvitation({
               <span className="azul-flourish" aria-hidden="true">
                 ❧
               </span>
+              <div className="azul-butterfly-pair"><ButterflyDetail /><ButterflyDetail /></div>
               <a
                 className="azul-down"
                 href="#azul-countdown"

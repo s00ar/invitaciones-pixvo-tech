@@ -213,3 +213,6 @@ Se retiró el ramo del sobre y el fondo floral de la apertura. Se mantienen sola
 
 ### Primera apertura móvil — 2026-11-02
 El desplazamiento se realiza tras revelar el contenido y resolver las fuentes, midiendo su posición real. Se elimina el temporizador fijo y el scroll-padding global de 90px solo en la exclusiva. Respeta movimiento reducido y mantiene audio dentro del gesto del usuario. Lint, build/tipos y WebKit 2/2 aprobados; regresión móvil390 con tipografía demorada exige contenido alineado a menos de 2px del inicio. Captura local inspeccionada.
+
+### Detalles ornamentales — 2026-11-02
+Corona original SVG sobre el nombre en sobre e interior, fecha con mes arriba/día protagonista y líneas laterales, mariposas doradas decorativas en la tarjeta. Por confirmación explícita se repone solo el ramo conectado al sello; fondo exterior conserva marfil simple. Lint, build/tipos y WebKit 2/2 aprobados, incluyendo regresión de primera apertura móvil y capturas inspeccionadas. Sin cambios de datos del evento.

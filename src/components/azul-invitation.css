@@ -137,7 +137,8 @@ html:has(.azul-page) {
 }
 .azul-envelope-card .azul-script { font-size: 65px; }
 .azul-envelope-card > span:last-child { font-size: 14px; letter-spacing: 3px; }
-.azul-crown { font-size: 40px; line-height: 1.1; color: var(--gold); }
+.azul-crown { display: block; width: 140px; height: 54px; margin: 0 auto 10px; color: var(--gold); }
+.azul-envelope-lettering .azul-crown { width: 128px; height: 48px; margin: 9px auto 0; }
 .azul-envelope-fold {
   position: absolute;
   inset: 0 0 0 0;
@@ -280,8 +281,8 @@ html:has(.azul-page) {
 .azul-date strong {
   font-size: 66px;
   font-weight: 400;
-  border-inline: 1px solid #ad9463;
-  padding: 0 22px;
+  display: block;
+  padding: 0 12px;
   line-height: 1.15;
   color: var(--gold);
 }
@@ -630,3 +631,23 @@ html:has(.azul-page) {
   flex-direction: column;
   gap: 12px;
 }
+
+.azul-date { align-items: end; gap: 16px; }
+.azul-date-side { border-block: 1px solid #ad9463; padding: 7px 4px; margin-bottom: 12px; min-width: 70px; }
+.azul-date-center > span { font-size: 13px; letter-spacing: 2px; color: var(--gold); }
+@media (max-width: 650px) { .azul-date { gap: 10px; } .azul-date-side { min-width: 60px; letter-spacing: 1px; } .azul-date-center > span { font-size: 11px; letter-spacing: 1px; } }
+.azul-envelope-bouquet {
+  position: absolute;
+  width: 62%;
+  height: 55%;
+  left: 1%;
+  top: 31%;
+  background: url('/assets/exclusives/azul/dried-bouquet.webp') center / contain no-repeat;
+  transform: rotate(-14deg);
+  filter: drop-shadow(2px 3px 2px #58493625);
+  pointer-events: none;
+}
+.azul-glass-inner { position: relative; }
+.azul-butterfly-pair { position: absolute; left: 14px; bottom: 18px; display: flex; gap: 3px; align-items: end; color: var(--gold); pointer-events: none; }
+.azul-butterfly { width: 35px; height: 36px; transform: rotate(-22deg); }
+.azul-butterfly + .azul-butterfly { width: 25px; height: 28px; transform: translateY(-22px) rotate(18deg); }
