@@ -184,3 +184,11 @@ El administrador puede registrar un pago recibido fuera del checkout o marcar co
 Registrar un pago habilita el plan; la publicación sigue siendo una acción separada. Compartir incorpora «Publicar y compartir» para una invitación con pago registrado y conserva validaciones de propietario, revisión, medios, vigencia y límites. El registro manual no expone endpoints para visitantes o propietarios sin rol admin.
 
 Pruebas locales: 86/86 unitarias/integración, lint y build con TypeScript pasan. Incluyen rechazo de propietario y rol admin revocado/simulado, importe inválido, falta de confirmación, idempotencia, snapshot de orden, bloqueo de reembolsos y publicación autorizada posterior. Chromium: 1/1 recorrido de pago manual, auditoría y publicación desde Compartir aprobado. Se corrigieron dos selectores ambiguos del test y el marcado del aviso antes de completarlo. Datos reales de clientes permanecen fuera del código y de este documento.
+
+## Calendario precargado y apertura de WhatsApp — 2026-11-02
+
+En las exclusivas, «Agendar este día» abre Google Calendar con título, inicio y fin, zona del evento, descripción, vestimenta y salón/dirección; el visitante guarda el evento en su calendario. Se usan instantes UTC y zona explícita para conservar eventos que terminan al día siguiente independientemente de la zona del dispositivo. Los datos se obtienen del documento, sin incorporar datos reales al código.
+
+Confirmar asistencia guarda la respuesta y su recibo antes de navegar directamente al enlace WhatsApp devuelto por el servidor. Se elimina el segundo botón de aviso; la navegación en la misma pestaña evita depender de ventanas emergentes después de la petición asíncrona. El invitado sigue tocando Enviar dentro de WhatsApp: no se afirma envío automático. Ante error del guardado no navega.
+
+Validación: 2 pruebas de calendario (evento nocturno, zona, datos y bloques deshabilitados) y 1 E2E Chromium de calendario/RSVP pasan. El E2E verifica error de guardado sin navegación, guardado real en la base local y apertura posterior de WhatsApp interceptado; no envía mensajes ni respuestas de prueba a clientes reales.

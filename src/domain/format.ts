@@ -44,6 +44,24 @@ const utc = (v: string) =>
     .toISOString()
     .replace(/[-:]/g, "")
     .replace(/\.\d{3}/, "");
+export function googleCalendarUrl(d: InvitationDocument) {
+  const venue = d.blocks.find((b) => b.enabled && b.type === "venues")?.props.items?.[0];
+  const dress = d.blocks.find((b) => b.enabled && b.type === "dressCode")?.props;
+  const end = d.event.endsAt ?? new Date(Date.parse(d.event.startsAt) + 7200000).toISOString();
+  const details = [d.event.message,
+    dress?.title ? `Vestimenta: ${dress.title}. ${dress.text ?? ""}` : "",
+    venue?.url ? `Cómo llegar: ${venue.url}` : "",
+  ].filter(Boolean).join("\n\n");
+  const query = new URLSearchParams({
+    action: "TEMPLATE",
+    text: d.event.title,
+    dates: `${utc(d.event.startsAt)}/${utc(end)}`,
+    ctz: d.event.timezone,
+    details,
+    location: [venue?.name, venue?.address].filter(Boolean).join(", "),
+  });
+  return `https://calendar.google.com/calendar/render?${query}`;
+}
 export function calendarICS(d: InvitationDocument, uid: string) {
   const end =
     d.event.endsAt ??

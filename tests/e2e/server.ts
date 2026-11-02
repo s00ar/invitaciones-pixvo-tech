@@ -50,6 +50,7 @@ await transaction(async (db) => {
     ["aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "e2e-celebracion"],
     ["bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "e2e-publica"],
     ["dddddddd-dddd-4ddd-8ddd-dddddddddddd", "e2e-video"],
+    ["cccccccc-cccc-4ccc-8ccc-cccccccccccc", "e2e-exclusive"],
   ]) {
     const doc = makeDocument(
       slug === "e2e-video" ? "pixvo-disco-night" : "pixvo-glam-pink",
@@ -67,6 +68,8 @@ await transaction(async (db) => {
       "insert into invitations(id,owner_id,slug,draft_json) values($1,$2,$3,$4)",
       [id, owner.id, slug, JSON.stringify(doc)],
     );
+    if (slug === "e2e-exclusive")
+      await db.query("insert into exclusive_events(event_id,design,notification_email,notification_whatsapp) values($1,'azul',$2,'+5491100000000')", [id, owner.email]);
     const order = randomUUID();
     await db.query(
       "insert into orders(id,owner_id,invitation_id,plan_snapshot,amount_minor,currency) values($1,$2,$3,$4,123450,$5)",
@@ -100,6 +103,7 @@ await transaction(async (db) => {
   }
 });
 await publish(owner, "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", 1);
+await publish(owner, "cccccccc-cccc-4ccc-8ccc-cccccccccccc", 1);
 await (await globalThis.pixvoDb)?.close();
 globalThis.pixvoDb = undefined;
 const child = spawn(

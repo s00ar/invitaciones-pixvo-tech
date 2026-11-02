@@ -13,7 +13,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { InvitationDocument } from "@/domain/document";
-import { calendarICS } from "@/domain/format";
+import { googleCalendarUrl } from "@/domain/format";
 
 import "./azul-invitation.css";
 
@@ -99,18 +99,6 @@ export function AzulInvitation({
           Math.floor(remaining / 60000) % 60,
           Math.floor(remaining / 1000) % 60,
         ];
-  function calendar() {
-    const url = URL.createObjectURL(
-      new Blob([calendarICS(d, slug ?? "exclusive-preview")], {
-        type: "text/calendar;charset=utf-8",
-      }),
-    );
-    const a = window.document.createElement("a");
-    a.href = url;
-    a.download = "invitacion.ics";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
   return (
     <main className="azul-page">
       {!slug && (
@@ -250,9 +238,9 @@ export function AzulInvitation({
               </div>
             ))}
           </div>
-          <button className="azul-button azul-outline" onClick={calendar}>
+          <a className="azul-button azul-outline" href={googleCalendarUrl(d)} target="_blank" rel="noopener noreferrer" aria-label="Agendar este día en Google Calendar">
             <CalendarDays size={16} /> Agendar este día
-          </button>
+          </a>
         </section>
         <section className="azul-section azul-venue" id="azul-lugar">
           <div className="azul-venue-art" aria-hidden="true">
@@ -375,7 +363,6 @@ function AzulRSVP({ slug }: { slug?: string }) {
     [busy, setBusy] = useState(false),
     [feedback, setFeedback] = useState(""),
     [error, setError] = useState(false);
-  const [whatsappUrl, setWhatsappUrl] = useState("");
   const receipt = useRef<string | null>(null);
   useEffect(() => {
     try {
@@ -392,7 +379,6 @@ function AzulRSVP({ slug }: { slug?: string }) {
         if (!slug || busy) return;
         setBusy(true);
         setFeedback("");
-        setWhatsappUrl("");
         const f = new FormData(e.currentTarget);
         try {
           const r = await fetch(`/api/public/${slug}/rsvp`, {
@@ -411,12 +397,15 @@ function AzulRSVP({ slug }: { slug?: string }) {
           const data = await r.json();
           if (!r.ok) throw new Error(data.error);
           receipt.current = data.token;
-          setWhatsappUrl(data.whatsappUrl ?? "");
           try {
             localStorage.setItem(`pixvo-rsvp:${slug}`, data.token);
           } catch {}
           setError(false);
           setFeedback(data.message);
+          if (data.whatsappUrl) {
+            setFeedback(`${data.message} Abriendo WhatsApp: tocá Enviar para avisarle a Vero.`);
+            window.location.assign(data.whatsappUrl);
+          }
         } catch (e) {
           setError(true);
           setFeedback(
@@ -516,22 +505,6 @@ function AzulRSVP({ slug }: { slug?: string }) {
         </p>
       )}
       {feedback && <p role={error ? "alert" : "status"}>{feedback}</p>}
-      {whatsappUrl && (
-        <div className="azul-whatsapp">
-          <a
-            className="azul-button"
-            href={whatsappUrl}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Avisar a Vero por WhatsApp
-          </a>
-          <small>
-            Tu respuesta ya está guardada. Abrí WhatsApp y tocá Enviar para
-            avisarle a Vero.
-          </small>
-        </div>
-      )}
     </form>
   );
 }
