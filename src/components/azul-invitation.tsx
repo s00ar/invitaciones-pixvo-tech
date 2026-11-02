@@ -138,7 +138,15 @@ export function AzulInvitation({
             <span className="azul-kicker">MIS QUINCE AÑOS</span>
             <span>{numericDate}</span>
           </div>
-          <div className="azul-envelope-fold" aria-hidden="true" />
+          <div className="azul-envelope-fold" aria-hidden="true">
+            <div className="azul-envelope-lettering">
+              <span className="azul-kicker">MIS XV</span>
+              <span className="azul-script">{name}</span>
+              <span className="azul-envelope-date">{numericDate}</span>
+            </div>
+          </div>
+          <div className="azul-envelope-cord" aria-hidden="true" />
+          <div className="azul-envelope-bouquet" aria-hidden="true" />
           <button
             className="azul-seal"
             aria-label={`Abrir invitación de ${name}`}

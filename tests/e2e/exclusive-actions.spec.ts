@@ -3,6 +3,13 @@ import { test, expect } from "./fixtures";
 test("agenda precargada y WhatsApp automático únicamente después de guardar asistencia", async ({ page }) => {
   await page.route("https://wa.me/**", route => route.fulfill({ contentType: "text/html", body: "<h1>WhatsApp de prueba</h1>" }));
   await page.goto("/exclusivas/e2e-exclusive", { waitUntil: "networkidle" });
+  await page.evaluate(() => document.fonts.ready);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("button", { name: /Abrir invitación/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/evidence/exclusive-envelope-mobile.png" });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: "test-results/evidence/exclusive-envelope-desktop.png" });
   await page.getByRole("button", { name: /Abrir invitación/ }).click();
   const calendar = new URL((await page.getByRole("link", { name: "Agendar este día en Google Calendar" }).getAttribute("href"))!);
   expect(calendar.hostname).toBe("calendar.google.com");

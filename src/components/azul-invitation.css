@@ -98,86 +98,112 @@
   font-size: 14px;
   font-style: italic;
 }
+
 .azul-envelope {
   position: relative;
-  width: min(500px, 87vw);
-  height: 300px;
-  margin: 80px 0 25px;
-  background: linear-gradient(140deg, #fffef5, #e7ddc9);
-  box-shadow:
-    0 20px 60px #493d3130,
-    0 0 0 1px #a8966c40;
-  transform: rotate(-3deg);
+  width: min(370px, 78vw);
+  aspect-ratio: 0.79;
+  margin: 38px 0 30px;
+  background: #eee8dc;
+  box-shadow: 12px 22px 38px #493d3138, 0 0 0 1px #a8966c40;
+  transform: rotate(-4deg);
   isolation: isolate;
 }
 .azul-envelope-card {
   position: absolute;
-  inset: -35px 30px 30px;
-  background: #fffcf3;
-  border: 1px solid #a6905d;
-  outline: 6px solid #fffcf3;
+  inset: 8px -12px 8px 20px;
+  padding: 22px;
+  background: linear-gradient(115deg, #fffef7ee, #f5f0e3d9);
+  border: 1px solid #b6a16c;
+  outline: 5px solid #fffaf0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: transform 0.8s;
-}
-.azul-envelope-card .azul-script {
-  font-size: 65px;
-}
-.azul-envelope-card > span:last-child {
-  font-size: 14px;
-  letter-spacing: 3px;
-}
-.azul-crown {
-  font-size: 40px;
-  line-height: 1.1;
+  gap: 12px;
   color: var(--gold);
+  transition: transform .8s;
 }
-.azul-envelope-fold {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(150deg, #fdf9ee, #e7dfcd);
-  clip-path: polygon(0 0, 50% 57%, 100% 0, 100% 100%, 0 100%);
-  filter: drop-shadow(0 -2px 3px #6a543040);
-}
-.azul-envelope-fold:after {
+.azul-envelope-card:after {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    35deg,
-    transparent 49.8%,
-    #b9a78050 50%,
-    transparent 50.3%
-  );
+  inset: 9px;
+  border: 1px solid #c5b587;
+  pointer-events: none;
 }
-.azul-seal {
+.azul-envelope-card .azul-script { font-size: 65px; }
+.azul-envelope-card > span:last-child { font-size: 14px; letter-spacing: 3px; }
+.azul-crown { font-size: 40px; line-height: 1.1; color: var(--gold); }
+.azul-envelope-fold {
   position: absolute;
-  left: calc(50% - 41px);
-  top: 120px;
-  border: 5px double #aa8644;
-  border-radius: 49% 51% 46% 54%;
-  width: 82px;
-  height: 82px;
-  background: radial-gradient(circle at 32% 23%, #c6ac6a, #8e6b2b 65%, #5c4119);
-  box-shadow:
-    2px 5px 10px #402d2c50,
-    inset 1px 1px 4px #f3e0a8;
-  color: #f2e0ac;
-  font:
-    46px AzulScript,
-    Georgia,
-    serif;
-  transition: transform 0.4s;
+  inset: 0 0 0 0;
+  border-radius: 0 0 95% 0 / 0 0 100% 0;
+  background: repeating-linear-gradient(12deg, #ffffff08 0 1px, #a0896805 1px 3px), linear-gradient(110deg, #f8f3e9, #e7ded0);
+  box-shadow: 5px 3px 5px #65533b35, inset -1px 0 #fffdf3;
+  transform-origin: left center;
+  transition: transform .8s;
 }
-.azul-seal:hover {
-  transform: scale(1.07);
+.azul-envelope-lettering {
+  position: absolute;
+  top: 6%;
+  left: 4%;
+  width: 77%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.is-open .azul-envelope-card {
-  transform: translateY(-45px);
+.azul-envelope-lettering .azul-script {
+  font-size: clamp(62px, 10vw, 86px);
+  text-shadow: 0 1px #fff9db;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
+.azul-envelope-date { color: #80652f; font-size: 13px; letter-spacing: 2px; }
+.azul-envelope-bouquet {
+  position: absolute;
+  width: 68%;
+  height: 66%;
+  left: -2%;
+  top: 28%;
+  background: url('/assets/exclusives/azul/dried-bouquet.webp') center / contain no-repeat;
+  filter: drop-shadow(3px 5px 2px #58493630);
+  transform: rotate(-15deg);
+  pointer-events: none;
+  transition: transform .8s, opacity .8s;
+}
+.azul-envelope-cord {
+  position: absolute;
+  left: 37%;
+  right: -10px;
+  top: 80%;
+  height: 5px;
+  border-block: 1px solid #a48a4c;
+  background: #e3d5a8;
+  box-shadow: 0 2px 2px #69552930;
+  transform: rotate(5deg);
+  pointer-events: none;
+}
+.azul-page .azul-seal {
+  position: absolute;
+  left: 28%;
+  top: 76%;
+  border: 5px double #9c8145;
+  border-radius: 48% 52% 49% 51%;
+  width: 78px;
+  height: 78px;
+  background: radial-gradient(ellipse at 30% 20%, #f2e6b9, #c8b478 40%, #ab904f 72%, #e7d8a3);
+  box-shadow: 2px 5px 7px #402d2c50, inset 0 0 0 2px #f4eac1, inset 2px 3px 5px #8f733e;
+  color: #79602e;
+  text-shadow: 1px 1px #fff1bd, -1px -1px #a99050;
+  font: 46px AzulScript, Georgia, serif;
+  transition: transform .4s;
+  cursor: pointer;
+}
+.azul-seal:hover { transform: scale(1.07); }
+.is-open .azul-envelope-card { transform: translate(24px, -22px) rotate(5deg); }
+.is-open .azul-envelope-fold { transform: perspective(900px) rotateY(-18deg); }
+.is-open .azul-envelope-bouquet { transform: translateX(-12px) rotate(-20deg); }
 .azul-open-hint {
   font-size: 13px;
   margin-bottom: 10px !important;
@@ -522,24 +548,9 @@
     padding: 38px 22px;
     min-height: calc(100svh - 50px);
   }
-  .azul-envelope {
-    height: 245px;
-    margin-top: 65px;
-    width: min(350px, 85vw);
-  }
-  .azul-envelope-card {
-    inset: -25px 22px 25px;
-  }
-  .azul-envelope-card .azul-script {
-    font-size: 55px;
-  }
-  .azul-seal {
-    top: 100px;
-    width: 72px;
-    height: 72px;
-    left: calc(50% - 36px);
-    font-size: 40px;
-  }
+  .azul-envelope { width: min(310px, 78vw); margin-top: 30px; }
+  .azul-envelope-card .azul-script { font-size: 55px; }
+  .azul-page .azul-seal { width: 66px; height: 66px; font-size: 39px; }
   .azul-nav {
     gap: 22px;
     padding: 10px 18px;
