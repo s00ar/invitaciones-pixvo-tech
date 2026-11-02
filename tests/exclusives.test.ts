@@ -9,7 +9,9 @@ import {
   responses,
   getPublic,
   createInvitation,
+  publish,
 } from "../src/server/services";
+import { confirmManualPayment } from "../src/server/manual-payments";
 import { makeAzulDocument } from "../src/domain/azul";
 import {
   dispatchNotifications,
@@ -181,4 +183,48 @@ it("una integración sin configurar no finge envíos y un proveedor exitoso no s
   );
   expect(await sendNotification(job)).toEqual({ state: "failed" });
   vi.unstubAllGlobals();
+});
+
+it("solo un administrador vigente registra efectivo, sin duplicarlo ni publicar sin autorización", async () => {
+  const eventId = await provisionAzul(owner.email, "+5491100000000", makeAzulDocument(), "manual-paid-fixture");
+  const body = { mode: "new", requestId: randomUUID(), eventId, planId: "custom", amountMinor: 10000000, method: "cash", note: "Pago recibido en prueba", confirmed: true };
+  await expect(confirmManualPayment(owner, body)).rejects.toMatchObject({ status: 403 });
+  await expect(confirmManualPayment({ ...owner, role: "admin" }, body)).rejects.toMatchObject({ status: 403 });
+  const admin = { ...other, role: "admin" };
+  await transaction(db => db.query("update profiles set role='admin' where id=$1", [admin.id]));
+  await expect(publish(owner, eventId, 1)).rejects.toMatchObject({ status: 403 });
+  await expect(confirmManualPayment(admin, { ...body, amountMinor: 0 })).rejects.toThrow();
+  await expect(confirmManualPayment(admin, { ...body, confirmed: false })).rejects.toThrow();
+  await confirmManualPayment(admin, body);
+  const before = await exclusiveDraft(owner, "manual-paid-fixture");
+  expect(before.status).toBe("draft");
+  expect(before.entitlement?.tier).toBe("custom");
+  expect((await confirmManualPayment(admin, body)).alreadyApproved).toBe(true);
+  expect((await exclusiveDraft(owner, "manual-paid-fixture")).expires_at).toEqual(before.expires_at);
+  await expect(confirmManualPayment(admin, { ...body, amountMinor: 1 })).rejects.toMatchObject({ status: 409 });
+  await expect(confirmManualPayment(admin, { ...body, requestId: randomUUID() })).rejects.toMatchObject({ status: 409 });
+  const records = await transaction(async db => ({ payments: (await db.query("select * from payments where order_id=$1", [body.requestId])).rows, audit: (await db.query("select * from audit_log where entity_id=$1 and action='payment.manual.approved'", [body.requestId])).rows }));
+  expect(records.payments).toHaveLength(1);
+  expect(records.payments[0].provider_id).toBe(`manual:${body.requestId}`);
+  expect(records.audit).toHaveLength(1);
+  expect(records.audit[0].actor_id).toBe(admin.id);
+  await publish(owner, eventId, 1);
+  expect((await getPublic("manual-paid-fixture")).event.title).toBe(before.draft_json.event.title);
+});
+
+it("marca una orden existente con su importe y snapshot, sin reaprobar reembolsos", async () => {
+  const eventId = await provisionAzul(owner.email, "+5491100000000", makeAzulDocument(), "existing-paid-fixture");
+  const orderId = randomUUID();
+  await transaction(async db => {
+    await db.query("insert into orders(id,owner_id,invitation_id,plan_snapshot,amount_minor,currency) select $1,$2,$3,to_jsonb(p),5000000,'ARS' from plans p where id='custom'", [orderId, owner.id, eventId]);
+    await db.query("update plans set entitlements=jsonb_set(entitlements,'{validDays}','12') where id='custom'");
+  });
+  const admin = { ...other, role: "admin" };
+  const body = { mode: "existing", orderId, method: "transfer", note: "Transferencia confirmada", confirmed: true };
+  await confirmManualPayment(admin, body);
+  expect((await exclusiveDraft(owner, "existing-paid-fixture")).entitlement?.validDays).toBe(365);
+  expect((await confirmManualPayment(admin, body)).alreadyApproved).toBe(true);
+  await transaction(db => db.query("update orders set status='refunded' where id=$1", [orderId]));
+  await expect(confirmManualPayment(admin, body)).rejects.toMatchObject({ status: 409 });
+  await expect(confirmManualPayment(admin, { ...body, amountMinor: 1 })).rejects.toThrow();
 });

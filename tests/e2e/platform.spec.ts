@@ -302,6 +302,7 @@ test("API y UI aíslan propietarios, CSV, medios, pagos y administración", asyn
     ).status(),
   ).toBe(404);
   expect((await page.request.get("/api/admin")).status()).toBe(403);
+  expect((await page.request.post("/api/admin/manual-payments", { data: {} })).status()).toBe(403);
   await page.goto(`/app/invitaciones/${fixture}/editar`);
   await expect(
     page.getByRole("heading", { name: "Este enlace no está disponible." }),
@@ -346,7 +347,7 @@ test("autosave muestra fallo de red, recupera borrador y detecta conflicto", asy
   ).toBeVisible();
   await second.close();
 });
-test("admin configura planes y visibilidad con auditoría, sin aprobar pagos", async ({
+test("admin configura visibilidad, registra efectivo y habilita compartir con auditoría", async ({
   page,
 }) => {
   await login(page, "admin@example.test");
@@ -360,10 +361,27 @@ test("admin configura planes y visibilidad con auditoría, sin aprobar pagos", a
   });
   expect(result.status()).toBe(422);
   await row.getByRole("button", { name: "Activar", exact: true }).click();
+  const created = await page.request.post("/api/invitations", { data: { templateId: "pixvo-free-xv" } });
+  expect(created.status()).toBe(201);
+  const event = await created.json();
+  await page.reload();
   await page.getByRole("button", { name: "Pagos", exact: true }).click();
-  await expect(
-    page.getByText("No se aprueban pagos manualmente", { exact: false }),
-  ).toBeVisible();
+  await page.getByRole("button", { name: "Registrar pago recibido", exact: true }).click();
+  await page.getByRole("combobox", { name: /^Invitación/ }).selectOption(event.id);
+  await page.getByRole("combobox", { name: /^Plan/ }).selectOption("custom");
+  await page.getByLabel("Importe recibido en pesos argentinos").fill("100000");
+  await page.getByLabel("Medio de pago").selectOption("cash");
+  await page.getByLabel("Nota o referencia").fill("Efectivo de prueba");
+  await page.getByLabel("Confirmo que este pago ya fue recibido", { exact: false }).check();
+  await page.getByRole("button", { name: "Confirmar pago recibido" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Pago registrado" })).toBeVisible();
+  await expect(page.getByText("Pago manual", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Auditoría", exact: true }).click();
+  await expect(page.getByRole("row").filter({ hasText: "payment.manual.approved" })).toContainText("Efectivo de prueba");
+  await page.goto(`/app/invitaciones/${event.id}/compartir`);
+  await page.getByRole("button", { name: "Publicar y compartir" }).click();
+  await expect(page.getByRole("button", { name: "Copiar enlace", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Abrir invitación" })).toHaveAttribute("href", /\/i\//);
 });
 
 test("cinco muestras XV, estilos accesibles y selección persistente en editor y encargo", async ({

@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { Copy, Download, Plus, Check, ArrowUpRight } from "lucide-react";
 import { api } from "./auth";
@@ -253,6 +254,8 @@ export function Share({
   qr: string | null;
   url: string;
 }) {
+  const router = useRouter();
+  const [publishing, setPublishing] = useState(false);
   const [copied, setCopied] = useState(false),
     [error, setError] = useState("");
   return (
@@ -269,8 +272,15 @@ export function Share({
       </div>
       {i.status !== "published" ? (
         <Notice>
-          La invitación todavía no está activa. Revisá el pago y publicala desde
-          el editor.
+          {i.entitlement ? <>
+            <span>El pago está registrado. Publicá la versión guardada para obtener el enlace que podrás compartir. </span>
+            <button className="button primary" disabled={publishing} onClick={async () => {
+              setPublishing(true); setError("");
+              try { await api(`/api/invitations/${i.id}/publish`, "POST", { expectedRevision: i.revision }); router.refresh(); }
+              catch (e) { setError((e as Error).message); }
+              finally { setPublishing(false); }
+            }}>{publishing ? "Publicando…" : "Publicar y compartir"}</button>
+          </> : "La invitación todavía no está activa. Registrá el pago para habilitar su publicación."}
         </Notice>
       ) : (
         <div className="panel qr-panel">

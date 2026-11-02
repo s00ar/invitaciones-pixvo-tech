@@ -5,6 +5,7 @@ import { Notice } from "./ui";
 import type { Plan } from "@/server/services";
 import { categories } from "@/domain/document";
 import { statusLabels } from "./dashboard";
+import { ManualPaymentForm } from "./manual-payment-form";
 type Data = {
   plans: Plan[];
   templates: {
@@ -22,6 +23,9 @@ type Data = {
   }[];
   orders: {
     id: string;
+    title: string;
+    plan_name: string;
+    manual: boolean;
     amount_minor: number;
     currency: string;
     status: string;
@@ -32,7 +36,7 @@ type Data = {
     state: string;
     delivery_url: string;
   }[];
-  audit: { action: string; entity_id: string; created_at: string }[];
+  audit: { action: string; entity_id: string; created_at: string; actor_name: string | null; actor_id: string | null; metadata: { method?: string; note?: string; amountMinor?: number } }[];
 };
 function PlanEditor({
   p,
@@ -130,6 +134,7 @@ function PlanEditor({
   );
 }
 export function Admin() {
+  const [paymentForm, setPaymentForm] = useState<"new" | Data["orders"][number] | null>(null);
   const [data, setData] = useState<Data | null>(null),
     [tab, setTab] = useState("events"),
     [error, setError] = useState(""),
@@ -280,9 +285,10 @@ export function Admin() {
           {tab === "orders" && (
             <>
               <Notice>
-                Los estados provienen del proveedor verificado. No se aprueban
-                pagos manualmente desde este panel.
+                Podés confirmar pagos ya recibidos por fuera de la web. Cada confirmación queda registrada con tu usuario y habilita el plan sin generar otro cobro.
               </Notice>
+              <button className="button primary" onClick={() => setPaymentForm("new")}>Registrar pago recibido</button>
+              {paymentForm && <ManualPaymentForm key={paymentForm === "new" ? "new" : paymentForm.id} events={data.events} plans={data.plans} order={paymentForm === "new" ? undefined : paymentForm} onCancel={() => setPaymentForm(null)} onSaved={async () => { setPaymentForm(null); setMessage("Pago registrado. La invitación ya puede publicarse desde su cuenta."); await load(); }} />}
               <div className="panel table-wrap">
                 <table>
                   <thead>
@@ -290,19 +296,21 @@ export function Admin() {
                       <th>Orden</th>
                       <th>Importe</th>
                       <th>Estado</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
                     {data.orders.map((o) => (
                       <tr key={o.id}>
-                        <td>{o.id}</td>
+                        <td>{o.title}<small>{o.plan_name} · {o.id}</small></td>
                         <td>
                           {new Intl.NumberFormat("es-AR", {
                             style: "currency",
                             currency: o.currency,
                           }).format(o.amount_minor / 100)}
                         </td>
-                        <td>{statusLabels[o.status]}</td>
+                        <td>{statusLabels[o.status]}{o.manual && <small>Pago manual</small>}</td>
+                        <td>{["pending", "rejected"].includes(o.status) && <button className="button small ghost" onClick={() => setPaymentForm(o)}>Marcar como pagada</button>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -349,6 +357,7 @@ export function Admin() {
                     <th>Acción</th>
                     <th>Entidad</th>
                     <th>Fecha</th>
+                    <th>Administrador / detalle</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -357,6 +366,7 @@ export function Admin() {
                       <td>{a.action}</td>
                       <td>{a.entity_id}</td>
                       <td>{new Date(a.created_at).toLocaleString("es-AR")}</td>
+                      <td>{a.actor_name || a.actor_id || "Sistema"}{a.action === "payment.manual.approved" && <small>{a.metadata.method === "cash" ? "Efectivo" : a.metadata.method === "transfer" ? "Transferencia" : "Otro"} · {a.metadata.note}</small>}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -23,6 +23,7 @@ import {
 import * as service from "@/server/services";
 import * as media from "@/server/media";
 import * as billing from "@/server/payments";
+import { confirmManualPayment } from "@/server/manual-payments";
 import { csv, calendarICS } from "@/domain/format";
 import { randomUUID } from "node:crypto";
 import { templates } from "@/domain/document";
@@ -435,7 +436,7 @@ async function route(request: Request, ctx: Context) {
             ).rows,
             orders: (
               await db.query(
-                "select id,amount_minor,currency,status,created_at from orders order by created_at desc limit 200",
+                "select o.id,o.amount_minor,o.currency,o.status,o.created_at,i.draft_json->'event'->>'title' as title,o.plan_snapshot->>'name' as plan_name,exists(select 1 from payments p where p.order_id=o.id and p.provider_id like 'manual:%') as manual from orders o join invitations i on i.id=o.invitation_id order by o.created_at desc limit 200",
               )
             ).rows,
             requests: (
@@ -445,12 +446,14 @@ async function route(request: Request, ctx: Context) {
             ).rows,
             audit: (
               await db.query(
-                "select action,entity_id,created_at from audit_log order by created_at desc limit 100",
+                "select a.action,a.entity_id,a.created_at,p.display_name as actor_name,a.actor_id,a.metadata from audit_log a left join profiles p on p.id=a.actor_id order by a.created_at desc limit 100",
               )
             ).rows,
           })),
         );
       const b = await jsonBody(request);
+      if (p[1] === "manual-payments" && method === "POST")
+        return send(await confirmManualPayment(user, b));
       if (p[1] === "plans") {
         await service.configurePlan(user, b);
         return send({ ok: true });
