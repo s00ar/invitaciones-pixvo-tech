@@ -203,3 +203,7 @@ Sin cambios de esquema. Pasan 7/7 pruebas dirigidas de exclusiva, lint y build/t
 
 ## Sobre curvo con ramo seco — 2026-11-02
 La apertura exclusiva incorpora sobre vertical marfil con solapa curva, nombre y fecha dorados, ramo original de gypsophila y gramíneas con transparencia, cordón fino y sello con inicial dinámica. Mantiene botón accesible, apertura, música por gesto y reduced-motion. Recurso WebP con origen registrado en SOURCE.md. Verificación local: lint, build/tipos y E2E Chromium aprobados; capturas móvil 390 px y escritorio 1440 px, sin desborde horizontal. Sin cambios de datos ni respuestas.
+
+### Acabado del sello — 2026-11-02
+Sello con textura original de lacre oro champán, doble aro, ramita y corazón en relieve; inicial dinámica con efecto de estampado. Mantiene el botón de apertura y su nombre accesible. Recurso transparente WebP de 320 px con procedencia registrada.
+Validación: lint y E2E Chromium 1/1 aprobados; revisión visual de captura móvil, sin desborde. Cambio limitado a CSS y recurso decorativo.
