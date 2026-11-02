@@ -216,3 +216,6 @@ El desplazamiento se realiza tras revelar el contenido y resolver las fuentes, m
 
 ### Detalles ornamentales — 2026-11-02
 Corona original SVG sobre el nombre en sobre e interior, fecha con mes arriba/día protagonista y líneas laterales, mariposas doradas decorativas en la tarjeta. Por confirmación explícita se repone solo el ramo conectado al sello; fondo exterior conserva marfil simple. Lint, build/tipos y WebKit 2/2 aprobados, incluyendo regresión de primera apertura móvil y capturas inspeccionadas. Sin cambios de datos del evento.
+
+### Frase inicial dorada — 2026-11-02
+Frase introductoria en dorado del diseño y Times New Roman/Times italic, similar a referencia serif cursiva; tamaño adaptable20–26px y líneas equilibradas. Solo CSS, sin descarga de fuentes. WebKit2/2 aprobado y captura móvil inspeccionada; conserva apertura inicial y formularios.
