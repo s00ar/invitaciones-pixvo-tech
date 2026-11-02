@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures";
 
 test("agenda precargada y WhatsApp automático únicamente después de guardar asistencia", async ({ page }) => {
   await page.route("https://wa.me/**", route => route.fulfill({ contentType: "text/html", body: "<h1>WhatsApp de prueba</h1>" }));
-  await page.goto("/exclusivas/e2e-exclusive");
+  await page.goto("/exclusivas/e2e-exclusive", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: /Abrir invitación/ }).click();
   const calendar = new URL((await page.getByRole("link", { name: "Agendar este día en Google Calendar" }).getAttribute("href"))!);
   expect(calendar.hostname).toBe("calendar.google.com");
@@ -21,14 +21,16 @@ test("agenda precargada y WhatsApp automático únicamente después de guardar a
   await page.getByRole("button", { name: "Confirmar respuesta" }).click();
   await expect(page).toHaveURL(/^https:\/\/wa\.me\/5491100000000\?text=/);
   expect(new URL(page.url()).searchParams.get("text")).toContain("1 persona(s)");
-  await page.goto("/login");
+  await page.goto("/login", { waitUntil: "networkidle" });
   await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
   await page.getByLabel("Contraseña", { exact: true }).fill("FixturePass2027!");
   await page.getByRole("button", { name: "Iniciar sesión", exact: true }).click();
   await expect(page).toHaveURL(/\/app$/);
+  // Let development chunks finish before another full-document navigation.
+  await page.waitForLoadState("networkidle");
   const replies = await (await page.request.get("/api/invitations/cccccccc-cccc-4ccc-8ccc-cccccccccccc/rsvps")).json();
   expect(replies).toEqual(expect.arrayContaining([expect.objectContaining({ name: "Familia de prueba automática", attendees: 1, message: "" })]));
-  await page.goto("/app/invitaciones/cccccccc-cccc-4ccc-8ccc-cccccccccccc/respuestas");
+  await page.goto("/app/invitaciones/cccccccc-cccc-4ccc-8ccc-cccccccccccc/respuestas", { waitUntil: "networkidle" });
   const row = page.getByRole("row").filter({hasText:"Familia de prueba automática"});
   await row.getByRole("button",{name:"Editar",exact:true}).click();
   const form = page.getByRole("form",{name:"Editar invitado"});
@@ -44,6 +46,6 @@ test("agenda precargada y WhatsApp automático únicamente después de guardar a
   page.once("dialog",dialog=>dialog.accept());
   await updated.getByRole("button",{name:"Eliminar",exact:true}).click();
   await expect(updated).not.toBeVisible();
-  await page.reload();
+  await page.reload({ waitUntil: "networkidle" });
   await expect(page.getByRole("row").filter({hasText:"Persona corregida"})).toHaveCount(0);
 });
