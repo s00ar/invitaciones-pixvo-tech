@@ -678,3 +678,5 @@ html:has(.azul-page) {
 .azul-hero h1.azul-name { font-size: clamp(64px, 15vw, 130px); }
 .azul-nav .azul-name { min-width: 0; font-size: 26px; line-height: 1.1; }
 .azul-form input:not([type="radio"]), .azul-form textarea { font-size: 16px; }
+
+.azul-page .azul-name { text-transform: uppercase; }
