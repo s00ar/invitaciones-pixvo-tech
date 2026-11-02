@@ -1,13 +1,16 @@
 @font-face {
-  font-family: AzulScript;
-  src: url("/assets/exclusives/azul/GreatVibes-Regular.ttf") format("truetype");
+  font-family: "Bodoni Moda";
+  src: url("/assets/exclusives/azul/BodoniModa-Italic.ttf") format("truetype");
   font-display: swap;
+  font-style: italic;
+  font-weight: 400 900;
 }
 html:has(.azul-page) {
   scroll-padding-top: 0;
 }
 .azul-page {
   --gold: #80652f;
+  --elegant-serif: "Bodoni Moda", "Times New Roman", serif;
   --ink: #39332c;
   --paper: #faf7ef;
   color: var(--ink);
@@ -100,7 +103,7 @@ html:has(.azul-page) {
 }
 .azul-opening-intro > p:last-child {
   color: var(--gold);
-  font-family: "Times New Roman", Times, "Bodoni MT", serif;
+  font-family: var(--elegant-serif);
   font-size: clamp(20px, 2.5vw, 26px);
   font-style: italic;
   font-weight: 400;
@@ -658,3 +661,20 @@ html:has(.azul-page) {
 .azul-butterfly-pair { position: absolute; left: 14px; bottom: 18px; display: flex; gap: 3px; align-items: end; color: var(--gold); pointer-events: none; }
 .azul-butterfly { width: 35px; height: 36px; transform: rotate(-22deg); }
 .azul-butterfly + .azul-butterfly { width: 25px; height: 28px; transform: translateY(-22px) rotate(18deg); }
+
+.azul-page .azul-script.azul-name {
+  font-family: var(--elegant-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* One font throughout the invitation, including form controls and seal. */
+.azul-page, .azul-page * {
+  font-family: var(--elegant-serif) !important;
+  font-style: italic !important;
+  font-optical-sizing: auto;
+}
+.azul-page .azul-script.azul-name { overflow-wrap: anywhere; }
+.azul-hero h1.azul-name { font-size: clamp(64px, 15vw, 130px); }
+.azul-nav .azul-name { min-width: 0; font-size: 26px; line-height: 1.1; }
+.azul-form input:not([type="radio"]), .azul-form textarea { font-size: 16px; }

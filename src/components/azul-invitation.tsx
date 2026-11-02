@@ -170,7 +170,7 @@ export function AzulInvitation({
         <div className="azul-envelope">
           <div className="azul-envelope-card">
             <OrnamentalCrown />
-            <span className="azul-script">{name}</span>
+            <span className="azul-script azul-name">{name}</span>
             <span className="azul-kicker">MIS QUINCE AÑOS</span>
             <span>{numericDate}</span>
           </div>
@@ -178,7 +178,7 @@ export function AzulInvitation({
             <div className="azul-envelope-lettering">
               <span className="azul-kicker">MIS XV</span>
               <OrnamentalCrown />
-              <span className="azul-script">{name}</span>
+              <span className="azul-script azul-name">{name}</span>
               <span className="azul-envelope-date">{numericDate}</span>
             </div>
           </div>
@@ -206,7 +206,7 @@ export function AzulInvitation({
       </header>
       <div ref={content} id="azul-content" hidden={!opened}>
         <nav className="azul-nav" aria-label="Secciones de la invitación">
-          <span className="azul-script">{name}</span>
+          <span className="azul-script azul-name">{name}</span>
           <a href="#azul-lugar">La fiesta</a>
           <a href="#azul-rsvp">Confirmar</a>
           {audioUrl && (
@@ -231,7 +231,7 @@ export function AzulInvitation({
             <div className="azul-glass-inner">
               <OrnamentalCrown />
               <p className="azul-kicker">MIS QUINCE AÑOS</p>
-              <h1 className="azul-script">{name}</h1>
+              <h1 className="azul-script azul-name">{name}</h1>
               <p className="azul-quote">{d.event.message}</p>
               <div className="azul-date">
                 <span className="azul-date-side">{part("weekday").toUpperCase()}</span>
@@ -376,7 +376,7 @@ export function AzulInvitation({
             ❧
           </span>
           <p>Gracias por ser parte de mi historia.</p>
-          <span className="azul-script">Te espero, {name}</span>
+          <span className="azul-script">Te espero, <span className="azul-script azul-name">{name}</span></span>
           <p className="azul-fine">{numericDate}</p>
           <Link href="/">
             Una invitación exclusiva de <strong>Pixvo</strong>

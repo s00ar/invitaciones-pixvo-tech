@@ -61,7 +61,7 @@ test('primera apertura móvil alinea el contenido incluso con fuente demorada', 
   await page.setViewportSize({ width: 390, height: 844 });
   let releaseFont!: () => void;
   const fontGate = new Promise<void>(resolve => { releaseFont = resolve; });
-  await page.route('**/GreatVibes-Regular.ttf', async route => {
+  await page.route('**/BodoniModa-Italic.ttf', async route => {
     await fontGate;
     await route.continue();
   });

@@ -219,3 +219,7 @@ Corona original SVG sobre el nombre en sobre e interior, fecha con mes arriba/d�
 
 ### Frase inicial dorada — 2026-11-02
 Frase introductoria en dorado del diseño y Times New Roman/Times italic, similar a referencia serif cursiva; tamaño adaptable20–26px y líneas equilibradas. Solo CSS, sin descarga de fuentes. WebKit2/2 aprobado y captura móvil inspeccionada; conserva apertura inicial y formularios.
+
+### Tipografía unificada Bodoni Moda Italic — 2026-11-02
+Toda la exclusiva usa Bodoni Moda Italic, alojada localmente con su licencia SIL OFL. Se unifican nombres, textos, sellos, botones y formularios; tamaños de nombre/navegación ajustados y campos de16px para legibilidad móvil. Fuente original de Google Fonts, 176300 bytes, sin dependencia externa al navegar.
+Validación: lint aprobado; captura móvil con fuente nueva inspeccionada y regresión de primera apertura WebKit aprobada. E2E completo pendiente: espera de guardado RSVP excedió15s en entorno local lento; no se modificó lógica de guardado. Se amplió solo temporalmente el arranque local y se restauró la configuración.
