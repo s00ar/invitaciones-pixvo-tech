@@ -3,7 +3,8 @@ import { documentSchema } from "@/domain/document";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { localMode } from "@/server/db";
-import { requireUser } from "@/server/auth";
+import { currentUser } from "@/server/auth";
+import { LoginRedirect } from "@/components/auth";
 import { exclusiveDraft } from "@/server/exclusives";
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -29,7 +30,8 @@ export default async function Page({
       <AzulInvitation document={d} audioUrl="/api/exclusive-preview/audio" />
     );
   }
-  const user = await requireUser();
+  const user = await currentUser();
+  if (!user) return <LoginRedirect />;
   const { draft_json: d } = await exclusiveDraft(user, slug);
   const audio = d.blocks.find((b) => b.type === "music" && b.enabled)?.props
     .audioId;
