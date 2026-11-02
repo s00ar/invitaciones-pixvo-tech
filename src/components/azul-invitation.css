@@ -81,8 +81,9 @@
   flex-direction: column;
   justify-content: center;
   background:
-    linear-gradient(#f9f5eb77, #e9dfcf33),
-    url("/assets/exclusives/azul/stationery.webp") center/cover;
+    radial-gradient(ellipse at 25% 15%, #fffdf5, transparent 65%),
+    repeating-linear-gradient(28deg, #ffffff12 0 1px, #b9a88508 1px 3px),
+    linear-gradient(120deg, #f4eddf, #e9dfcd);
 }
 .azul-opening-intro {
   text-align: center;
@@ -160,18 +161,7 @@
   overflow-wrap: anywhere;
 }
 .azul-envelope-date { color: #80652f; font-size: 13px; letter-spacing: 2px; }
-.azul-envelope-bouquet {
-  position: absolute;
-  width: 68%;
-  height: 66%;
-  left: -2%;
-  top: 28%;
-  background: url('/assets/exclusives/azul/dried-bouquet.webp') center / contain no-repeat;
-  filter: drop-shadow(3px 5px 2px #58493630);
-  transform: rotate(-15deg);
-  pointer-events: none;
-  transition: transform .8s, opacity .8s;
-}
+
 .azul-envelope-cord {
   position: absolute;
   left: 37%;
@@ -204,7 +194,6 @@
 .azul-seal:hover { transform: scale(1.07); }
 .is-open .azul-envelope-card { transform: translate(24px, -22px) rotate(5deg); }
 .is-open .azul-envelope-fold { transform: perspective(900px) rotateY(-18deg); }
-.is-open .azul-envelope-bouquet { transform: translateX(-12px) rotate(-20deg); }
 .azul-open-hint {
   font-size: 13px;
   margin-bottom: 10px !important;

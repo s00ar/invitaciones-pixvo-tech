@@ -146,7 +146,6 @@ export function AzulInvitation({
             </div>
           </div>
           <div className="azul-envelope-cord" aria-hidden="true" />
-          <div className="azul-envelope-bouquet" aria-hidden="true" />
           <button
             className="azul-seal"
             aria-label={`Abrir invitación de ${name}`}

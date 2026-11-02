@@ -207,3 +207,6 @@ La apertura exclusiva incorpora sobre vertical marfil con solapa curva, nombre y
 ### Acabado del sello — 2026-11-02
 Sello con textura original de lacre oro champán, doble aro, ramita y corazón en relieve; inicial dinámica con efecto de estampado. Mantiene el botón de apertura y su nombre accesible. Recurso transparente WebP de 320 px con procedencia registrada.
 Validación: lint y E2E Chromium 1/1 aprobados; revisión visual de captura móvil, sin desborde. Cambio limitado a CSS y recurso decorativo.
+
+### Portada simple sin flores — 2026-11-02
+Se retiró el ramo del sobre y el fondo floral de la apertura. Se mantienen solapa curva, cordón, sello de lacre e inicial; fondo marfil realizado con CSS. Lint y E2E Chromium 1/1 aprobados, captura móvil inspeccionada. Sin cambios en los datos del evento ni en los formularios.
