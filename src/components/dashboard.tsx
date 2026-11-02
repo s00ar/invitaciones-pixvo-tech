@@ -142,9 +142,9 @@ export function Dashboard() {
                 <div className="event-actions">
                   <Link
                     className="button small primary"
-                    href={`/app/invitaciones/${i.id}/editar`}
+                    href={i.exclusive_design ? `/exclusivas/${i.slug}/preview` : `/app/invitaciones/${i.id}/editar`}
                   >
-                    Editar <ArrowUpRight size={12} />
+                    {i.exclusive_design ? "Ver diseño exclusivo" : "Editar"} <ArrowUpRight size={12} />
                   </Link>
                   <Link
                     className="button small ghost"

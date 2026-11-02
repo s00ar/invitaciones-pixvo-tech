@@ -98,6 +98,7 @@ export async function upload(
   const sizeError = mediaSizeError(bytes.length, kind);
   if (sizeError) fail(413, sizeError);
   let mime = type.mime;
+  if (mime === "audio/x-m4a") mime = "audio/mp4";
   if (mime.startsWith("image/")) {
     try {
       bytes = await sharp(bytes, { limitInputPixels: 40e6 })

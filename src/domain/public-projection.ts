@@ -9,6 +9,7 @@ const allowed: Record<BlockType, string[]> = {
     "text",
     "mode",
     "maxAttendees",
+    "unlimitedAttendees",
     "capacity",
     "closesAt",
     "askDiet",

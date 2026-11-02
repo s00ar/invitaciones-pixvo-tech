@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { exclusiveBySlug } from "@/server/exclusives";
 import { getPublic } from "@/server/services";
 import { InvitationRenderer } from "@/components/invitation";
 import { AppError } from "@/server/errors";
@@ -40,5 +41,6 @@ export default async function PublicPage({
     throw e;
   });
   const { guest } = await searchParams;
+  if ((await exclusiveBySlug(slug))?.design === "azul") redirect(`/exclusivas/${slug}`);
   return <InvitationRenderer document={doc} slug={slug} guest={guest} />;
 }

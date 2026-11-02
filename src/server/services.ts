@@ -16,6 +16,7 @@ import { hashToken, token, type User } from "./auth";
 import { publicProjection } from "../domain/public-projection";
 import type { SampleStyle } from "../domain/custom-samples";
 export type Invitation = {
+  exclusive_design?: string | null;
   id: string;
   owner_id: string;
   slug: string;
@@ -64,7 +65,7 @@ export async function listInvitations(user: User) {
     async (db) =>
       (
         await db.query<Invitation>(
-          "select * from invitations where owner_id=$1 order by updated_at desc",
+          "select i.*,e.design as exclusive_design from invitations i left join exclusive_events e on e.event_id=i.id where i.owner_id=$1 order by i.updated_at desc",
           [user.id],
         )
       ).rows,
@@ -330,7 +331,7 @@ export const rsvpSchema = z
   .object({
     name: z.string().trim().min(1).max(120),
     response: z.enum(["yes", "no"]),
-    attendees: z.number().int().min(0).max(20),
+    attendees: z.number().int().min(0).max(2147483647),
     diet: z.string().max(500).default(""),
     message: z.string().max(1000).default(""),
     token: z.string().max(100).optional(),
@@ -346,11 +347,12 @@ export async function respond(slug: string, input: unknown, ip: string) {
     const { i, document: d } = await publicInvitation(db, slug, true);
     const config = d.blocks.find((b) => b.type === "rsvp" && b.enabled)?.props;
     if (!config) fail(422, "Confirmaciones cerradas");
+    const exclusive = (await db.query<{notification_whatsapp:string}>("select notification_whatsapp from exclusive_events where event_id=$1", [i.id])).rows[0];
     if (config.closesAt && new Date(config.closesAt) < new Date())
       fail(422, "El plazo de confirmación finalizó");
     let party = p.token
       ? (
-          await db.query<{ id: string; max_attendees: number }>(
+          await db.query<{ id: string; max_attendees: number | null }>(
             "select id,max_attendees from guest_parties where event_id=$1 and token_hash=$2",
             [i.id, hashToken(p.token)],
           )
@@ -359,9 +361,10 @@ export async function respond(slug: string, input: unknown, ip: string) {
     if (p.token && !party) fail(403, "El enlace de invitado es inválido");
     if (!party && config.mode === "guest")
       fail(403, "Usá tu enlace personal para responder");
-    const max = party?.max_attendees ?? config.maxAttendees ?? 2;
+    const max = exclusive && config.mode === "open" && config.unlimitedAttendees
+      ? null : (party?.max_attendees ?? config.maxAttendees ?? 2);
     if (
-      (p.response === "yes" && (p.attendees < 1 || p.attendees > max)) ||
+      (p.response === "yes" && (p.attendees < 1 || (max !== null && p.attendees > max))) ||
       (p.response === "no" && p.attendees !== 0)
     )
       fail(422, `Cantidad inválida. El máximo es ${max}`);
@@ -386,8 +389,8 @@ export async function respond(slug: string, input: unknown, ip: string) {
         [party.id, i.id, hashToken(receipt!), max, p.name],
       );
     }
-    await db.query(
-      "insert into rsvps(id,event_id,guest_party_id,name,response,attendees,diet,message) values($1,$2,$3,$4,$5,$6,$7,$8) on conflict(event_id,guest_party_id) do update set name=$4,response=$5,attendees=$6,diet=$7,message=$8,version=rsvps.version+1,updated_at=now()",
+    const saved = await db.query<{id: string; version: number}>(
+      "insert into rsvps(id,event_id,guest_party_id,name,response,attendees,diet,message) values($1,$2,$3,$4,$5,$6,$7,$8) on conflict(event_id,guest_party_id) do update set name=$4,response=$5,attendees=$6,diet=$7,message=$8,version=rsvps.version+1,updated_at=now() where (rsvps.name,rsvps.response,rsvps.attendees,rsvps.diet,rsvps.message) is distinct from (excluded.name,excluded.response,excluded.attendees,excluded.diet,excluded.message) returning id,version",
       [
         randomUUID(),
         i.id,
@@ -399,8 +402,14 @@ export async function respond(slug: string, input: unknown, ip: string) {
         p.message,
       ],
     );
+    if (exclusive && saved.rows[0]) {
+      for (const channel of ["email"]) {
+        await db.query("insert into notification_outbox(id,event_id,rsvp_id,rsvp_version,channel,payload) values($1,$2,$3,$4,$5,$6) on conflict do nothing", [randomUUID(), i.id, saved.rows[0].id, saved.rows[0].version, channel, JSON.stringify({title:d.event.title,name:p.name,response:p.response,attendees:p.attendees,diet:config.askDiet?p.diet:"",message:p.message})]);
+      }
+    }
     return {
       token: receipt,
+      ...(exclusive ? {whatsappUrl:`https://wa.me/${exclusive.notification_whatsapp.replace(/^\+/,"")}?text=${encodeURIComponent(`Hola Vero, soy ${p.name}. Ya registré mi respuesta para ${d.event.title}: ${p.response==="yes"?`asistiremos ${p.attendees} persona(s).${p.message?` Integrantes: ${p.message}`:""}`:"no podré asistir."}`)}`} : {}),
       message:
         "Tu respuesta quedó guardada. Podés actualizarla desde este dispositivo.",
     };

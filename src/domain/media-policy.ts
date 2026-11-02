@@ -8,6 +8,8 @@ const mimeKinds: Record<string, MediaKind> = {
   "image/png": "image",
   "image/webp": "image",
   "audio/mpeg": "audio",
+  "audio/x-m4a": "audio",
+  "audio/mp4": "audio",
   "video/mp4": "video",
   "video/webm": "video",
 };
@@ -17,6 +19,7 @@ const extensionKinds: Record<string, MediaKind> = {
   png: "image",
   webp: "image",
   mp3: "audio",
+  m4a: "audio",
   mp4: "video",
   webm: "video",
 };

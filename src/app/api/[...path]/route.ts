@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { after } from "next/server";
+import { dispatchNotifications } from "@/server/notifications";
 import {
   requireUser,
   currentUser,
@@ -165,8 +167,11 @@ async function route(request: Request, ctx: Context) {
         return send({ document: doc });
       }
       const body = await jsonBody(request);
-      if (p[2] === "rsvp")
-        return send(await service.respond(slug, body, clientIP(request)));
+      if (p[2] === "rsvp") {
+        const result=await service.respond(slug, body, clientIP(request));
+        after(async()=>{try{await dispatchNotifications();}catch{console.error("pixvo.notification.dispatch.failed");}});
+        return send(result);
+      }
       if (p[2] === "songs")
         return send(await service.songs(slug, body, clientIP(request)));
     }

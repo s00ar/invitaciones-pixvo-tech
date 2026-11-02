@@ -445,11 +445,11 @@ function RSVP({ slug, b, guest }: { slug?: string; b: Block; guest?: string }) {
                 name="attendees"
                 type="number"
                 min="1"
-                max="20"
+                max={b.props.unlimitedAttendees && b.props.mode === "open" ? undefined : (b.props.maxAttendees ?? 20)}
                 defaultValue="1"
                 required
               />
-              <small>El cupo de tu enlace se verifica al guardar.</small>
+              <small>{b.props.unlimitedAttendees && b.props.mode === "open" ? "Incluí a todas las personas de tu grupo familiar." : "El cupo de tu enlace se verifica al guardar."}</small>
             </label>
           )}
           {b.props.askDiet && (

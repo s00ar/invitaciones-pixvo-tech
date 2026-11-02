@@ -137,6 +137,7 @@ const props = z
       .max(60)
       .optional(),
     maxAttendees: z.number().int().min(1).max(20).optional(),
+    unlimitedAttendees: z.boolean().optional(),
     capacity: z.number().int().min(1).max(10000).optional(),
     mode: z.enum(["open", "guest"]).optional(),
     closesAt: instant.optional(),

@@ -32,7 +32,7 @@ it("el SQL entregado aplica el esquema completo una vez y conserva ajustes y dat
     expect((await db.query("select * from templates")).rows).toHaveLength(27);
     expect(
       (await db.query("select * from pixvo_migrations")).rows,
-    ).toHaveLength(4);
+    ).toHaveLength(6);
     expect(
       (
         await db.query<{ price_minor: number }>(
@@ -132,11 +132,11 @@ it("actualiza una base de tres migraciones conservando órdenes previas y restri
     `);
     expect(
       (await db.query("select * from pixvo_migrations")).rows,
-    ).toHaveLength(3);
+    ).toHaveLength(5);
     await db.exec(sql);
     expect(
       (await db.query("select * from pixvo_migrations")).rows,
-    ).toHaveLength(4);
+    ).toHaveLength(6);
     expect(
       (
         await db.query(
