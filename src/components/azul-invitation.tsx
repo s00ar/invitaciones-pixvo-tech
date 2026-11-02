@@ -359,6 +359,7 @@ export function AzulInvitation({
 }
 
 function AzulRSVP({ slug }: { slug?: string }) {
+  const [attendees, setAttendees] = useState(1);
   const [response, setResponse] = useState("yes"),
     [busy, setBusy] = useState(false),
     [feedback, setFeedback] = useState(""),
@@ -456,17 +457,18 @@ function AzulRSVP({ slug }: { slug?: string }) {
               type="number"
               min="1"
               step="1"
-              defaultValue="1"
+              value={attendees}
+              onChange={(e) => setAttendees(Number(e.target.value))}
               required
             />
           </label>
           <label>
-            Nombres y apellidos de los integrantes
+            Nombres y apellidos de los integrantes {attendees === 1 && <span>(opcional si vas solo)</span>}
             <textarea
               name="members"
               rows={3}
               maxLength={1000}
-              required
+              required={attendees > 1}
               placeholder="Incluí a todas las personas que asistirán."
             />
           </label>

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Copy, Download, Plus, Check, ArrowUpRight } from "lucide-react";
 import { api } from "./auth";
 import { Notice } from "./ui";
@@ -15,8 +15,35 @@ type Reply = {
   attendees: number | null;
   diet: string | null;
   message: string | null;
-  max_attendees: number;
+  max_attendees: number | null;
+  version: number;
 };
+function GuestEditor({ eventId, guest, onSaved, onCancel }: { eventId: string; guest: Reply; onSaved: () => Promise<void>; onCancel: () => void }) {
+  const editor = useRef<HTMLFormElement>(null);
+  useEffect(() => { editor.current?.scrollIntoView({ block: "center" }); }, []);
+  const [response, setResponse] = useState(guest.response ?? "pending");
+  const [busy, setBusy] = useState(false), [error, setError] = useState("");
+  return <form ref={editor} className="panel form-grid" aria-label="Editar invitado" onSubmit={async e => {
+    e.preventDefault(); if (busy) return;
+    const f = new FormData(e.currentTarget);
+    setBusy(true); setError("");
+    try {
+      await api(`/api/invitations/${eventId}/guests/${guest.id}`, "PATCH", { expectedVersion: guest.version, label: f.get("label"), name: f.get("name"), response, attendees: response === "yes" ? Number(f.get("attendees")) : 0, diet: f.get("diet"), message: f.get("message") });
+      await onSaved();
+    } catch (e) { setError((e as Error).message); } finally { setBusy(false); }
+  }}>
+    <h2>Editar invitado</h2>
+    <label className="field">Nombre del grupo<input name="label" required maxLength={120} defaultValue={guest.label} /></label>
+    <label className="field">Nombre de quien confirma<input name="name" required={response !== "pending"} maxLength={120} defaultValue={guest.name ?? guest.label} /></label>
+    <label className="field">Respuesta<select value={response} onChange={e => setResponse(e.target.value)}>{!guest.response && <option value="pending">Pendiente</option>}<option value="yes">Asiste</option><option value="no">No asiste</option></select></label>
+    {response === "yes" && <label className="field">Personas confirmadas<input name="attendees" type="number" min="1" max={guest.max_attendees ?? undefined} required defaultValue={guest.attendees || 1} /></label>}
+    <label className="field">Restricciones alimentarias<textarea name="diet" maxLength={500} defaultValue={guest.diet ?? ""} /></label>
+    <label className="field">Integrantes / mensaje<textarea name="message" maxLength={1000} defaultValue={guest.message ?? ""} /></label>
+    <p>Estos cambios actualizan la lista. No envían mensajes al invitado.</p>
+    {error && <Notice error>{error}</Notice>}
+    <div className="inline-actions"><button className="button primary" disabled={busy}>{busy ? "Guardando…" : "Guardar cambios"}</button><button className="button ghost" type="button" disabled={busy} onClick={onCancel}>Cancelar</button></div>
+  </form>;
+}
 export function EventNav({ id }: { id: string }) {
   return (
     <nav className="app-subnav">
@@ -29,6 +56,8 @@ export function EventNav({ id }: { id: string }) {
   );
 }
 export function Responses({ id }: { id: string }) {
+  const [editing, setEditing] = useState<Reply | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [rows, setRows] = useState<Reply[]>([]),
     [songs, setSongs] = useState<
       { title: string; artist: string; url: string }[]
@@ -185,6 +214,7 @@ export function Responses({ id }: { id: string }) {
           Actualizar
         </button>
       </div>
+      {editing && <GuestEditor key={editing.id + ":" + editing.version} eventId={id} guest={editing} onCancel={() => setEditing(null)} onSaved={async () => { setEditing(null); await load(); }} />}
       <div className="panel table-wrap">
         <table>
           <thead>
@@ -194,6 +224,7 @@ export function Responses({ id }: { id: string }) {
               <th>Personas</th>
               <th>Alimentación</th>
               <th>Mensaje</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -211,10 +242,20 @@ export function Responses({ id }: { id: string }) {
                       : "Pendiente"}
                 </td>
                 <td>
-                  {r.attendees ?? "—"} / {r.max_attendees}
+                  {r.attendees ?? "—"}{r.max_attendees !== null ? ` / ${r.max_attendees}` : " · Sin límite"}
                 </td>
                 <td>{r.diet || "—"}</td>
                 <td>{r.message || "—"}</td>
+                <td><div className="inline-actions">
+                  <button className="button small ghost" disabled={deleting !== null} onClick={() => { setError(""); setEditing(r); }}>Editar</button>
+                  <button className="button small ghost" disabled={deleting !== null} onClick={async () => {
+                    if (!window.confirm(`¿Eliminar a ${r.name || r.label} y su respuesta? Su enlace personal dejará de funcionar. Esta acción no se puede deshacer.`)) return;
+                    setDeleting(r.id); setError("");
+                    try { await api(`/api/invitations/${id}/guests/${r.id}`, "DELETE", { expectedVersion: r.version }); if (editing?.id === r.id) setEditing(null); await load(); }
+                    catch (e) { setError((e as Error).message); }
+                    finally { setDeleting(null); }
+                  }}>{deleting === r.id ? "Eliminando…" : "Eliminar"}</button>
+                </div></td>
               </tr>
             ))}
           </tbody>

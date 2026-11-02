@@ -445,9 +445,10 @@ export async function responses(user: User, id: string) {
         attendees: number | null;
         diet: string | null;
         message: string | null;
-        max_attendees: number;
+        max_attendees: number | null;
+        version: number;
       }>(
-        "select g.id,g.label,g.max_attendees,r.name,r.response,r.attendees,r.diet,r.message from guest_parties g left join rsvps r on r.guest_party_id=g.id where g.event_id=$1 order by g.created_at desc",
+        "select g.id,g.label,g.max_attendees,r.name,r.response,r.attendees,r.diet,r.message,coalesce(r.version,0) as version from guest_parties g left join rsvps r on r.guest_party_id=g.id where g.event_id=$1 order by g.created_at desc",
         [id],
       )
     ).rows;

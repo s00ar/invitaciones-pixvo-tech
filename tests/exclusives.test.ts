@@ -10,7 +10,9 @@ import {
   getPublic,
   createInvitation,
   publish,
+  createGuest,
 } from "../src/server/services";
+import { editGuest, deleteGuest } from "../src/server/guest-management";
 import { confirmManualPayment } from "../src/server/manual-payments";
 import { makeAzulDocument } from "../src/domain/azul";
 import {
@@ -227,4 +229,31 @@ it("marca una orden existente con su importe y snapshot, sin reaprobar reembolso
   await transaction(db => db.query("update orders set status='refunded' where id=$1", [orderId]));
   await expect(confirmManualPayment(admin, body)).rejects.toMatchObject({ status: 409 });
   await expect(confirmManualPayment(admin, { ...body, amountMinor: 1 })).rejects.toThrow();
+});
+
+it("el propietario edita y elimina respuestas sin saltarse cupos, propiedad ni versiones", async () => {
+  const eventId = await provisionAzul(owner.email, "+5491100000000", makeAzulDocument(), "guest-management-fixture");
+  await fixturePublish(eventId);
+  const receipt = await respond("guest-management-fixture", { name: "Persona sola", response: "yes", attendees: 1 }, "management");
+  const row = (await responses(owner,eventId))[0];
+  expect(row.message).toBe("");
+  const input = { expectedVersion: row.version, label: "Grupo corregido", name: "Nombre corregido", response: "yes", attendees: 3, diet: "Sin sal", message: "Tres integrantes" };
+  await expect(editGuest(other,eventId,row.id,input)).rejects.toMatchObject({status:404});
+  await expect(deleteGuest(other,eventId,row.id,{expectedVersion:row.version})).rejects.toMatchObject({status:404});
+  await expect(editGuest(owner,id,row.id,input)).rejects.toMatchObject({status:404});
+  await editGuest(owner,eventId,row.id,input);
+  const updated = (await responses(owner,eventId))[0];
+  expect(updated).toMatchObject({name:"Nombre corregido",label:"Grupo corregido",attendees:3,diet:"Sin sal",version:row.version+1});
+  expect((await transaction(db=>db.query("select id from notification_outbox where event_id=$1",[eventId]))).rows).toHaveLength(0);
+  await expect(editGuest(owner,eventId,row.id,input)).rejects.toMatchObject({status:409});
+  await expect(deleteGuest(owner,eventId,row.id,{expectedVersion:row.version})).rejects.toMatchObject({status:409});
+  await deleteGuest(owner,eventId,row.id,{expectedVersion:updated.version});
+  expect(await responses(owner,eventId)).toHaveLength(0);
+  await expect(respond("guest-management-fixture",{name:"Persona sola",response:"yes",attendees:1,token:receipt.token},"management")).rejects.toMatchObject({status:403});
+  await createGuest(owner,eventId,"Pendiente",2);
+  const pending = (await responses(owner,eventId))[0];
+  await expect(editGuest(owner,eventId,pending.id,{...input,expectedVersion:0})).rejects.toMatchObject({status:422});
+  await editGuest(owner,eventId,pending.id,{...input,expectedVersion:0,response:"pending",attendees:0});
+  await deleteGuest(owner,eventId,pending.id,{expectedVersion:0});
+  expect(await responses(owner,eventId)).toHaveLength(0);
 });

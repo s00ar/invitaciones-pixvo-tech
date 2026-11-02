@@ -24,6 +24,7 @@ import * as service from "@/server/services";
 import * as media from "@/server/media";
 import * as billing from "@/server/payments";
 import { confirmManualPayment } from "@/server/manual-payments";
+import { editGuest, deleteGuest } from "@/server/guest-management";
 import { csv, calendarICS } from "@/domain/format";
 import { randomUUID } from "node:crypto";
 import { templates } from "@/domain/document";
@@ -208,6 +209,10 @@ async function route(request: Request, ctx: Context) {
             201,
           );
         }
+      }
+      if (p[2] === "guests" && p[3] && p.length === 4) {
+        if (method === "PATCH") return send(await editGuest(user, id, p[3], await jsonBody(request)));
+        if (method === "DELETE") return send(await deleteGuest(user, id, p[3], await jsonBody(request)));
       }
       if (!p[2]) {
         if (method === "GET")
