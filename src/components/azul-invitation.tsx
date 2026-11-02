@@ -76,6 +76,26 @@ export function AzulInvitation({
   const audio = useRef<HTMLAudioElement>(null),
     content = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (!opened) return;
+    let cancelled = false;
+    let frame = 0;
+    // Measure after reveal and font layout, not against a fixed timer or
+    // the platform header's global scroll padding.
+    void document.fonts.ready.then(() => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        if (!content.current) return;
+        window.scrollTo({
+          top: window.scrollY + content.current.getBoundingClientRect().top,
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "instant"
+            : "smooth",
+        });
+      });
+    });
+    return () => { cancelled = true; cancelAnimationFrame(frame); };
+  }, [opened]);
+  useEffect(() => {
     const tick = () =>
       setRemaining(Math.max(0, Date.parse(d.event.startsAt) - Date.now()));
     tick();
@@ -154,17 +174,6 @@ export function AzulInvitation({
             onClick={() => {
               setOpened(true);
               if (audioUrl) void play();
-              setTimeout(
-                () =>
-                  content.current?.scrollIntoView({
-                    behavior: window.matchMedia(
-                      "(prefers-reduced-motion: reduce)",
-                    ).matches
-                      ? "instant"
-                      : "smooth",
-                  }),
-                450,
-              );
             }}
           >
             {name.slice(0, 1)}

@@ -56,3 +56,18 @@ test("agenda precargada y WhatsApp automático únicamente después de guardar a
   await page.reload({ waitUntil: "networkidle" });
   await expect(page.getByRole("row").filter({hasText:"Persona corregida"})).toHaveCount(0);
 });
+
+test('primera apertura móvil alinea el contenido incluso con fuente demorada', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  let releaseFont!: () => void;
+  const fontGate = new Promise<void>(resolve => { releaseFont = resolve; });
+  await page.route('**/GreatVibes-Regular.ttf', async route => {
+    await fontGate;
+    await route.continue();
+  });
+  await page.goto('/exclusivas/e2e-exclusive', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: /Abrir invitación/ }).click();
+  releaseFont();
+  await expect.poll(() => page.locator('#azul-content').evaluate(node => Math.abs(node.getBoundingClientRect().top))).toBeLessThan(2);
+  await page.screenshot({ path: 'test-results/evidence/exclusive-first-opening-mobile.png' });
+});

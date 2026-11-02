@@ -3,6 +3,9 @@
   src: url("/assets/exclusives/azul/GreatVibes-Regular.ttf") format("truetype");
   font-display: swap;
 }
+html:has(.azul-page) {
+  scroll-padding-top: 0;
+}
 .azul-page {
   --gold: #80652f;
   --ink: #39332c;

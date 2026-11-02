@@ -210,3 +210,6 @@ Validación: lint y E2E Chromium 1/1 aprobados; revisión visual de captura móv
 
 ### Portada simple sin flores — 2026-11-02
 Se retiró el ramo del sobre y el fondo floral de la apertura. Se mantienen solapa curva, cordón, sello de lacre e inicial; fondo marfil realizado con CSS. Lint y E2E Chromium 1/1 aprobados, captura móvil inspeccionada. Sin cambios en los datos del evento ni en los formularios.
+
+### Primera apertura móvil — 2026-11-02
+El desplazamiento se realiza tras revelar el contenido y resolver las fuentes, midiendo su posición real. Se elimina el temporizador fijo y el scroll-padding global de 90px solo en la exclusiva. Respeta movimiento reducido y mantiene audio dentro del gesto del usuario. Lint, build/tipos y WebKit 2/2 aprobados; regresión móvil390 con tipografía demorada exige contenido alineado a menos de 2px del inicio. Captura local inspeccionada.
