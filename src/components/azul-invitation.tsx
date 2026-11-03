@@ -162,11 +162,6 @@ export function AzulInvitation({
         />
       )}
       <header className={`azul-opening ${opened ? "is-open" : ""}`}>
-        <div className="azul-opening-intro">
-          <p className="azul-kicker">UNA NOCHE PARA RECORDAR</p>
-          <span className="azul-script">Estás invitado</span>
-          <p>Hay un momento especial esperando por vos.</p>
-        </div>
         <div className="azul-envelope">
           <div className="azul-envelope-card">
             <OrnamentalCrown />
@@ -272,10 +267,6 @@ export function AzulInvitation({
           </a>
         </section>
         <section className="azul-section azul-venue" id="azul-lugar">
-          <div className="azul-venue-art" aria-hidden="true">
-            <span>Una noche,</span>
-            <span className="azul-script">mil recuerdos</span>
-          </div>
           <div>
             <MapPin size={25} strokeWidth={1} />
             <p className="azul-kicker">NOS ENCONTRAMOS EN</p>
@@ -303,12 +294,11 @@ export function AzulInvitation({
         <section className="azul-section azul-dress">
           <Sparkles size={26} strokeWidth={1} />
           <p className="azul-kicker">EL LOOK DE LA NOCHE</p>
-          <h2>Elegante sport</h2>
-          <p>Vení con ganas de celebrar y sentirte especial.</p>
+          <h2>Elegante</h2>
           <div className="azul-dress-note">
             <span className="azul-fine">UN DETALLE IMPORTANTE</span>
             <p>
-              No se permiten prendas de color{" "}
+              No se permiten <strong>los colores</strong>{" "}
               <strong>rosa, blanco o plateado</strong>, ni prendas con{" "}
               <strong>brillos</strong>.
             </p>
@@ -320,7 +310,7 @@ export function AzulInvitation({
           <h2>¿Me acompañás?</h2>
           <p>
             Confirmá tu asistencia hasta el{" "}
-            <strong>{closesLabel} inclusive.</strong>
+            <strong>{closesLabel}.</strong>
           </p>
           <p className="azul-fine">PODÉS CONFIRMAR A TODO TU GRUPO FAMILIAR</p>
           <AzulRSVP slug={slug} />
@@ -330,11 +320,7 @@ export function AzulInvitation({
             <Music2 size={25} strokeWidth={1} />
             <p className="azul-kicker">LA BANDA SONORA DE MIS XV</p>
             <h2>Que no falte tu canción</h2>
-            <p>
-              ¿Cuál te hace salir a bailar?
-              <br />
-              Ayudame a armar una noche inolvidable.
-            </p>
+            <p>¿Cuál te hace salir a bailar?</p>
             <SongRequest slug={slug} />
           </div>
           <div>
@@ -372,9 +358,6 @@ export function AzulInvitation({
           </div>
         </section>
         <footer className="azul-footer">
-          <span className="azul-flourish" aria-hidden="true">
-            ❧
-          </span>
           <p>Gracias por ser parte de mi historia.</p>
           <span className="azul-script">Te espero, <span className="azul-script azul-name">{name}</span></span>
           <p className="azul-fine">{numericDate}</p>

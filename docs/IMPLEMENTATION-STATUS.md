@@ -226,3 +226,6 @@ Validación: lint aprobado; captura móvil con fuente nueva inspeccionada y regr
 
 ### Nombre en mayúsculas — 2026-11-03
 Todas las apariciones del nombre con azul-name se muestran en mayúsculas, manteniendo Bodoni Moda Italic. Cambio exclusivamente de presentación CSS.
+
+### Simplificación de contenido — 2026-11-03
+Se retiran introducción sobre el sobre, panel ornamental de ubicación, frases secundarias marcadas y adorno del pie. Dress code Elegante y los colores en negrita; ubicación centrada. La música se gestiona en almacenamiento privado y versiones de datos, fuera del repositorio público. Validación: lint y build con TypeScript aprobados.

@@ -680,3 +680,5 @@ html:has(.azul-page) {
 .azul-form input:not([type="radio"]), .azul-form textarea { font-size: 16px; }
 
 .azul-page .azul-name { text-transform: uppercase; }
+
+.azul-venue { grid-template-columns: 1fr; }

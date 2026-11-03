@@ -60,7 +60,7 @@ export function makeAzulDocument() {
       type: "dressCode",
       enabled: true,
       props: {
-        title: "Elegante sport",
+        title: "Elegante",
         text: "Reservamos el rosa, blanco y plateado para la ocasión. Por favor, evitá estos colores y las prendas con brillos.",
       },
     },
