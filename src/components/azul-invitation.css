@@ -247,7 +247,7 @@ html:has(.azul-page) {
 }
 .azul-hero {
   padding: 80px 24px 95px;
-  background: url("/assets/exclusives/azul/stationery.webp") center/cover;
+  background: var(--paper);
   display: flex;
   justify-content: center;
 }
@@ -378,9 +378,7 @@ html:has(.azul-page) {
 }
 .azul-venue-art {
   min-height: 460px;
-  background:
-    linear-gradient(#fff8e44d, #fff8e440),
-    url("/assets/exclusives/azul/stationery.webp") left center/cover;
+  background: var(--paper);
   display: flex;
   justify-content: center;
   flex-direction: column;

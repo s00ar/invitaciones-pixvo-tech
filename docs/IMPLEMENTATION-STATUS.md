@@ -229,3 +229,6 @@ Todas las apariciones del nombre con azul-name se muestran en mayúsculas, mante
 
 ### Simplificación de contenido — 2026-11-03
 Se retiran introducción sobre el sobre, panel ornamental de ubicación, frases secundarias marcadas y adorno del pie. Dress code Elegante y los colores en negrita; ubicación centrada. La música se gestiona en almacenamiento privado y versiones de datos, fuera del repositorio público. Validación: lint y build con TypeScript aprobados.
+
+### Fondo interior liso — 2026-11-03
+Se elimina stationery.webp de todas las reglas CSS de la exclusiva, incluida la portada interior. Fondo marfil con var(--paper). Verificación de ausencia de referencias y diff check; no cambia lógica ni datos.
