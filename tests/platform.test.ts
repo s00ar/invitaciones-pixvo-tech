@@ -145,6 +145,7 @@ describe("documento y exportación", () => {
     ]);
     expect(plans[0].entitlements.audio).toBe(true);
     const fresh = (await createInvitation(a, "pixvo-free-xv")).id;
+    const created = [fresh];
     for (const [key, value] of Object.entries({
       PAYMENTS_ENABLED: "true",
       MERCADOPAGO_ACCESS_TOKEN: "test-only-token",
@@ -174,6 +175,16 @@ describe("documento y exportación", () => {
           price_minor: plan.price_minor,
         });
       }
+      for (const template of templates.filter((t) => t.coverStyle)) {
+        const { id } = await createInvitation(a, template.id);
+        created.push(id);
+        await expect(createOrder(a, id, "standard")).rejects.toMatchObject({
+          status: 403,
+          message: "Este template requiere Invitación interactiva o premium",
+        });
+        await expect(createOrder(a, id, "premium")).resolves.toHaveProperty("id");
+        await expect(createOrder(a, id, "custom")).resolves.toHaveProperty("id");
+      }
       await db.query(
         "update plans set price_minor=3600000 where id='standard'",
       );
@@ -198,8 +209,10 @@ describe("documento y exportación", () => {
       await db.query(
         "update plans set price_minor=3500000 where id='standard'",
       );
-      await db.query("delete from orders where invitation_id=$1", [fresh]);
-      await db.query("delete from invitations where id=$1", [fresh]);
+      for (const id of created) {
+        await db.query("delete from orders where invitation_id=$1", [id]);
+        await db.query("delete from invitations where id=$1", [id]);
+      }
       vi.unstubAllEnvs();
     }
   });
@@ -216,8 +229,8 @@ describe("documento y exportación", () => {
       "alias-privado-desactivado",
     );
   });
-  it("valida los 27 presets y cinco familias sin metadata del competidor", () => {
-    expect(templates).toHaveLength(27);
+  it("valida los 29 presets y cinco familias sin metadata del competidor", () => {
+    expect(templates).toHaveLength(29);
     expect(new Set(templates.map((t) => t.family)).size).toBe(5);
     for (const t of templates)
       expect(documentSchema.safeParse(makeDocument(t.id)).success).toBe(true);
@@ -779,7 +792,7 @@ describe("pagos verificados e idempotencia", () => {
   });
 });
 describe("publicación, archivos y RSVP", () => {
-  it("crea, edita y publica cada uno de los 27 presets", async () => {
+  it("crea, edita y publica cada uno de los 29 presets", async () => {
     for (const t of templates) {
       const fresh = (await createInvitation(a, t.id)).id;
       await update(fresh, (d) => {
@@ -996,13 +1009,20 @@ describe("publicación, archivos y RSVP", () => {
     expect(() =>
       validatePlan(d, defaultPlans[0].entitlements as never),
     ).toThrow("interactiva o premium");
+    const basic = makeDocument("pixvo-free-xv");
+    basic.theme.backgroundAsset = makeDocument(
+      "pixvo-neon-costero-xv",
+    ).theme.backgroundAsset;
+    expect(() =>
+      validatePlan(basic, { ...defaultPlans[0].entitlements, tier: "standard" }),
+    ).toThrow("interactiva o premium");
   });
 });
 
 describe("muestras XV personalizadas", () => {
   it("valida cinco estilos y conserva el catálogo original y los documentos previos", () => {
     expect(customSamples).toHaveLength(5);
-    expect(templates).toHaveLength(27);
+    expect(templates).toHaveLength(29);
     for (const s of customSamples) {
       const d = makeSampleDocument(s.id);
       expect(documentSchema.safeParse(d).success).toBe(true);

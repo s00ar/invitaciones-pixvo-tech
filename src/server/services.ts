@@ -4,13 +4,14 @@ import {
   documentSchema,
   makeDocument,
   makeSampleDocument,
+  templates,
   referencedMedia,
   validatePlan,
   entitlementsSchema,
   type InvitationDocument,
   type Entitlements,
 } from "../domain/document";
-import { transaction, type DB } from "./db";
+import { seedCoastalTemplates, transaction, type DB } from "./db";
 import { fail } from "./errors";
 import { hashToken, token, type User } from "./auth";
 import { publicProjection } from "../domain/public-projection";
@@ -74,6 +75,16 @@ export async function listInvitations(user: User) {
 export async function getInvitation(user: User, id: string) {
   return transaction((db) => owned(db, id, user));
 }
+export function getActiveTemplateIds() {
+  return transaction(async (db) => {
+    await seedCoastalTemplates(db);
+    const result = await db.query<{ id: string }>(
+      "select id from templates where active=true",
+    );
+    return result.rows.map((t) => t.id);
+  });
+}
+
 export async function getPlans() {
   return transaction(
     async (db) =>
@@ -98,6 +109,8 @@ export async function createInvitation(
     ),
     id = randomUUID();
   return transaction(async (db) => {
+    if (templates.some((t) => t.id === templateId && t.coverStyle))
+      await seedCoastalTemplates(db);
     const t = (
       await db.query("select id from templates where id=$1 and active=true", [
         templateId,

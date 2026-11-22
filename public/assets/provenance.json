@@ -128,6 +128,18 @@
       "sha256": "8b84df28e1ab824875d3ef8efaade1ab875d0078f03947bfddd2fc0dc7c5d099"
     },
     {
+      "path": "/assets/backgrounds/pixvo-neon-costero-18.webp",
+      "source": "assets/backgrounds/pixvo-neon-costero-18.webp",
+      "license": "Ilustración original generada para Pixvo. Ver assets/backgrounds/NEON-COSTERO.md",
+      "sha256": "e6ed7a73125fe00c2a68b8dcb059d57dde3b20114e190e60b1b195cc68bb8f75"
+    },
+    {
+      "path": "/assets/backgrounds/pixvo-neon-costero-xv.webp",
+      "source": "assets/backgrounds/pixvo-neon-costero-xv.webp",
+      "license": "Ilustración original generada para Pixvo. Ver assets/backgrounds/NEON-COSTERO.md",
+      "sha256": "380c905110499ca0ec16d4ff891bf079742f2306c8fd88796fbc49d8413a6b78"
+    },
+    {
       "path": "/assets/backgrounds/pixvo-neon-party-party.svg",
       "source": "assets/backgrounds/pixvo-neon-party-party.svg",
       "license": "SVG original del proyecto Pixvo",

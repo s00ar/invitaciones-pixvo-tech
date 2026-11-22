@@ -1375,5 +1375,99 @@
       "visibility"
     ],
     "layoutNotes": "Hero alineado izquierda, agenda estructurada y sedes en tarjetas."
+  },
+  {
+    "id": "pixvo-neon-costero-xv",
+    "version": 1,
+    "name": "Neón Costero · XV",
+    "category": "xv",
+    "tier": "premium",
+    "family": "party",
+    "freeStyle": false,
+    "status": "pixvo_original",
+    "coverStyle": "coastal-xv",
+    "exampleTitle": "Los quince de Emilia",
+    "theme": {
+      "accent": "#FF4B9A",
+      "background": "#130C23",
+      "foreground": "#FFF7EF",
+      "headingFont": "Georgia",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-neon-costero-xv.webp",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "calendar",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Portada ilustrada, luz neón costera y secciones de evento en paneles oscuros."
+  },
+  {
+    "id": "pixvo-neon-costero-18",
+    "version": 1,
+    "name": "Neón Costero · 18",
+    "category": "parties",
+    "tier": "premium",
+    "family": "party",
+    "freeStyle": false,
+    "status": "pixvo_original",
+    "coverStyle": "coastal-18",
+    "exampleTitle": "Los 18 de Alex",
+    "theme": {
+      "accent": "#3DE1E1",
+      "background": "#09111F",
+      "foreground": "#F7F9FF",
+      "headingFont": "Bebas Neue",
+      "bodyFont": "Inter Tight",
+      "radius": 8
+    },
+    "backgroundAsset": "assets/backgrounds/pixvo-neon-costero-18.webp",
+    "blocks": [
+      "hero",
+      "countdown",
+      "venues",
+      "calendar",
+      "message",
+      "rsvp"
+    ],
+    "optionalBlocks": [
+      "gallery",
+      "dressCode",
+      "gifts",
+      "music",
+      "social",
+      "songRequests",
+      "agenda"
+    ],
+    "editable": [
+      "content",
+      "palette",
+      "fonts",
+      "background",
+      "blockOrder",
+      "visibility"
+    ],
+    "layoutNotes": "Portada ilustrada, luz neón costera y secciones de evento en paneles oscuros."
   }
 ]

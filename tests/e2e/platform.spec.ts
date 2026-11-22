@@ -11,13 +11,69 @@ async function login(page: Page, email = "owner@example.test") {
   await page.getByRole("button", { name: "Iniciar sesión" }).click();
   await expect(page).toHaveURL(/\/app$/);
 }
-test("landing y catálogo responsive, 27 presets y cinco familias", async ({
+test("Neón Costero conserva su portada y ofrece solo los planes compatibles", async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  await login(page);
+  await page.goto("/templates?plan=standard&q=Ne%C3%B3n+Costero");
+  await expect(page.locator(".template-card")).toHaveCount(0);
+  await page.goto("/templates?plan=premium&q=Ne%C3%B3n+Costero");
+  await expect(page.locator(".template-card")).toHaveCount(2);
+
+  for (const [variant, title, width] of [
+    ["xv", "Los quince de Emilia", 390],
+    ["18", "Los 18 de Alex", 1440],
+  ] as const) {
+    await page.setViewportSize({ width, height: 900 });
+    await page
+      .getByRole("link", {
+        name: `Ver Neón Costero · ${variant.toUpperCase()}`,
+        exact: true,
+      })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: title, exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText("18 de diciembre de 2027 · 21:00")).toBeVisible();
+    await expect(page.locator(".coastal-illustrated")).toHaveCSS(
+      "background-image",
+      new RegExp(`pixvo-neon-costero-${variant}\\.webp`),
+    );
+    const cover = await page.request.get(
+      `/assets/backgrounds/pixvo-neon-costero-${variant}.webp`,
+    );
+    expect(cover.ok()).toBe(true);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(width);
+    await page.screenshot({
+      path: `test-results/evidence/neon-costero-${variant}.png`,
+    });
+    if (variant === "xv") await page.goBack();
+  }
+
+  await page.getByRole("link", { name: "Usar diseño" }).click();
+  await expect(page).toHaveURL(/\/app\/invitaciones\/[^/]+\/editar$/);
+  await page.getByRole("button", { name: "Revisar y publicar" }).click();
+  const plan = page.getByRole("combobox", { name: "Plan" });
+  await expect(plan).toHaveValue("premium");
+  await expect(plan.getByRole("option")).toHaveCount(2);
+  await expect(
+    plan.getByRole("option", { name: /Invitación premium/ }),
+  ).toHaveCount(1);
+  expect(pageErrors).toEqual([]);
+});
+
+test("landing y catálogo responsive, 29 presets y cinco familias", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: /Tu gran momento/ }),
   ).toBeVisible();
+  await expect(page.locator("#neon-costero .template-card")).toHaveCount(2);
   for (const route of ["/precios", "/"]) {
     await page.goto(route);
     for (const [name, amount] of [
@@ -31,6 +87,9 @@ test("landing y catálogo responsive, 27 presets y cinco familias", async ({
       await expect(card.locator(".plan-price")).toHaveText(
         new RegExp(`\\$\\s*${amount.replaceAll(".", "\\.")}`),
       );
+      await expect(
+        card.getByRole("link", { name: /Diseños Neón Costero/ }),
+      ).toHaveCount(name === "Invitación básica" ? 0 : 1);
     }
     await expect(page.locator(".plans-note")).toContainText(
       "Se pueden agregar adicionales según funcionalidades extra",
@@ -45,12 +104,12 @@ test("landing y catálogo responsive, 27 presets y cinco familias", async ({
     fullPage: true,
   });
   await page.goto("/templates");
-  await expect(page.locator(".template-card")).toHaveCount(27);
+  await expect(page.locator(".template-card")).toHaveCount(29);
   await page.getByRole("button", { name: "Quince años", exact: true }).click();
-  await expect(page.locator(".template-card")).toHaveCount(6);
+  await expect(page.locator(".template-card")).toHaveCount(7);
   await expect(page).toHaveURL(/category=xv/);
   await page.reload();
-  await expect(page.locator(".template-card")).toHaveCount(6);
+  await expect(page.locator(".template-card")).toHaveCount(7);
   await page.screenshot({
     caret: "initial",
     path: "test-results/evidence/catalogo.png",

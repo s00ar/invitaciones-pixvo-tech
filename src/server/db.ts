@@ -23,12 +23,20 @@ declare global {
   var pixvoPool: Pool | undefined;
 }
 
-export async function seed(db: DB) {
-  for (const t of templates)
+async function seedTemplates(db: DB, presets: typeof templates) {
+  for (const t of presets)
     await db.query(
       "insert into templates(id,version,category,config) values($1,$2,$3,$4) on conflict(id) do nothing",
       [t.id, t.version, t.category, JSON.stringify(t)],
     );
+}
+
+export async function seedCoastalTemplates(db: DB) {
+  await seedTemplates(db, templates.filter((t) => t.coverStyle));
+}
+
+export async function seed(db: DB) {
+  await seedTemplates(db, templates);
   for (const p of defaultPlans)
     await db.query(
       "insert into plans(id,name,price_minor,currency,entitlements) values($1,$2,$3,$4,$5) on conflict(id) do nothing",

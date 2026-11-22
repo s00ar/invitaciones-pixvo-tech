@@ -2,6 +2,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { readFile } from "node:fs/promises";
 import { it, expect } from "vitest";
 import { buildBootstrapSQL } from "../src/server/bootstrap-sql";
+import { seedCoastalTemplates } from "../src/server/db";
 
 async function emptySupabaseFixture() {
   const db = new PGlite();
@@ -29,7 +30,7 @@ it("el SQL entregado aplica el esquema completo una vez y conserva ajustes y dat
   const db = await emptySupabaseFixture();
   try {
     await db.exec(sql);
-    expect((await db.query("select * from templates")).rows).toHaveLength(27);
+    expect((await db.query("select * from templates")).rows).toHaveLength(29);
     expect(
       (await db.query("select * from pixvo_migrations")).rows,
     ).toHaveLength(6);
@@ -166,6 +167,26 @@ it("actualiza una base de tres migraciones conservando órdenes previas y restri
     expect(
       (await db.query("select mercadopago_order_id from orders")).rows[0],
     ).toEqual({ mercadopago_order_id: "ORDTSTUPGRADE" });
+  } finally {
+    await db.close();
+  }
+});
+
+it("registra Neón Costero con el rol de producción y conserva la disponibilidad administrada", async () => {
+  const db = await emptySupabaseFixture();
+  try {
+    await db.exec(await buildBootstrapSQL());
+    await db.exec(
+      "delete from templates where id='pixvo-neon-costero-xv'; update templates set active=false where id='pixvo-neon-costero-18'; set role service_role;",
+    );
+    await seedCoastalTemplates(db);
+    await seedCoastalTemplates(db);
+    expect(
+      (await db.query("select id, active from templates where id like 'pixvo-neon-costero-%' order by id")).rows,
+    ).toEqual([
+      { id: "pixvo-neon-costero-18", active: false },
+      { id: "pixvo-neon-costero-xv", active: true },
+    ]);
   } finally {
     await db.close();
   }

@@ -13,7 +13,7 @@ El script del kit no ejecuta estas pruebas: Codex debe implementarlas.
 - Borrador nunca público por slug/API/cache. Secretos ausentes en bundles y logs.
 
 ## P1, producto
-- 27 templates visibles con filtros correctos y estilos distintos; cada uno seleccionable/editable/publicable.
+- 29 templates visibles con filtros correctos y estilos distintos; cada uno seleccionable, editable y publicable con un plan compatible.
 - Familias editorial, ornamental, fiesta, infantil y corporativa con composición propia.
 - Preview y público equivalentes para mismo documento; revisar 360,390,768 y1440 px sin scroll horizontal.
 - QR escaneable abre la URL correcta; ICS importa hora correcta incluso en cambio horario; contador no negativo.

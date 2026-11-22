@@ -55,7 +55,7 @@ const checks: Check[] = [
     path: "/api/templates",
     expected: 200,
     verify: (_, b) =>
-      assert(JSON.parse(b).length === 27, "Catálogo incompleto"),
+      assert(JSON.parse(b).length === templates.length, "Catálogo incompleto"),
   },
   {
     path: "/api/plans",

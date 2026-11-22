@@ -1,19 +1,12 @@
 import { Suspense } from "react";
 import { Header, Footer, Eyebrow } from "@/components/ui";
 import { Catalog } from "@/components/catalog";
-import { configured, transaction } from "@/server/db";
+import { configured } from "@/server/db";
+import { getActiveTemplateIds } from "@/server/services";
 export const metadata = { title: "Encontrá tu diseño" };
 export const dynamic = "force-dynamic";
 export default async function TemplatesPage() {
-  const ids = configured()
-    ? await transaction(async (db) =>
-        (
-          await db.query<{ id: string }>(
-            "select id from templates where active=true",
-          )
-        ).rows.map((t) => t.id),
-      )
-    : undefined;
+  const ids = configured() ? await getActiveTemplateIds() : undefined;
   return (
     <>
       <Header />

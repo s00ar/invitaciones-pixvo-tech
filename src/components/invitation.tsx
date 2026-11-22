@@ -18,7 +18,11 @@ import {
   VolumeX,
 } from "lucide-react";
 import { useRef } from "react";
-import type { InvitationDocument, Block } from "@/domain/document";
+import {
+  templates,
+  type InvitationDocument,
+  type Block,
+} from "@/domain/document";
 import { dateLabel } from "@/domain/format";
 import { customSamples } from "@/domain/custom-samples";
 import { SampleMotif } from "./sample-motif";
@@ -86,6 +90,16 @@ function Hero({
   b: Block;
   slug?: string;
 }) {
+  const preset = templates.find((t) => t.id === d.templateId);
+  const coverStyle =
+    preset && !d.theme.sampleStyle && d.theme.family === preset.family
+      ? preset.coverStyle
+      : undefined;
+  const illustrated =
+    coverStyle &&
+    d.theme.backgroundAsset === preset?.backgroundAsset &&
+    !d.theme.backgroundMediaId &&
+    !d.theme.videoId;
   const player = useRef<HTMLVideoElement>(null),
     [videoPlaying, setVideoPlaying] = useState(false),
     [videoLoading, setVideoLoading] = useState(false),
@@ -214,7 +228,7 @@ function Hero({
       : undefined;
   return (
     <section
-      className={`inv-hero hero-${d.theme.family} ${d.theme.videoId ? "has-hero-video" : ""}`}
+      className={`inv-hero hero-${d.theme.family} ${d.theme.videoId ? "has-hero-video" : ""}${coverStyle ? ` hero-coastal ${coverStyle}` : ""}${illustrated ? " coastal-illustrated" : ""}`}
       style={{
         backgroundImage: bg
           ? `linear-gradient(rgb(0 0 0 / ${d.theme.overlay}),rgb(0 0 0 / ${d.theme.overlay})),url("${bg}")`
@@ -296,6 +310,8 @@ function Hero({
             <SampleMotif style={d.theme.sampleStyle} />
             {common}
           </div>
+        ) : coverStyle ? (
+          <div className="coastal-title">{common}</div>
         ) : d.theme.family === "editorial" ? (
           <>
             <div className="editorial-label">

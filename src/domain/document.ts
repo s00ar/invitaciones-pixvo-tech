@@ -288,6 +288,8 @@ export const templates = catalog.map(
     family,
     freeStyle,
     theme,
+    coverStyle,
+    exampleTitle,
     backgroundAsset,
     blocks,
     optionalBlocks,
@@ -301,6 +303,8 @@ export const templates = catalog.map(
     family,
     freeStyle,
     theme,
+    coverStyle,
+    exampleTitle,
     backgroundAsset,
     blocks,
     optionalBlocks,
@@ -327,7 +331,8 @@ export function makeDocument(id: string): InvitationDocument {
     templateVersion: 1,
     event: {
       title:
-        t.category === "weddings"
+        t.exampleTitle ??
+        (t.category === "weddings"
           ? "Sofía & Mateo"
           : t.category === "xv"
             ? "Los quince de Emilia"
@@ -335,7 +340,7 @@ export function makeDocument(id: string): InvitationDocument {
               ? "El cumple de Alex"
               : t.category === "corporate"
                 ? "Un nuevo encuentro"
-                : "Una noche para celebrar",
+                : "Una noche para celebrar"),
       category: t.category,
       startsAt: "2027-12-18T21:00:00-03:00",
       timezone: "America/Argentina/Buenos_Aires",
@@ -352,9 +357,9 @@ export function makeDocument(id: string): InvitationDocument {
       family: t.family,
       backgroundAsset: t.backgroundAsset,
       overlay: 0.15,
-      focusX: 50,
+      focusX: t.coverStyle ? 100 : 50,
       focusY: 50,
-      align: "center",
+      align: t.coverStyle ? "left" : "center",
       scale: 1,
       spacing: 1,
     },
@@ -465,6 +470,20 @@ export const entitlementsSchema = z
   })
   .strict();
 export type Entitlements = z.infer<typeof entitlementsSchema>;
+export function templateAllowsPlan(
+  d: InvitationDocument,
+  tier: Entitlements["tier"],
+) {
+  return (
+    tier !== "standard" ||
+    !templates.some(
+      (t) =>
+        t.tier === "premium" &&
+        (t.id === d.templateId ||
+          (t.coverStyle && t.backgroundAsset === d.theme.backgroundAsset)),
+    )
+  );
+}
 export const defaultPlans = [
   {
     id: "standard",
@@ -513,8 +532,7 @@ export const defaultPlans = [
   },
 ];
 export function validatePlan(d: InvitationDocument, e: Entitlements) {
-  const t = templates.find((t) => t.id === d.templateId)!;
-  if (t.tier === "premium" && e.tier === "standard")
+  if (!templateAllowsPlan(d, e.tier))
     throw new Error("Este template requiere Invitación interactiva o premium");
   if (
     d.blocks.reduce(

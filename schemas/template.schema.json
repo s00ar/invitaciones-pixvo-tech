@@ -45,6 +45,12 @@
         "corporate"
       ]
     },
+    "coverStyle": {
+      "enum": ["coastal-xv", "coastal-18"]
+    },
+    "exampleTitle": {
+      "type": "string"
+    },
     "blocks": {
       "type": "array",
       "items": {

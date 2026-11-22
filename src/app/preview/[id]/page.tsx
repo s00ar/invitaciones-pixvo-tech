@@ -23,7 +23,11 @@ export default async function Preview({
         </Link>
         <div>
           <strong>{t.name}</strong>
-          <span>Datos de ejemplo · Vista previa</span>
+          <span>
+            {t.coverStyle
+              ? "Interactiva / Premium · Datos de ejemplo"
+              : "Datos de ejemplo · Vista previa"}
+          </span>
         </div>
         <Link
           className="button primary small"

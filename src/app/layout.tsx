@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./custom-samples.css";
+import "./neon-costero.css";
 export const metadata: Metadata = {
   title: {
     default: "Pixvo Invitaciones · Tu momento empieza acá",

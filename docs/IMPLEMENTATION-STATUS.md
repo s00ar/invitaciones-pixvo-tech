@@ -232,3 +232,9 @@ Se retiran introducción sobre el sobre, panel ornamental de ubicación, frases 
 
 ### Fondo interior liso — 2026-11-03
 Se elimina stationery.webp de todas las reglas CSS de la exclusiva, incluida la portada interior. Fondo marfil con var(--paper). Verificación de ausencia de referencias y diff check; no cambia lógica ni datos.
+
+## Neón Costero · 2026-11-22
+
+Dos presets editables para XV y 18 con ilustraciones originales, incorporados en portada, catálogo y precios. Interactiva y Premium son los planes compatibles. La validación de servidor aplica también al uso de estas portadas como fondo de otros presets.
+
+En producción, el catálogo y la primera creación desde estas vistas previas registran las dos filas faltantes con el rol de servicio. La inserción conserva los estados de disponibilidad existentes y los ajustes de otros templates y planes. El seed y el bootstrap también incluyen ambos presets.

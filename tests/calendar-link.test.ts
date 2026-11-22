@@ -5,6 +5,9 @@ import { googleCalendarUrl } from "../src/domain/format";
 it("precarga un evento nocturno con zona, descripción y lugar sin depender de la zona del visitante", () => {
   const d = makeAzulDocument();
   d.event.title = "Cumpleaños & celebración";
+  d.blocks.find((b) => b.type === "dressCode")!.props = {
+    title: "Elegante sport",
+  };
   const url = new URL(googleCalendarUrl(d));
   expect(url.origin).toBe("https://calendar.google.com");
   expect(url.searchParams.get("action")).toBe("TEMPLATE");

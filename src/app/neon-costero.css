@@ -1,0 +1,133 @@
+.template-grid.coastal-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.template-art.art-coastal {
+  isolation: isolate;
+  justify-content: start;
+  background-position: center 39%;
+}
+
+.art-coastal::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(90deg, #090812e6, #09081252 62%, #09081214),
+    linear-gradient(0deg, #0908129c, transparent 24%);
+}
+
+.art-coastal .art-inner {
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  transform: none;
+  margin-left: 3%;
+}
+
+.art-coastal .art-inner strong {
+  max-width: 9ch;
+  text-transform: none;
+  font-weight: 800;
+  transform: none;
+  text-shadow: 0 2px 18px #090812a0;
+}
+
+.art-coastal.coastal-xv .art-inner strong {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.art-coastal .art-category,
+.art-coastal .art-preview {
+  opacity: 1;
+}
+
+.inv-hero.hero-coastal {
+  container-type: inline-size;
+}
+
+.inv-hero.coastal-illustrated {
+  background-size:
+    100% 100%,
+    max(64%, 420px) auto;
+  background-repeat: no-repeat;
+}
+
+.coastal-illustrated::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      var(--inv-bg) 37%,
+      color-mix(in srgb, var(--inv-bg) 70%, transparent) 51%,
+      transparent 82%
+    ),
+    linear-gradient(0deg, var(--inv-bg), transparent 24%);
+  pointer-events: none;
+}
+
+.inv-hero.hero-coastal .hero-content {
+  min-height: clamp(460px, 61cqw, 740px);
+}
+
+.hero-coastal .coastal-title {
+  width: min(54%, 740px);
+  text-shadow: 0 2px 16px #090812a0;
+}
+
+.inv-hero.hero-coastal h1 {
+  font-size: clamp(42px, 9cqw, 128px);
+  font-weight: 900;
+  line-height: 0.99;
+}
+
+.inv-hero.hero-coastal.coastal-xv h1 {
+  font-style: italic;
+  font-weight: 400;
+}
+
+.hero-coastal .inv-date,
+.hero-coastal .inv-eyebrow {
+  margin-block: 1.1rem;
+}
+
+.hero-coastal .inv-button {
+  text-shadow: none;
+}
+
+.invitation:has(.hero-coastal) .count-section {
+  transform: none;
+  background: color-mix(in srgb, var(--inv-bg) 86%, var(--inv-accent));
+  color: var(--inv-fg);
+  border-block: 1px solid color-mix(in srgb, var(--inv-accent) 36%, transparent);
+}
+
+.invitation:has(.hero-coastal) .detail-section {
+  transform: none;
+}
+
+@container (max-width: 640px) {
+  .inv-hero.hero-coastal .hero-content {
+    justify-content: flex-start;
+    min-height: clamp(490px, 135cqw, 660px);
+    padding: 40px 6% 24px;
+  }
+
+  .hero-coastal .coastal-title {
+    width: 100%;
+  }
+
+  .inv-hero.hero-coastal h1 {
+    font-size: clamp(38px, 11cqw, 68px);
+  }
+}
+
+@media (max-width: 580px) {
+  .template-grid.coastal-grid {
+    grid-template-columns: 1fr;
+  }
+}

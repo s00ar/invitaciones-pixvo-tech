@@ -11,6 +11,8 @@ const root = process.cwd(),
     "family",
     "freeStyle",
     "theme",
+    "coverStyle",
+    "exampleTitle",
     "backgroundAsset",
     "blocks",
     "optionalBlocks",
@@ -54,7 +56,9 @@ for (const [source, destination, license] of [
     manifest.push({
       path: `/${destination}/${name}`,
       source: `${source}/${name}`,
-      license,
+      license: name.startsWith("pixvo-neon-costero-")
+        ? "Ilustración original generada para Pixvo. Ver assets/backgrounds/NEON-COSTERO.md"
+        : license,
       sha256: createHash("sha256").update(bytes).digest("hex"),
     });
   }
@@ -96,4 +100,6 @@ await writeIfChanged(
     2,
   ) + "\n",
 );
-console.log("27 presets saneados y recursos propios sincronizados.");
+console.log(
+  `${presets.length} presets saneados y recursos propios sincronizados.`,
+);

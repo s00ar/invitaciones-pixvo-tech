@@ -31,3 +31,12 @@ Nombres Pixvo y familias: propuestas. Nombres de referencia y planes: observados
 | corporate | [Tech Cyan](https://invita.somosweb.ar/preview/luxury-brand) | Conexión Digital | premium | corporate |
 | corporate | [Executive Slate](https://invita.somosweb.ar/preview/executive-slate) | Encuentro Ejecutivo | premium | corporate |
 | corporate | [Mi estilo](https://invita.somosweb.ar/preview/free-corporate) | Evento a tu Manera | standard | corporate |
+
+## Colección Neón Costero
+
+| Categoría | Diseño Pixvo | Planes |
+|---|---|---|
+| xv | Neón Costero · XV | Interactiva y Premium |
+| parties | Neón Costero · 18 | Interactiva y Premium |
+
+La colección usa paletas del kit como referencia para dos portadas originales. Las plantillas se editan con los mismos bloques, archivos y RSVP del catálogo. [Procedencia de las ilustraciones](../assets/backgrounds/NEON-COSTERO.md).

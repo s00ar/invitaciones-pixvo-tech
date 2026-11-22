@@ -6,7 +6,7 @@ const pool = new Pool(postgresConfig());
 try {
   await seed(pool);
   console.log(
-    "27 templates y planes con precios ARS preparados; configuración existente conservada.",
+    "Templates y planes con precios ARS preparados; configuración existente conservada.",
   );
 } finally {
   await pool.end();

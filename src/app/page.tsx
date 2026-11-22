@@ -18,6 +18,7 @@ import { CustomSamplesGallery } from "@/components/custom-samples";
 export const dynamic = "force-dynamic";
 export default function Home() {
   const selections = [templates[6], templates[0], templates[17]];
+  const coastal = templates.filter((t) => t.coverStyle);
   return (
     <>
       <Header />
@@ -105,6 +106,31 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <section className="container section" id="neon-costero">
+          <div className="section-heading">
+            <div>
+              <Eyebrow>Novedad</Eyebrow>
+              <h2>
+                Neón <em>Costero.</em>
+              </h2>
+            </div>
+            <div>
+              <p>
+                Dos diseños ilustrados para celebrar tus XV o tus 18 entre
+                palmeras y luces de neón. Disponibles con Invitación interactiva
+                e Invitación premium.
+              </p>
+              <Link className="text-link" href="/precios">
+                Ver planes <ArrowRight size={17} />
+              </Link>
+            </div>
+          </div>
+          <div className="template-grid coastal-grid">
+            {coastal.map((t) => (
+              <TemplateCard key={t.id} t={t} />
+            ))}
+          </div>
+        </section>
         <section className="container section">
           <div className="section-heading">
             <div>
@@ -117,7 +143,8 @@ export default function Home() {
             </div>
             <div>
               <p>
-                27 puntos de partida, muchas formas de expresarte.
+                {templates.length} puntos de partida, muchas formas de
+                expresarte.
                 <br />
                 Colores, fotos y detalles que hablan de vos.
               </p>

@@ -45,13 +45,7 @@ async function route(request: Request, ctx: Context) {
       sameOrigin(request);
     if (p[0] === "templates" && method === "GET") {
       const active = configured()
-        ? await transaction(async (db) =>
-            (
-              await db.query<{ id: string }>(
-                "select id from templates where active=true",
-              )
-            ).rows.map((t) => t.id),
-          )
+        ? await service.getActiveTemplateIds()
         : templates.map((t) => t.id);
       return send(
         templates.filter(

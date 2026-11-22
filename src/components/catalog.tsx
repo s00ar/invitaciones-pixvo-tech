@@ -23,13 +23,15 @@ export function TemplateCard({
     | "family"
     | "backgroundAsset"
     | "freeStyle"
+    | "coverStyle"
+    | "exampleTitle"
   >;
 }) {
   return (
     <article className="template-card">
       <Link
         href={`/preview/${t.id}`}
-        className={`template-art art-${t.family}`}
+        className={`template-art art-${t.family}${t.coverStyle ? ` art-coastal ${t.coverStyle}` : ""}`}
         style={{
           backgroundColor: t.theme.background,
           color: t.theme.foreground,
@@ -44,25 +46,28 @@ export function TemplateCard({
           className="art-inner"
           style={{ fontFamily: fontStack(t.theme.headingFont) }}
         >
-          <span className="art-ornament">
-            {t.family === "party"
-              ? "↗"
-              : t.family === "kids"
-                ? "★"
-                : t.family === "corporate"
-                  ? "[ P ]"
-                  : "✦"}
-          </span>
+          {!t.coverStyle && (
+            <span className="art-ornament">
+              {t.family === "party"
+                ? "↗"
+                : t.family === "kids"
+                  ? "★"
+                  : t.family === "corporate"
+                    ? "[ P ]"
+                    : "✦"}
+            </span>
+          )}
           <strong>
-            {t.category === "weddings"
-              ? "Sofía & Mateo"
-              : t.category === "xv"
-                ? "Emilia"
-                : t.category === "kids"
-                  ? "¡Alex cumple!"
-                  : t.category === "corporate"
-                    ? "Ideas que conectan."
-                    : "Esta noche es nuestra."}
+            {t.exampleTitle ??
+              (t.category === "weddings"
+                ? "Sofía & Mateo"
+                : t.category === "xv"
+                  ? "Emilia"
+                  : t.category === "kids"
+                    ? "¡Alex cumple!"
+                    : t.category === "corporate"
+                      ? "Ideas que conectan."
+                      : "Esta noche es nuestra.")}
           </strong>
           <span>18 · DICIEMBRE · 2027</span>
         </div>

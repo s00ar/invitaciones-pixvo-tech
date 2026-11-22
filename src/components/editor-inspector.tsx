@@ -398,11 +398,18 @@ export function EditorInspector({ id, d, selected, change }: Props) {
                 onChange={(e) => theme("backgroundAsset", e.target.value)}
               >
                 <option value="">Color liso</option>
-                {templates.map((t) => (
-                  <option key={t.id} value={t.backgroundAsset}>
-                    {t.name}
-                  </option>
-                ))}
+                {templates
+                  .filter(
+                    (t) =>
+                      !t.coverStyle ||
+                      t.id === d.templateId ||
+                      t.backgroundAsset === d.theme.backgroundAsset,
+                  )
+                  .map((t) => (
+                    <option key={t.id} value={t.backgroundAsset}>
+                      {t.name}
+                    </option>
+                  ))}
               </select>
             </label>
             {mediaSelect(

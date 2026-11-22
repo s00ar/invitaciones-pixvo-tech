@@ -79,6 +79,17 @@ export async function Plans() {
                     {f}
                   </li>
                 ))}
+                {(id === "premium" || id === "custom") && (
+                  <li>
+                    <Check size={14} />
+                    <Link
+                      href="/templates?plan=premium&q=Ne%C3%B3n+Costero"
+                      className="text-link"
+                    >
+                      Diseños Neón Costero · XV y 18
+                    </Link>
+                  </li>
+                )}
               </ul>
               {id === "premium" && (
                 <small className="plan-integration-status">

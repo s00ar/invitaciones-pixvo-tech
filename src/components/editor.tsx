@@ -22,6 +22,7 @@ import {
   documentSchema,
   blockLabels,
   repeatable,
+  templateAllowsPlan,
   validatePlan,
   type InvitationDocument,
 } from "@/domain/document";
@@ -64,7 +65,17 @@ export function Editor({
     } | null>(null),
     [history, setHistory] = useState<InvitationDocument[]>([]),
     [future, setFuture] = useState<InvitationDocument[]>([]),
-    [planId, setPlanId] = useState(initial.entitlement?.tier ?? "standard");
+    [preferredPlan, setPreferredPlan] = useState(
+      initial.entitlement?.tier ?? "standard",
+    );
+  const eligiblePlans = plans.filter((p) =>
+    templateAllowsPlan(d, p.entitlements.tier),
+  );
+  const planId = (
+    eligiblePlans.find((p) => p.id === preferredPlan) ??
+    eligiblePlans.find((p) => p.id === "premium") ??
+    eligiblePlans[0]
+  )?.id;
   const saved = useRef(JSON.stringify(initial.draft_json)),
     doc = useRef(d),
     rev = useRef(initial.revision),
@@ -258,6 +269,7 @@ export function Editor({
     }
   }
   async function pay() {
+    if (!planId) return;
     setBusy(true);
     setError("");
     try {
@@ -612,15 +624,21 @@ export function Editor({
                       <label className="field">
                         Plan
                         <select
-                          value={planId}
+                          value={planId ?? ""}
+                          disabled={!planId}
                           onChange={(e) =>
-                            setPlanId(
+                            setPreferredPlan(
                               e.target.value as
                                 "standard" | "premium" | "custom",
                             )
                           }
                         >
-                          {plans.map((p) => (
+                          {!planId && (
+                            <option value="">
+                              Plan compatible por configurar
+                            </option>
+                          )}
+                          {eligiblePlans.map((p) => (
                             <option key={p.id} value={p.id}>
                               {p.name} ·{" "}
                               {p.price_minor
@@ -635,7 +653,7 @@ export function Editor({
                       </label>
                       <button
                         className="button primary"
-                        disabled={busy || status !== "Guardado"}
+                        disabled={!planId || busy || status !== "Guardado"}
                         onClick={pay}
                       >
                         {busy
