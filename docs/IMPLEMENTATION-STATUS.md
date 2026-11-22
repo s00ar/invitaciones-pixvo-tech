@@ -238,3 +238,7 @@ Se elimina stationery.webp de todas las reglas CSS de la exclusiva, incluida la 
 Dos presets editables para XV y 18 con ilustraciones originales, incorporados en portada, catálogo y precios. Interactiva y Premium son los planes compatibles. La validación de servidor aplica también al uso de estas portadas como fondo de otros presets.
 
 En producción, el catálogo y la primera creación desde estas vistas previas registran las dos filas faltantes con el rol de servicio. La inserción conserva los estados de disponibilidad existentes y los ajustes de otros templates y planes. El seed y el bootstrap también incluyen ambos presets.
+
+## Orden del catálogo — 2026-11-22
+
+Las plantillas Neón Costero aparecen primero en /templates cuando coinciden con los filtros y están activas. Se conserva el orden relativo del resto del catálogo. El recorrido E2E del catálogo comprueba las primeras dos tarjetas.

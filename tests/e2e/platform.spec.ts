@@ -104,6 +104,9 @@ test("landing y catálogo responsive, 29 presets y cinco familias", async ({
     fullPage: true,
   });
   await page.goto("/templates");
+  const cards = page.locator(".template-card h3");
+  await expect(cards.nth(0)).toHaveText("Neón Costero · XV");
+  await expect(cards.nth(1)).toHaveText("Neón Costero · 18");
   await expect(page.locator(".template-card")).toHaveCount(29);
   await page.getByRole("button", { name: "Quince años", exact: true }).click();
   await expect(page.locator(".template-card")).toHaveCount(7);

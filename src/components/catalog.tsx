@@ -106,12 +106,15 @@ export function Catalog({ activeIds }: { activeIds?: string[] }) {
     else p.delete(key);
     router.replace(`/templates?${p}`, { scroll: false });
   }
-  const filtered = templates.filter(
+  const matching = templates.filter(
     (t) =>
       (!activeIds || activeIds.includes(t.id)) &&
       (!category || t.category === category) &&
       (!tier || t.tier === tier) &&
       t.name.toLowerCase().includes(q.toLowerCase()),
+  );
+  const filtered = matching.sort(
+    (a, b) => Number(Boolean(b.coverStyle)) - Number(Boolean(a.coverStyle)),
   );
   return (
     <>
